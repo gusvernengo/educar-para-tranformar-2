@@ -162,8 +162,8 @@ educar-para-transformar/
 El proyecto utiliza las siguientes credenciales de Supabase:
 
 ```javascript
-const supabaseUrl = 'https://anzkzcasszqqstwhamfm.supabase.co';
-const supabaseKey = 'sb_publishable_yCBVC5kXaCDQSkQtfJhgiA_qC7c-q40';
+const supabaseUrl = 'https://qynsmxiarnanqtxefltu.supabase.co';
+const supabaseKey = 'sb_publishable_iy7O34nEqp_zVcWzet7tCQ_1mGOgGQy';
 ```
 
 ### Tabla de Base de Datos

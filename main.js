@@ -1,6 +1,6 @@
-﻿    // 1. Inicializar Supabase (Mantenemos tus credenciales reales)
-    const supabaseUrl = 'https://anzkzcasszqqstwhamfm.supabase.co';
-    const supabaseKey = 'sb_publishable_yCBVC5kXaCDQSkQtfJhgiA_qC7c-q40';
+    // 1. Inicializar Supabase (Mantenemos tus credenciales reales)
+    const supabaseUrl = 'https://qynsmxiarnanqtxefltu.supabase.co';
+    const supabaseKey = 'sb_publishable_iy7O34nEqp_zVcWzet7tCQ_1mGOgGQy';
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     // Mejora C y A: Función única para gestionar todos los modales
@@ -255,4 +255,24 @@
     function descargarPDF() {
         alert("Generando documento PDF con firma digital institucional...\nSu descarga comenzará en breve.");
     }
+
+    // Exposición global en window para eventos inline HTML y compatibilidad móvil
+    window.toggleModal = toggleModal;
+    window.alternarVisibilidadModal = alternarVisibilidadModal;
+    window.validarFormularioAdmision = validarFormularioAdmision;
+    window.actualizarEstadoBotonEnvio = actualizarEstadoBotonEnvio;
+    window.enviarDatosAdmisionASupabase = enviarDatosAdmisionASupabase;
+    window.limpiarFormularioAdmision = limpiarFormularioAdmision;
+    window.enviarForm = enviarForm;
+    window.gestionarVistas = gestionarVistas;
+    window.iniciarSesion = iniciarSesion;
+    window.abrirModalRecuperarContraseña = abrirModalRecuperarContraseña;
+    window.procesarRecuperacionContraseña = procesarRecuperacionContraseña;
+    window.cerrarSesion = cerrarSesion;
+    window.cambiarTab = cambiarTab;
+    window.validarDocumentoEstudiante = validarDocumentoEstudiante;
+    window.verificarEstadoAcademico = verificarEstadoAcademico;
+    window.mostrarResultadoCertificado = mostrarResultadoCertificado;
+    window.procesarCertificado = procesarCertificado;
+    window.descargarPDF = descargarPDF;
 
