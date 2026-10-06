@@ -2,6 +2,7 @@
     const supabaseUrl = 'https://qynsmxiarnanqtxefltu.supabase.co';
     const supabaseKey = 'sb_publishable_iy7O34nEqp_zVcWzet7tCQ_1mGOgGQy';
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    window.supabaseClient = supabaseClient;
 
     // Mejora C y A: Función única para gestionar todos los modales
     function toggleModal(mostrar) {
@@ -46,7 +47,7 @@
         submitButton.disabled = enviando;
     }
 
-    // Mejora B: Responsabilidad única - Enviar datos a Supabase
+    // Mejora B: Responsabilidad única - Enviar datos a Supabase con persistencia real
     async function enviarDatosAdmisionASupabase(nombreCompleto, documentoNacional, nivelSeleccionado, correoTutor, mensajeAdicional) {
         try {
             const { data, error } = await supabaseClient.from('inscripciones').insert([{
@@ -54,9 +55,13 @@
                 dni: documentoNacional,
                 nivel: nivelSeleccionado,
                 email: correoTutor,
-                mensaje: mensajeAdicional
+                mensaje: mensajeAdicional,
+                estado: 'pendiente'
             }]);
-            if (error) throw error;
+            if (error) {
+                console.error("Error de Supabase al insertar inscripción:", error.message);
+                return { exito: false, mensaje: 'Error al registrar solicitud: ' + error.message };
+            }
             return { exito: true, mensaje: '¡Solicitud registrada correctamente en la base de datos!' };
         } catch (error) {
             console.error("Error al enviar datos:", error);
@@ -86,31 +91,106 @@
         actualizarEstadoBotonEnvio(false);
 
         alert(resultado.mensaje);
-        if (resultado.exito) limpiarFormularioAdmision();
-    }
-
-    // Mejora A y D: Gestión de vistas con nombres significativos y legibilidad mejorada
-    function gestionarVistas(usuarioActual) {
-        const vistaLanding = document.getElementById('vistaLanding');
-        const vistaPanel = document.getElementById('vistaPanel');
-
-        if (usuarioActual) {
-            vistaLanding?.classList.add('hidden');
-            vistaPanel?.classList.remove('hidden');
-            
-            const emailElement = document.getElementById('panelUserEmail');
-            const avatarElement = document.getElementById('userAvatarInitials');
-            
-            if (emailElement) emailElement.innerText = usuarioActual.email;
-            if (avatarElement) avatarElement.innerText = usuarioActual.email.charAt(0).toUpperCase();
-        } else {
-            vistaLanding?.classList.remove('hidden');
-            vistaPanel?.classList.add('hidden');
+        if (resultado.exito) {
+            limpiarFormularioAdmision();
         }
     }
 
+    // Consulta de perfil y rol en Supabase (public.profiles)
+    async function obtenerPerfilUsuario(userId) {
+        if (!userId) return null;
+        try {
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('id, email, role')
+                .eq('id', userId)
+                .single();
+
+            if (error) {
+                console.warn("No se pudo obtener perfil de usuario:", error.message);
+                return null;
+            }
+            return data;
+        } catch (err) {
+            console.error("Error al consultar perfil en Supabase:", err);
+            return null;
+        }
+    }
+
+    // Gestión dinámica de vistas según el rol del usuario (public.profiles.role)
+    async function gestionarVistasPorRol(usuario) {
+        const vistaLanding = document.getElementById('vistaLanding');
+        const vistaPanel = document.getElementById('vistaPanel');
+        const vistaAdmin = document.getElementById('vistaAdmin');
+
+        if (!usuario) {
+            // Usuario no autenticado: mostrar únicamente la Landing Page
+            vistaLanding?.classList.remove('hidden');
+            vistaPanel?.classList.add('hidden');
+            vistaAdmin?.classList.add('hidden');
+            return;
+        }
+
+        // Obtener rol del perfil en Supabase
+        const perfil = await obtenerPerfilUsuario(usuario.id);
+        const rol = perfil?.role;
+
+        if (rol === 'admin') {
+            // Rol Administrador: acceso directo al Tablero de Gestión
+            vistaLanding?.classList.add('hidden');
+            vistaPanel?.classList.add('hidden');
+            vistaAdmin?.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Sincronizar solicitudes reales de admisión desde Supabase
+            if (typeof window.cargarSolicitudesAdmin === 'function') {
+                await window.cargarSolicitudesAdmin();
+            }
+        } else if (rol === 'estudiante') {
+            // Rol Estudiante: acceso al Campus del Estudiante
+            vistaLanding?.classList.add('hidden');
+            vistaAdmin?.classList.add('hidden');
+            vistaPanel?.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const emailElement = document.getElementById('panelUserEmail');
+            const avatarElement = document.getElementById('userAvatarInitials');
+            const userEmail = usuario.email || perfil?.email;
+
+            if (emailElement) {
+                emailElement.innerText = userEmail || 'Usuario';
+            }
+
+            if (avatarElement) {
+                avatarElement.innerText = userEmail
+                    ? userEmail.charAt(0).toUpperCase()
+                    : 'U';
+            }
+        } else {
+            // Perfil inexistente, error de consulta o rol desconocido
+            vistaAdmin?.classList.add('hidden');
+            vistaPanel?.classList.add('hidden');
+            vistaLanding?.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Cerrar la sesión si corresponde para invalidar estado local
+            try {
+                await supabaseClient.auth.signOut();
+            } catch (errSignOut) {
+                console.error("Error al cerrar sesión de usuario sin rol válido:", errSignOut);
+            }
+
+            alert("No se pudo determinar el perfil de acceso. Contacte al administrador.");
+        }
+    }
+
+    // Alias para compatibilidad con llamadas existentes
+    function gestionarVistas(usuario) {
+        return gestionarVistasPorRol(usuario);
+    }
+
     // ========================================================
-    // Mejora A y E: Autenticación con nombres significativos
+    // Autenticación con nombres significativos y roles
     // ========================================================
     async function iniciarSesion() {
         const correoUsuario = document.getElementById('loginEmail').value.trim();
@@ -129,11 +209,10 @@
 
             if (error) throw error;
 
-            alert('¡Inicio de sesión correcto! Bienvenido al Campus.');
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
             toggleModal(false);
-            gestionarVistas(data.user);
+            await gestionarVistasPorRol(data.user);
 
         } catch (error) {
             console.error("Error de autenticación:", error.message);
@@ -143,9 +222,8 @@
             alert(mensajeError);
         }
     }
-    // Mejora A: Nombres significativos y Mejora B: Funciones con responsabilidad única
-    // Recuperación de contraseña
 
+    // Recuperación de contraseña
     function abrirModalRecuperarContraseña() {
         toggleModal(false);
         alternarVisibilidadModal('modalOlvidePassword', true);
@@ -163,32 +241,37 @@
         alternarVisibilidadModal('modalExitoRecuperacion', true);
     }
 
-    // Mejora D: Legibilidad - Cerrar sesión del usuario
+    // Cerrar sesión del usuario de forma completa
     async function cerrarSesion() {
         try {
             const { error } = await supabaseClient.auth.signOut();
             if (error) throw error;
-            gestionarVistas(null);
+            await gestionarVistasPorRol(null);
             alert('Sesión cerrada correctamente.');
         } catch (error) {
             alert('Error al cerrar sesión: ' + error.message);
         }
     }
 
-    // Mejora E: Comentarios significativos - Persistencia de sesión al recargar la página
+    // Persistencia de sesión al recargar la página basada en Supabase Auth y Profiles
     window.addEventListener('DOMContentLoaded', async () => {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        gestionarVistas(session?.user || null);
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            await gestionarVistasPorRol(session?.user || null);
+        } catch (err) {
+            console.error("Error al restaurar sesión:", err);
+            await gestionarVistasPorRol(null);
+        }
     });
 
-
-    // Mejora E: Cerrar modal al hacer click fuera del contenido
+    // Cerrar modal al hacer click fuera del contenido
     window.onclick = function (event) {
         const modal = document.getElementById('modalLogin');
         if (event.target === modal) {
             toggleModal(false);
         }
     }
+
     // Toggle de navegación del panel de estudiante en móviles
     function toggleNavEstudiante() {
         const navMenu = document.getElementById('navEstudianteMenu');
@@ -205,9 +288,9 @@
         }
     }
 
-    // Mejora D: Control de pestañas del panel con legibilidad mejorada
+    // Control de pestañas del panel con legibilidad mejorada y soporte para cursos/pagos
     function cambiarTab(tabSeleccionada) {
-        const pestanasDisponibles = ['inicio', 'certificados'];
+        const pestanasDisponibles = ['inicio', 'cursos', 'pagos', 'certificados'];
 
         pestanasDisponibles.forEach(nombrePestana => {
             const containerPestana = document.getElementById(`tab${nombrePestana.charAt(0).toUpperCase() + nombrePestana.slice(1)}`);
@@ -300,4 +383,6 @@
     window.procesarCertificado = procesarCertificado;
     window.descargarPDF = descargarPDF;
     window.toggleNavEstudiante = toggleNavEstudiante;
+    window.obtenerPerfilUsuario = obtenerPerfilUsuario;
+    window.gestionarVistasPorRol = gestionarVistasPorRol;
 

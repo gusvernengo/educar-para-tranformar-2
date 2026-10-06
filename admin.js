@@ -343,13 +343,55 @@ const AdminState = {
 };
 
 // ====================================================================
+// CONEXIÓN SINGLETON A SUPABASE
+// ====================================================================
+
+function getSupabaseClient() {
+    if (window.supabaseClient) return window.supabaseClient;
+    if (typeof supabase !== 'undefined') {
+        const supabaseUrl = 'https://qynsmxiarnanqtxefltu.supabase.co';
+        const supabaseKey = 'sb_publishable_iy7O34nEqp_zVcWzet7tCQ_1mGOgGQy';
+        window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        return window.supabaseClient;
+    }
+    return null;
+}
+
+// ====================================================================
 // MÉTODOS DE CONTROL DE VISTAS Y NAVEGACIÓN
 // ====================================================================
 
 /**
- * Abre el Sistema de Gestión (Etapa 2 - Admin Panel)
+ * Abre el Sistema de Gestión (Etapa 2 - Admin Panel) validando rol
  */
-function abrirPanelAdmin() {
+async function abrirPanelAdmin() {
+    const client = getSupabaseClient();
+    if (client) {
+        try {
+            const { data: { session } } = await client.auth.getSession();
+            if (!session?.user) {
+                if (typeof window.toggleModal === 'function') {
+                    window.toggleModal(true);
+                }
+                mostrarToast('Inicie sesión con su cuenta de Administrador.', 'warning');
+                return;
+            }
+
+            const { data: perfil } = await client
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+
+            if (perfil?.role !== 'admin') {
+                alert('Acceso restringido: Esta cuenta no posee permisos de Administrador.');
+                return;
+            }
+        } catch (err) {
+            console.error("Error al validar rol de administrador:", err);
+        }
+    }
+
     const vistaLanding = document.getElementById('vistaLanding');
     const vistaPanel = document.getElementById('vistaPanel');
     const vistaAdmin = document.getElementById('vistaAdmin');
@@ -359,9 +401,10 @@ function abrirPanelAdmin() {
     if (vistaAdmin) {
         vistaAdmin.classList.remove('hidden');
         renderizarVistaAdmin();
+        await obtenerSolicitudes();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    mostrarToast('Bienvenido al Sistema de Gestión (Etapa 2)', 'info');
+    mostrarToast('Bienvenido al Sistema de Gestión', 'info');
 }
 
 /**
@@ -460,6 +503,10 @@ function cambiarAdminTab(nombreTab) {
     if (headerTitle && titulos[nombreTab]) {
         headerTitle.innerText = titulos[nombreTab];
     }
+
+    if (nombreTab === 'solicitudes' || nombreTab === 'dashboard') {
+        obtenerSolicitudes();
+    }
 }
 
 /**
@@ -504,8 +551,52 @@ function renderizarVistaAdmin() {
 /**
  * Actualiza los contadores de la sección Dashboard
  */
+/**
+ * Obtiene las solicitudes de admisión reales desde Supabase
+ */
+async function obtenerSolicitudes() {
+    const client = getSupabaseClient();
+    if (!client) {
+        console.warn("Cliente Supabase no inicializado aún.");
+        return;
+    }
+
+    try {
+        const { data, error } = await client
+            .from('inscripciones')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Error al obtener solicitudes desde Supabase:", error.message);
+            mostrarToast("Error al cargar solicitudes: " + error.message, "error");
+            return;
+        }
+
+        AdminState.solicitudes = (data || []).map(row => ({
+            id: row.id,
+            nombreAspirante: row.nombre || '',
+            nombre: row.nombre || '',
+            dni: row.dni || '',
+            nivel: row.nivel || '',
+            grado: row.nivel || '',
+            tutor: row.email ? `Tutor (${row.email.split('@')[0]})` : 'Tutor responsable',
+            email: row.email || '',
+            telefono: '-',
+            mensaje: row.mensaje || 'Sin observaciones.',
+            estado: row.estado || 'pendiente',
+            created_at: row.created_at
+        }));
+
+        renderizarContadoresDashboard();
+        renderizarTablaSolicitudes();
+    } catch (err) {
+        console.error("Fallo inesperado al consultar solicitudes:", err);
+    }
+}
+
 function renderizarContadoresDashboard() {
-    const pendientes = AdminState.solicitudes.filter(s => s.estado === 'Pendiente').length;
+    const pendientes = AdminState.solicitudes.filter(s => (s.estado || '').toLowerCase() === 'pendiente').length;
     AdminState.stats.solicitudesPendientes = pendientes;
 
     const elMatricula = document.getElementById('adminStatMatricula');
@@ -522,19 +613,19 @@ function renderizarContadoresDashboard() {
 }
 
 /**
- * Renderiza la tabla de Solicitudes de Admisión con filtros
+ * Renderiza la tabla de Solicitudes de Admisión con filtros y acciones completas
  */
 function renderizarTablaSolicitudes() {
     const tbody = document.getElementById('tablaSolicitudesBody');
     if (!tbody) return;
 
     let lista = AdminState.solicitudes.filter(item => {
-        const coincideNivel = AdminState.filtroSolicitudNivel === 'todos' || item.nivel.toLowerCase() === AdminState.filtroSolicitudNivel.toLowerCase();
-        const coincideEstado = AdminState.filtroSolicitudEstado === 'todos' || item.estado.toLowerCase() === AdminState.filtroSolicitudEstado.toLowerCase();
+        const coincideNivel = AdminState.filtroSolicitudNivel === 'todos' || (item.nivel || '').toLowerCase() === AdminState.filtroSolicitudNivel.toLowerCase();
+        const coincideEstado = AdminState.filtroSolicitudEstado === 'todos' || (item.estado || '').toLowerCase() === AdminState.filtroSolicitudEstado.toLowerCase();
         const coincideBusqueda = AdminState.busquedaSolicitud === '' || 
-            item.nombreAspirante.toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase()) ||
-            item.dni.includes(AdminState.busquedaSolicitud) ||
-            item.tutor.toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase());
+            (item.nombreAspirante || item.nombre || '').toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase()) ||
+            (item.dni || '').includes(AdminState.busquedaSolicitud) ||
+            (item.tutor || '').toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase());
         return coincideNivel && coincideEstado && coincideBusqueda;
     });
 
@@ -551,30 +642,35 @@ function renderizarTablaSolicitudes() {
     }
 
     tbody.innerHTML = lista.map(sol => {
+        const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
         let badgeEstado = '';
-        if (sol.estado === 'Pendiente') {
+        if (estadoNorm === 'pendiente') {
             badgeEstado = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-clock mr-1"></i>Pendiente</span>';
-        } else if (sol.estado === 'Aprobada') {
+        } else if (estadoNorm === 'aprobada') {
             badgeEstado = '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-check-circle mr-1"></i>Aprobada</span>';
         } else {
             badgeEstado = '<span class="bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-times-circle mr-1"></i>Rechazada</span>';
         }
 
         let badgeNivel = '';
-        if (sol.nivel === 'Inicial') badgeNivel = 'border-l-4 border-green-500';
-        else if (sol.nivel === 'Primario') badgeNivel = 'border-l-4 border-blue-500';
+        const nivelNorm = (sol.nivel || '').toLowerCase();
+        if (nivelNorm === 'inicial') badgeNivel = 'border-l-4 border-green-500';
+        else if (nivelNorm === 'primario') badgeNivel = 'border-l-4 border-blue-500';
         else badgeNivel = 'border-l-4 border-purple-500';
+
+        const fechaFormateada = sol.created_at ? new Date(sol.created_at).toLocaleDateString('es-AR') : (sol.fecha || '-');
+        const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
 
         return `
             <tr class="border-b border-slate-100 hover:bg-slate-50 transition ${badgeNivel}">
-                <td class="p-4 font-mono text-[11px] font-bold text-slate-500">${sol.id}</td>
+                <td class="p-4 font-mono text-[11px] font-bold text-slate-500">${codigo}</td>
                 <td class="p-4">
-                    <p class="font-bold text-slate-800 text-xs">${sol.nombreAspirante}</p>
+                    <p class="font-bold text-slate-800 text-xs">${sol.nombreAspirante || sol.nombre}</p>
                     <p class="text-[10px] text-slate-400">DNI: ${sol.dni}</p>
                 </td>
                 <td class="p-4">
                     <span class="font-bold text-xs text-blue-900">${sol.nivel}</span>
-                    <p class="text-[10px] text-slate-500">${sol.grado}</p>
+                    <p class="text-[10px] text-slate-500">${sol.grado || sol.nivel}</p>
                 </td>
                 <td class="p-4">
                     <p class="text-xs font-semibold text-slate-700">${sol.tutor}</p>
@@ -583,22 +679,25 @@ function renderizarTablaSolicitudes() {
                 <td class="p-4 text-center">
                     ${badgeEstado}
                 </td>
-                <td class="p-4 text-[11px] text-slate-500">${sol.fecha}</td>
+                <td class="p-4 text-[11px] text-slate-500">${fechaFormateada}</td>
                 <td class="p-4 text-right">
                     <div class="flex justify-end gap-1.5">
-                        <button onclick="verDetalleSolicitud('${sol.id}')" title="Ver Detalles de Familia" class="p-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs transition">
+                        <button onclick="verDetalleSolicitud('${sol.id}')" title="Ver Detalles de Familia" class="p-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
                             <i class="fas fa-eye"></i>
                         </button>
-                        ${sol.estado !== 'Aprobada' ? `
-                            <button onclick="cambiarEstadoSolicitud('${sol.id}', 'Aprobada')" title="Aprobar Vacante" class="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs transition">
+                        ${estadoNorm !== 'aprobada' ? `
+                            <button onclick="actualizarEstadoSolicitud('${sol.id}', 'aprobada')" title="Aprobar Vacante" class="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
                                 <i class="fas fa-check"></i>
                             </button>
                         ` : ''}
-                        ${sol.estado !== 'Rechazada' ? `
-                            <button onclick="cambiarEstadoSolicitud('${sol.id}', 'Rechazada')" title="Rechazar Vacante" class="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs transition">
+                        ${estadoNorm !== 'rechazada' ? `
+                            <button onclick="actualizarEstadoSolicitud('${sol.id}', 'rechazada')" title="Rechazar Vacante" class="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
                                 <i class="fas fa-times"></i>
                             </button>
                         ` : ''}
+                        <button onclick="eliminarSolicitud('${sol.id}')" title="Eliminar Solicitud" class="p-2 bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -607,20 +706,78 @@ function renderizarTablaSolicitudes() {
 }
 
 /**
- * Cambia el estado de una solicitud de admisión en memoria
+ * Actualiza el estado de una solicitud de admisión de forma persistente en Supabase
  */
-function cambiarEstadoSolicitud(id, nuevoEstado) {
-    const solicitud = AdminState.solicitudes.find(s => s.id === id);
-    if (!solicitud) return;
+async function actualizarEstadoSolicitud(id, nuevoEstado) {
+    const client = getSupabaseClient();
+    if (!client) return;
 
-    solicitud.estado = nuevoEstado;
-    renderizarContadoresDashboard();
-    renderizarTablaSolicitudes();
+    const estadoNormalizado = nuevoEstado.toLowerCase();
 
-    if (nuevoEstado === 'Aprobada') {
-        mostrarToast(`Vacante de ${solicitud.nombreAspirante} APROBADA exitosamente.`, 'success');
-    } else {
-        mostrarToast(`Solicitud de ${solicitud.nombreAspirante} actualizada a ${nuevoEstado}.`, 'warning');
+    try {
+        const { error } = await client
+            .from('inscripciones')
+            .update({ estado: estadoNormalizado })
+            .eq('id', id);
+
+        if (error) {
+            console.error("Error al actualizar estado en Supabase:", error.message);
+            alert("No se pudo actualizar el estado: " + error.message);
+            mostrarToast("Error al actualizar: " + error.message, "error");
+            return;
+        }
+
+        // Éxito real en base de datos: sincronizar en memoria y re-renderizar
+        const solicitud = AdminState.solicitudes.find(s => String(s.id) === String(id));
+        if (solicitud) {
+            solicitud.estado = estadoNormalizado;
+        }
+
+        renderizarContadoresDashboard();
+        renderizarTablaSolicitudes();
+
+        if (estadoNormalizado === 'aprobada') {
+            mostrarToast("Vacante APROBADA exitosamente en Supabase.", "success");
+        } else {
+            mostrarToast(`Solicitud actualizada a ${estadoNormalizado} en Supabase.`, "warning");
+        }
+    } catch (err) {
+        console.error("Fallo inesperado al actualizar solicitud:", err);
+        alert("Error de conexión al actualizar la solicitud.");
+    }
+}
+
+/**
+ * Elimina una solicitud de admisión de forma persistente en Supabase previa confirmación
+ */
+async function eliminarSolicitud(id) {
+    const confirmar = confirm("¿Está seguro de que desea eliminar permanentemente esta solicitud de admisión? Esta acción no se puede deshacer.");
+    if (!confirmar) return;
+
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    try {
+        const { error } = await client
+            .from('inscripciones')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error("Error al eliminar solicitud en Supabase:", error.message);
+            alert("No se pudo eliminar la solicitud: " + error.message);
+            mostrarToast("Error al eliminar: " + error.message, "error");
+            return;
+        }
+
+        // Éxito real en base de datos: remover de memoria y re-renderizar
+        AdminState.solicitudes = AdminState.solicitudes.filter(s => String(s.id) !== String(id));
+        renderizarContadoresDashboard();
+        renderizarTablaSolicitudes();
+        mostrarToast("Solicitud eliminada correctamente de Supabase.", "success");
+    } catch (err) {
+        console.error("Fallo inesperado al eliminar solicitud:", err);
+        alert("Error de conexión al eliminar la solicitud.");
     }
 }
 
@@ -628,23 +785,27 @@ function cambiarEstadoSolicitud(id, nuevoEstado) {
  * Modal para ver detalle completo de la solicitud
  */
 function verDetalleSolicitud(id) {
-    const sol = AdminState.solicitudes.find(s => s.id === id);
+    const sol = AdminState.solicitudes.find(s => String(s.id) === String(id));
     if (!sol) return;
 
     const modal = document.getElementById('modalDetalleSolicitud');
     const contenido = document.getElementById('contenidoDetalleSolicitud');
     if (!modal || !contenido) return;
 
+    const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
+    const badgeClass = estadoNorm === 'aprobada' ? 'bg-emerald-100 text-emerald-800' : (estadoNorm === 'pendiente' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+    const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
+
     contenido.innerHTML = `
         <div class="space-y-4">
             <div class="flex items-center justify-between pb-3 border-b">
                 <div>
-                    <span class="text-[10px] font-black uppercase text-blue-800 bg-blue-50 px-2 py-0.5 rounded">${sol.id}</span>
-                    <h4 class="text-lg font-black text-slate-800 mt-1">${sol.nombreAspirante}</h4>
+                    <span class="text-[10px] font-black uppercase text-blue-800 bg-blue-50 px-2 py-0.5 rounded">${codigo}</span>
+                    <h4 class="text-lg font-black text-slate-800 mt-1">${sol.nombreAspirante || sol.nombre}</h4>
                 </div>
                 <div>
-                    <span class="px-3 py-1 rounded-full text-xs font-bold ${sol.estado === 'Aprobada' ? 'bg-emerald-100 text-emerald-800' : (sol.estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800')}">
-                        ${sol.estado}
+                    <span class="px-3 py-1 rounded-full text-xs font-bold capitalize ${badgeClass}">
+                        ${estadoNorm}
                     </span>
                 </div>
             </div>
@@ -1123,3 +1284,7 @@ window.setFiltroSolicitudEstado = setFiltroSolicitudEstado;
 window.setFiltroAlumnoNivel = setFiltroAlumnoNivel;
 window.actualizarEstilosBotonesFiltro = actualizarEstilosBotonesFiltro;
 window.toggleNavAdmin = toggleNavAdmin;
+window.obtenerSolicitudes = obtenerSolicitudes;
+window.actualizarEstadoSolicitud = actualizarEstadoSolicitud;
+window.eliminarSolicitud = eliminarSolicitud;
+window.cargarSolicitudesAdmin = obtenerSolicitudes;
