@@ -1,8 +1,24 @@
-﻿        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap');
 
         :root {
             --primary: #1e3a8a;
             --secondary: #f97316;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        img, svg, video, canvas {
+            max-width: 100%;
+            height: auto;
         }
 
         body {
@@ -45,6 +61,8 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
+            overflow-y: auto;
         }
 
         .modal.active {
@@ -58,4 +76,15 @@
 
         .star-active {
             color: #facc15;
+        }
+
+        /* Utilidades táctiles móviles */
+        .touch-scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 640px) {
+            button, a, input, select, textarea {
+                touch-action: manipulation;
+            }
         }

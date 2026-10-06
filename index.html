@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#1e3a8a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,16 +23,14 @@
                 class="bg-blue-900 text-white py-2 px-6 text-[10px] font-bold uppercase tracking-widest hidden md:block text-center">
                 Excelencia Educativa en Resistencia, Chaco - Inscripciones Ciclo Lectivo 2027 Abiertas
             </div>
-            <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white shadow-lg">
-                        <i class="fas fa-graduation-cap"></i>
+            <nav class="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center gap-2">
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white shadow-lg shrink-0">
+                        <i class="fas fa-graduation-cap text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <span class="block font-black text-blue-900 uppercase leading-none">Educar para
-                            Transformar</span>
-                        <span class="text-[9px] text-orange-600 font-bold uppercase tracking-tighter">Centro
-                            Educativo</span>
+                        <span class="block font-black text-blue-900 uppercase leading-none text-xs sm:text-sm">Educar para Transformar</span>
+                        <span class="text-[8px] sm:text-[9px] text-orange-600 font-bold uppercase tracking-tighter">Centro Educativo</span>
                     </div>
                 </div>
                 <ul class="hidden lg:flex gap-6 text-[11px] font-black uppercase text-slate-500">
@@ -42,224 +40,234 @@
                     <li><a href="#opiniones" class="hover:text-blue-900">Opiniones</a></li>
                     <li><a href="#contacto" class="hover:text-blue-900">Contacto</a></li>
                 </ul>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <button onclick="abrirPanelAdmin()"
-                        class="bg-blue-900 text-amber-300 border border-amber-400/40 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-blue-800 transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fas fa-shield-alt text-amber-400"></i> GESTIÓN (ETAPA 2)
+                        class="bg-blue-900 text-amber-300 border border-amber-400/40 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-wider hover:bg-blue-800 transition flex items-center gap-1 shadow-sm">
+                        <i class="fas fa-shield-alt text-amber-400"></i>
+                        <span class="hidden sm:inline">GESTIÓN (ETAPA 2)</span>
+                        <span class="sm:hidden">GESTIÓN</span>
                     </button>
                     <button onclick="toggleModal(true)"
-                        class="text-[10px] font-black border-2 border-blue-900 px-4 py-2 rounded-lg hover:bg-blue-900 hover:text-white transition">ACCESO</button>
-                    <button onclick="document.getElementById('contacto').scrollIntoView()"
-                        class="bg-orange-500 text-white px-4 py-2 rounded-lg text-[10px] font-black shadow-lg hover:bg-orange-600 transition">INSCRIPCIÓN</button>
+                        class="text-[9px] sm:text-[10px] font-black border-2 border-blue-900 px-2.5 sm:px-4 py-1 sm:py-2 rounded-lg hover:bg-blue-900 hover:text-white transition">ACCESO</button>
+                    <button onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})"
+                        class="bg-orange-500 text-white px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[9px] sm:text-[10px] font-black shadow-lg hover:bg-orange-600 transition">INSCRIPCIÓN</button>
                 </div>
             </nav>
         </header>
 
-        <section id="inicio" class="container mx-auto px-4 mt-6">
-            <div class="relative rounded-[2.5rem] overflow-hidden h-[450px] shadow-2xl">
-                <div class="slide active h-full flex items-center px-12 text-white relative">
+        <section id="inicio" class="container mx-auto px-3 sm:px-4 mt-4 sm:mt-6">
+            <div class="relative rounded-2xl sm:rounded-[2.5rem] overflow-hidden min-h-[380px] md:h-[450px] shadow-xl sm:shadow-2xl">
+                <div class="slide active h-full flex items-center px-6 sm:px-10 md:px-12 py-10 md:py-0 text-white relative">
                     <!-- Mejora D y 6: Banner mejorado con imagen de educación de calidad -->
                     <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200"
                         class="absolute inset-0 w-full h-full object-cover -z-10" alt="Educación en equipo">
-                    <div class="absolute inset-0 bg-blue-900/50"></div>
+                    <div class="absolute inset-0 bg-blue-900/60 sm:bg-blue-900/50"></div>
                     <div class="max-w-xl relative">
-                        <h1 class="text-4xl md:text-6xl font-black mb-4 uppercase">Inspiramos, desafiamos y empoderamos</h1>
-                        <p class="mb-8 opacity-95 text-lg">A ser miembros comprometidos y éticos de una comunidad global con excelencia académica.</p>
-                        <div class="flex gap-4">
-                            <button class="bg-blue-900 px-6 py-3 rounded-xl font-bold uppercase text-xs hover:bg-blue-800 transition shadow-lg">Conocé Más</button>
-                            <button class="bg-white text-blue-900 px-6 py-3 rounded-xl font-bold uppercase text-xs hover:bg-gray-100 transition shadow-lg">Solicitar Vacante</button>
+                        <span class="inline-block bg-orange-500/90 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded mb-2 sm:mb-3">Ciclo Lectivo 2027</span>
+                        <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-4 uppercase leading-tight">Inspiramos, desafiamos y empoderamos</h1>
+                        <p class="mb-6 opacity-95 text-xs sm:text-sm md:text-lg leading-relaxed">A ser miembros comprometidos y éticos de una comunidad global con excelencia académica.</p>
+                        <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-4">
+                            <button onclick="document.getElementById('niveles').scrollIntoView({behavior: 'smooth'})" class="bg-blue-900 px-5 py-3 rounded-xl font-bold uppercase text-xs hover:bg-blue-800 transition shadow-lg text-center min-h-[44px]">Conocé Más</button>
+                            <button onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})" class="bg-white text-blue-900 px-5 py-3 rounded-xl font-bold uppercase text-xs hover:bg-gray-100 transition shadow-lg text-center min-h-[44px]">Solicitar Vacante</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="niveles" class="container mx-auto px-4 py-20">
-            <h3 class="text-2xl font-black text-blue-900 uppercase mb-12 flex items-center gap-4">
-                <span class="w-12 h-1 bg-orange-500"></span> Niveles Educativos
+        <section id="niveles" class="container mx-auto px-4 py-12 sm:py-16 md:py-20">
+            <h3 class="text-xl sm:text-2xl font-black text-blue-900 uppercase mb-8 sm:mb-12 flex items-center gap-3 sm:gap-4">
+                <span class="w-8 sm:w-12 h-1 bg-orange-500"></span> Niveles Educativos
             </h3>
-            <div class="grid grid-cols-1, md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-xl border-b-4 border-green-500 group">
-                    <i class="fas fa-cubes text-4xl text-green-500 mb-6"></i>
-                    <h4 class="text-xl font-black mb-4">INICIAL</h4>
-                    <p class="text-sm text-slate-500 mb-6">Estimulación temprana y aprendizaje en un ambiente seguro y
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl border-b-4 border-green-500 group">
+                    <i class="fas fa-cubes text-3xl sm:text-4xl text-green-500 mb-4 sm:mb-6"></i>
+                    <h4 class="text-lg sm:text-xl font-black mb-3 sm:mb-4">INICIAL</h4>
+                    <p class="text-xs sm:text-sm text-slate-500 mb-6">Estimulación temprana y aprendizaje en un ambiente seguro y
                         afectivo bajo metodologías lúdicas.</p>
-                    <button
-                        class="w-full py-3 rounded-xl border-2 border-slate-100 font-black text-[10px] uppercase group-hover:bg-green-500 group-hover:text-white transition">Ver
+                    <button onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})"
+                        class="w-full py-3 rounded-xl border-2 border-slate-100 font-black text-[10px] uppercase group-hover:bg-green-500 group-hover:text-white transition min-h-[44px] flex items-center justify-center">Ver
                         Más</button>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl border-b-4 border-blue-500 group">
-                    <i class="fas fa-book-reader text-4xl text-blue-500 mb-6"></i>
-                    <h4 class="text-xl font-black mb-4">PRIMARIO</h4>
-                    <p class="text-sm text-slate-500 mb-6">Formación integral con énfasis en valores, conocimiento
+                <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl border-b-4 border-blue-500 group">
+                    <i class="fas fa-book-reader text-3xl sm:text-4xl text-blue-500 mb-4 sm:mb-6"></i>
+                    <h4 class="text-lg sm:text-xl font-black mb-3 sm:mb-4">PRIMARIO</h4>
+                    <p class="text-xs sm:text-sm text-slate-500 mb-6">Formación integral con énfasis en valores, conocimiento
                         lógico-matemático y lectocomprensión.</p>
-                    <button
-                        class="w-full py-3 rounded-xl border-2 border-slate-100 font-black text-[10px] uppercase group-hover:bg-blue-500 group-hover:text-white transition">Ver
+                    <button onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})"
+                        class="w-full py-3 rounded-xl border-2 border-slate-100 font-black text-[10px] uppercase group-hover:bg-blue-500 group-hover:text-white transition min-h-[44px] flex items-center justify-center">Ver
                         Más</button>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl border-b-4 border-purple-500 group">
-                    <i class="fas fa-user-graduate text-4xl text-purple-500 mb-6"></i>
-                    <h4 class="text-xl font-black mb-4">SECUNDARIO</h4>
-                    <p class="text-sm text-slate-500 mb-6">Preparación académica rigurosa para los desafíos de la
+                <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl border-b-4 border-purple-500 group">
+                    <i class="fas fa-user-graduate text-3xl sm:text-4xl text-purple-500 mb-4 sm:mb-6"></i>
+                    <h4 class="text-lg sm:text-xl font-black mb-3 sm:mb-4">SECUNDARIO</h4>
+                    <p class="text-xs sm:text-sm text-slate-500 mb-6">Preparación académica rigurosa para los desafíos de la
                         universidad y el mundo laboral tecnológico.</p>
-                    <button
-                        class="w-full py-3 rounded-xl border-2 border-slate-100 font-black text-[10px] uppercase group-hover:bg-purple-500 group-hover:text-white transition">Ver
+                    <button onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})"
+                        class="w-full py-3 rounded-xl border-2 border-slate-100 font-black text-[10px] uppercase group-hover:bg-purple-500 group-hover:text-white transition min-h-[44px] flex items-center justify-center">Ver
                         Más</button>
                 </div>
             </div>
         </section>
 
-        <section id="bienestar" class="bg-slate-100 py-20">
+        <section id="bienestar" class="bg-slate-100 py-12 sm:py-16 md:py-20">
             <div class="container mx-auto px-4">
-                <h3 class="text-2xl font-black text-blue-900 uppercase mb-12 text-center">Bienestar Estudiantil</h3>
-                <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <h3 class="text-xl sm:text-2xl font-black text-blue-900 uppercase mb-8 sm:mb-12 text-center">Bienestar Estudiantil</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
-                        <i class="fas fa-volleyball-ball text-blue-500 text-2xl mb-3"></i>
+                        class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
+                        <i class="fas fa-volleyball-ball text-blue-500 text-2xl mb-2 sm:mb-3"></i>
                         <p class="text-[10px] font-black uppercase">Deportes</p>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
-                        <i class="fas fa-language text-blue-500 text-2xl mb-3"></i>
+                        class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
+                        <i class="fas fa-language text-blue-500 text-2xl mb-2 sm:mb-3"></i>
                         <p class="text-[10px] font-black uppercase">Idiomas</p>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
-                        <i class="fas fa-utensils text-blue-500 text-2xl mb-3"></i>
+                        class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
+                        <i class="fas fa-utensils text-blue-500 text-2xl mb-2 sm:mb-3"></i>
                         <p class="text-[10px] font-black uppercase">Comedor</p>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
-                        <i class="fas fa-medkit text-blue-500 text-2xl mb-3"></i>
+                        class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
+                        <i class="fas fa-medkit text-blue-500 text-2xl mb-2 sm:mb-3"></i>
                         <p class="text-[10px] font-black uppercase">Enfermería</p>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
-                        <i class="fas fa-microscope text-blue-500 text-2xl mb-3"></i>
+                        class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
+                        <i class="fas fa-microscope text-blue-500 text-2xl mb-2 sm:mb-3"></i>
                         <p class="text-[10px] font-black uppercase">Laboratorio</p>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
-                        <i class="fas fa-heartbeat text-blue-500 text-2xl mb-3"></i>
+                        class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-center service-card transition border-2 border-transparent">
+                        <i class="fas fa-heartbeat text-blue-500 text-2xl mb-2 sm:mb-3"></i>
                         <p class="text-[10px] font-black uppercase">Apoyo</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="opiniones" class="container mx-auto px-4 py-20">
-            <h3 class="text-2xl font-black text-blue-900 uppercase mb-12">Lo que dicen las Familias</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-lg italic text-slate-600 text-sm">
+        <section id="opiniones" class="container mx-auto px-4 py-12 sm:py-16 md:py-20">
+            <h3 class="text-xl sm:text-2xl font-black text-blue-900 uppercase mb-8 sm:mb-12">Lo que dicen las Familias</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg italic text-slate-600 text-xs sm:text-sm">
                     <div class="flex gap-1 mb-4">
                         <i class="fas fa-star star-active"></i><i class="fas fa-star star-active"></i><i
                             class="fas fa-star star-active"></i><i class="fas fa-star star-active"></i><i
                             class="fas fa-star star-active"></i>
                     </div>
                     "Excelente institución, con un equipo humano comprometido y maravillosas instalaciones."
-                    <p class="mt-4 font-black text-blue-900 not-italic uppercase text-xs">María López - Madre de
+                    <p class="mt-4 font-black text-blue-900 not-italic uppercase text-[11px] sm:text-xs">María López - Madre de
                         Primaria</p>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-lg italic text-slate-600 text-sm">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg italic text-slate-600 text-xs sm:text-sm">
                     <div class="flex gap-1 mb-4">
                         <i class="fas fa-star star-active"></i><i class="fas fa-star star-active"></i><i
                             class="fas fa-star star-active"></i><i class="fas fa-star star-active"></i><i
                             class="fas fa-star text-slate-200"></i>
                     </div>
                     "Mis hijos están felices y motivados cada día. La propuesta de robótica es increíble."
-                    <p class="mt-4 font-black text-blue-900 not-italic uppercase text-xs">Juan Pérez - Padre de
+                    <p class="mt-4 font-black text-blue-900 not-italic uppercase text-[11px] sm:text-xs">Juan Pérez - Padre de
                         Secundaria</p>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-lg italic text-slate-600 text-sm">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg italic text-slate-600 text-xs sm:text-sm">
                     <div class="flex gap-1 mb-4">
                         <i class="fas fa-star star-active"></i><i class="fas fa-star star-active"></i><i
                             class="fas fa-star star-active"></i><i class="fas fa-star star-active"></i><i
                             class="fas fa-star star-active"></i>
                     </div>
                     "Una educación de calidad que realmente prepara para los desafíos del mundo actual."
-                    <p class="mt-4 font-black text-blue-900 not-italic uppercase text-xs">Ana Gómez - Madre de Inicial
+                    <p class="mt-4 font-black text-blue-900 not-italic uppercase text-[11px] sm:text-xs">Ana Gómez - Madre de Inicial
                     </p>
                 </div>
             </div>
         </section>
 
-        <section id="contacto" class="bg-blue-900 py-20 text-white">
-            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16">
+        <section id="contacto" class="bg-blue-900 py-12 sm:py-16 md:py-20 text-white">
+            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
                 <div>
-                    <h3 class="text-3xl font-black uppercase mb-6">Proceso de Admisión 2027</h3>
-                    <p class="opacity-80 mb-8">Completá el formulario y nuestro equipo de admisiones te contactará para
+                    <h3 class="text-2xl sm:text-3xl font-black uppercase mb-4 sm:mb-6">Proceso de Admisión 2027</h3>
+                    <p class="opacity-80 mb-6 sm:mb-8 text-xs sm:text-sm leading-relaxed">Completá el formulario y nuestro equipo de admisiones te contactará para
                         agendar una visita personalizada a nuestras instalaciones.</p>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4"><i class="fas fa-phone"></i> (362) 123 4567</div>
-                        <div class="flex items-center gap-4"><i class="fas fa-envelope"></i>
+                    <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm">
+                        <div class="flex items-center gap-3 sm:gap-4"><i class="fas fa-phone text-orange-400"></i> (362) 123 4567</div>
+                        <div class="flex items-center gap-3 sm:gap-4"><i class="fas fa-envelope text-orange-400"></i>
                             info@educarparatransformar.edu.ar</div>
-                        <div class="flex items-center gap-4"><i class="fas fa-clock"></i> Lunes a Viernes: 07:30 a 17:30
+                        <div class="flex items-center gap-3 sm:gap-4"><i class="fas fa-clock text-orange-400"></i> Lunes a Viernes: 07:30 a 17:30
                             hs</div>
                     </div>
                 </div>
-                <form class="bg-white p-8 rounded-3xl text-slate-800 space-y-4" id="formAdmision">
+                <form class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl text-slate-800 space-y-3 sm:space-y-4 shadow-xl" id="formAdmision">
                     <input type="text" placeholder="Nombre completo"
-                        class="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:border-orange-500">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="DNI" class="p-3 bg-slate-50 border rounded-xl outline-none">
-                        <select class="p-3 bg-slate-50 border rounded-xl outline-none">
+                        class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <input type="text" placeholder="DNI" class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
+                        <select class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
                             <option>Nivel Inicial</option>
                             <option>Nivel Primario</option>
                             <option>Nivel Secundario</option>
                         </select>
                     </div>
                     <input type="email" placeholder="Correo electrónico del tutor"
-                        class="w-full p-3 bg-slate-50 border rounded-xl outline-none">
+                        class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
                     <textarea placeholder="Mensaje o consulta adicional"
-                        class="w-full p-3 bg-slate-50 border rounded-xl h-32 outline-none"></textarea>
+                        class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl h-28 sm:h-32 outline-none focus:border-orange-500 text-base"></textarea>
                     <button type="button" onclick="enviarForm()"
-                        class="w-full bg-orange-500 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg">Enviar
+                        class="w-full bg-orange-500 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-orange-600 transition min-h-[48px] flex items-center justify-center">Enviar
                         Solicitud de Vacante</button>
                 </form>
             </div>
         </section>
 
         <div id="modalLogin" class="modal">
-            <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl relative">
-                <button onclick="toggleModal(false)" class="absolute top-6 right-6 text-slate-400 hover:text-slate-800">
+            <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] w-full max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto">
+                <button onclick="toggleModal(false)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-800 absolute top-3 right-3 sm:top-5 sm:right-5 text-lg transition rounded-full hover:bg-slate-100" aria-label="Cerrar modal">
                     <i class="fas fa-times"></i>
                 </button>
-                <h3 class="text-xl font-black text-blue-900 uppercase mb-6 text-center">Acceso al Campus</h3>
-                <div class="space-y-4">
-                    <input type="email" id="loginEmail" placeholder="Usuario o email"
-                        class="w-full p-4 bg-slate-100 border-none rounded-xl outline-none">
-                    <input type="password" id="loginPassword" placeholder="Contraseña"
-                        class="w-full p-4 bg-slate-100 border-none rounded-xl outline-none">
+                <h3 class="text-lg sm:text-xl font-black text-blue-900 uppercase mb-4 sm:mb-6 text-center">Acceso al Campus</h3>
+                <div class="space-y-3 sm:space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Correo electrónico:</label>
+                        <input type="email" id="loginEmail" placeholder="Usuario o email"
+                            class="w-full p-3.5 sm:p-4 bg-slate-100 border border-slate-200/60 rounded-xl outline-none text-base min-h-[46px] focus:ring-2 focus:ring-blue-900">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Contraseña:</label>
+                        <input type="password" id="loginPassword" placeholder="Contraseña"
+                            class="w-full p-3.5 sm:p-4 bg-slate-100 border border-slate-200/60 rounded-xl outline-none text-base min-h-[46px] focus:ring-2 focus:ring-blue-900">
+                    </div>
                     <button onclick="iniciarSesion()"
-                        class="w-full bg-blue-900 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest">Ingresar</button>
+                        class="w-full bg-blue-900 hover:bg-blue-800 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest min-h-[48px] transition flex items-center justify-center shadow-md">Ingresar</button>
                     <p onclick="abrirModalRecuperarContraseña()"
-                        class="text-[10px] text-center font-bold text-slate-400 uppercase cursor-pointer hover:text-blue-900 transition">
+                        class="text-[11px] text-center font-bold text-slate-500 uppercase cursor-pointer hover:text-blue-900 transition py-1">
                         ¿Olvidaste tu contraseña?</p>
                     <div class="pt-3 border-t border-slate-200 mt-2">
                         <button onclick="toggleModal(false); abrirPanelAdmin();"
-                            class="w-full bg-gradient-to-r from-blue-900 to-indigo-900 text-amber-300 hover:text-white py-3 px-4 rounded-xl font-black text-[11px] uppercase tracking-wider shadow hover:shadow-md transition flex items-center justify-center gap-2">
+                            class="w-full bg-gradient-to-r from-blue-900 to-indigo-900 text-amber-300 hover:text-white py-3 px-3 sm:px-4 rounded-xl font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow hover:shadow-md transition flex items-center justify-center gap-2 min-h-[44px]">
                             <i class="fas fa-shield-alt text-amber-400"></i> Ingresar al Sistema de Gestión (Etapa 2)
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="modalOlvidePassword" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[110]">
-            <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl relative mx-4">
+
+        <div id="modalOlvidePassword" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4">
+            <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] w-full max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto">
                 <button onclick="toggleModalOlvide(false)"
-                    class="absolute top-6 right-6 text-slate-400 hover:text-slate-800">
+                    class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-800 absolute top-3 right-3 sm:top-5 sm:right-5 text-lg transition rounded-full hover:bg-slate-100" aria-label="Cerrar modal">
                     <i class="fas fa-times"></i>
                 </button>
 
-                <h3 class="text-xl font-black text-blue-900 uppercase mb-4 text-center">Recuperar Contraseña</h3>
-                <p class="text-xs text-slate-500 text-center mb-6">Ingresa tu correo electrónico registrado y te
+                <h3 class="text-lg sm:text-xl font-black text-blue-900 uppercase mb-3 sm:mb-4 text-center">Recuperar Contraseña</h3>
+                <p class="text-xs text-slate-500 text-center mb-5 sm:mb-6 leading-relaxed">Ingresa tu correo electrónico registrado y te
                     enviaremos las instrucciones para restablecer tu contraseña.</p>
 
-                <div class="space-y-4">
+                <div class="space-y-3 sm:space-y-4">
                     <input type="email" id="olvideEmail" placeholder="Tu correo electrónico"
-                        class="w-full p-4 bg-slate-100 border-none rounded-xl outline-none text-sm text-slate-800">
+                        class="w-full p-3.5 sm:p-4 bg-slate-100 border border-slate-200/60 rounded-xl outline-none text-base text-slate-800 min-h-[46px] focus:ring-2 focus:ring-blue-900">
                     <button onclick="procesarRecuperacionContraseña()"
-                        class="w-full bg-blue-900 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-blue-800 transition">
+                        class="w-full bg-blue-900 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-blue-800 transition min-h-[48px] flex items-center justify-center shadow-md">
                         Confirmar Correo
                     </button>
                 </div>
@@ -267,19 +275,19 @@
         </div>
 
         <div id="modalExitoRecuperacion"
-            class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[120]">
-            <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl relative mx-4 text-center">
+            class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[120] p-4">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] w-full max-w-md shadow-2xl relative text-center">
                 <div
-                    class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    class="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl sm:text-2xl">
                     <i class="fas fa-paper-plane"></i>
                 </div>
 
-                <h3 class="text-xl font-black text-slate-800 uppercase mb-2">¡Correo Enviado!</h3>
-                <p class="text-xs text-slate-500 mb-6">Hemos enviado un enlace de recuperación a tu casilla de correo.
+                <h3 class="text-lg sm:text-xl font-black text-slate-800 uppercase mb-2">¡Correo Enviado!</h3>
+                <p class="text-xs text-slate-500 mb-6 leading-relaxed">Hemos enviado un enlace de recuperación a tu casilla de correo.
                     Por favor, revisa tu bandeja de entrada y la carpeta de spam.</p>
 
                 <button onclick="alternarVisibilidadModal('modalExitoRecuperacion', false)"
-                    class="w-full bg-emerald-600 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-emerald-500 transition">
+                    class="w-full bg-emerald-600 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-emerald-500 transition min-h-[48px] flex items-center justify-center shadow-md">
                     Entendido
                 </button>
             </div>
@@ -289,55 +297,60 @@
     <!-- ========================================== -->
     <!--          VISTA PANEL DEL ESTUDIANTE        -->
     <!-- ========================================== -->
-    <div id="vistaPanel" class="hidden min-h-screen bg-slate-100 flex">
+    <div id="vistaPanel" class="hidden min-h-screen bg-slate-100 flex flex-col md:flex-row">
 
-        <aside class="w-64 bg-blue-900 text-white flex flex-col justify-between p-6 shadow-xl">
+        <aside class="w-full md:w-64 bg-blue-900 text-white flex flex-col justify-between p-4 sm:p-6 shadow-xl shrink-0">
             <div>
-                <div class="mb-8 text-center">
-                    <h2 class="text-lg font-black tracking-wider uppercase">Educar Para Transformar</h2>
-                    <p class="text-[10px] text-blue-300 uppercase">Panel del Estudiante</p>
+                <div class="flex items-center justify-between md:block mb-3 md:mb-8">
+                    <div>
+                        <h2 class="text-base md:text-lg font-black tracking-wider uppercase">Educar Para Transformar</h2>
+                        <p class="text-[9px] md:text-[10px] text-blue-300 uppercase">Panel del Estudiante</p>
+                    </div>
+                    <button id="btnToggleNavEstudiante" onclick="toggleNavEstudiante()" class="md:hidden px-3 py-1.5 bg-blue-800 hover:bg-blue-700 rounded-lg text-xs font-bold text-amber-300 flex items-center gap-1.5 border border-amber-400/30">
+                        <i class="fas fa-bars"></i> Menú
+                    </button>
                 </div>
 
-                <nav class="space-y-2">
-                    <!-- Modificado: Convertido a botón con ID para control de pestañas -->
+                <nav id="navEstudianteMenu" class="hidden md:block space-y-1.5 sm:space-y-2 mt-2 md:mt-0">
                     <button id="btn-tab-inicio" onclick="cambiarTab('inicio')"
-                        class="w-full flex items-center space-x-3 p-3 bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider transition text-left">
+                        class="w-full flex items-center space-x-3 p-3 bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
                         <i class="fas fa-home text-sm"></i> <span>Inicio</span>
                     </button>
-                    <a href="#"
-                        class="flex items-center space-x-3 p-3 hover:bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-200 hover:text-white transition">
+                    <a href="#" onclick="alert('Sección en actualización.'); return false;"
+                        class="flex items-center space-x-3 p-3 hover:bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-200 hover:text-white transition min-h-[44px]">
                         <i class="fas fa-graduation-cap text-sm"></i> <span>Mis Cursos</span>
                     </a>
-                    <a href="#"
-                        class="flex items-center space-x-3 p-3 hover:bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-200 hover:text-white transition">
+                    <a href="#" onclick="alert('Sección en actualización.'); return false;"
+                        class="flex items-center space-x-3 p-3 hover:bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-200 hover:text-white transition min-h-[44px]">
                         <i class="fas fa-file-invoice-dollar text-sm"></i> <span>Mis Pagos</span>
                     </a>
-                    <a href="#"
-                        class="flex items-center space-x-3 p-3 hover:bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-200 hover:text-white transition">
+                    <a href="#" onclick="alert('Sección en actualización.'); return false;"
+                        class="flex items-center space-x-3 p-3 hover:bg-blue-800 rounded-xl font-bold text-xs uppercase tracking-wider text-blue-200 hover:text-white transition min-h-[44px]">
                         <i class="fas fa-user text-sm"></i> <span>Mi Perfil</span>
                     </a>
                     <button id="btn-tab-certificados" onclick="cambiarTab('certificados')"
-                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left">
+                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
                         <span>📜 Certificados</span>
                     </button>
                 </nav>
             </div>
 
-            <button onclick="cerrarSesion()"
-                class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-black uppercase text-xs tracking-widest transition flex items-center justify-center space-x-2">
-                <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
-            </button>
+            <div id="navEstudianteFooter" class="hidden md:block pt-3 md:pt-0 mt-3 md:mt-6 border-t border-blue-800/80 md:border-t-0">
+                <button onclick="cerrarSesion()"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-black uppercase text-xs tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px]">
+                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                </button>
+            </div>
         </aside>
 
-        <main class="flex-1 p-10 overflow-y-auto">
-            <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm">
+        <main class="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto">
+            <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-6 sm:mb-8 bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
                 <div>
-                    <h1 class="text-2xl font-black text-slate-800">¡Bienvenido de nuevo!</h1>
-                    <p id="panelUserEmail" class="text-xs font-bold text-slate-400 mt-1">cargando_usuario@colegio.com
-                    </p>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-800">¡Bienvenido de nuevo!</h1>
+                    <p id="panelUserEmail" class="text-xs font-bold text-slate-400 mt-1 break-all">cargando_usuario@colegio.com</p>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-black"
+                <div class="flex items-center space-x-3 self-end sm:self-auto">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-black shadow-sm shrink-0"
                         id="userAvatarInitials">U</div>
                 </div>
             </header>
@@ -345,26 +358,25 @@
             <!-- ========================================== -->
             <!-- CONTENEDOR DE LA PESTAÑA INICIO            -->
             <!-- ========================================== -->
-            <div id="tabInicio" class="space-y-6">
-                <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-600">
+            <div id="tabInicio" class="space-y-4 sm:space-y-6">
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border-l-4 border-blue-600">
                         <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Estado Académico</p>
-                        <p class="text-2xl font-black text-slate-800 mt-2">Regular</p>
+                        <p class="text-xl sm:text-2xl font-black text-slate-800 mt-1 sm:mt-2">Regular</p>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-emerald-500">
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border-l-4 border-emerald-500">
                         <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Asistencia General</p>
-                        <p class="text-2xl font-black text-slate-800 mt-2">94%</p>
+                        <p class="text-xl sm:text-2xl font-black text-slate-800 mt-1 sm:mt-2">94%</p>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-amber-500">
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border-l-4 border-amber-500">
                         <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Avisos Pendientes</p>
-                        <p class="text-2xl font-black text-slate-800 mt-2">2 Nuevos</p>
+                        <p class="text-xl sm:text-2xl font-black text-slate-800 mt-1 sm:mt-2">2 Nuevos</p>
                     </div>
                 </section>
 
-                <section class="bg-white p-6 rounded-2xl shadow-sm">
-                    <h3 class="font-black text-slate-800 uppercase text-xs tracking-wider mb-4">Circular Informativa
-                    </h3>
-                    <div class="p-4 bg-slate-50 rounded-xl text-slate-600 text-xs leading-relaxed">
+                <section class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm">
+                    <h3 class="font-black text-slate-800 uppercase text-xs tracking-wider mb-3 sm:mb-4">Circular Informativa</h3>
+                    <div class="p-3.5 sm:p-4 bg-slate-50 rounded-xl text-slate-600 text-xs leading-relaxed">
                         Estimado alumno/tutor, le recordamos que las mesas de examen del periodo Julio ya se encuentran
                         abiertas para la inscripción desde la sección "Mis Cursos". Ante cualquier duda técnica,
                         contactar a soporte.
@@ -375,31 +387,31 @@
             <!-- ========================================== -->
             <!-- CONTENEDOR DE LA PESTAÑA CERTIFICADOS      -->
             <!-- ========================================== -->
-            <div id="tabCertificados" class="hidden space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Generar Certificado de Alumno Regular</h3>
-                    <p class="text-sm text-slate-500 mb-4">Ingrese su número de documento o legajo para verificar su
+            <div id="tabCertificados" class="hidden space-y-4 sm:space-y-6">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1 sm:mb-2">Generar Certificado de Alumno Regular</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 mb-4 leading-relaxed">Ingrese su número de documento o legajo para verificar su
                         estado institucional.</p>
 
                     <div class="flex flex-col sm:flex-row gap-3 max-w-md">
                         <input type="text" id="certDocumento" placeholder="Ej: 45678912 o Legajo"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                            class="w-full sm:flex-1 px-4 py-3 border border-gray-300 rounded-xl text-base sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 min-h-[44px]">
                         <button id="btnGenerarCert" onclick="procesarCertificado()"
-                            class="px-6 py-2 bg-blue-900 text-white font-bold rounded-xl text-sm hover:bg-blue-800 transition">
+                            class="w-full sm:w-auto px-6 py-3 bg-blue-900 text-white font-bold rounded-xl text-xs sm:text-sm hover:bg-blue-800 transition min-h-[44px] flex items-center justify-center uppercase tracking-wider shadow-md">
                             GENERAR CERTIFICADO
                         </button>
                     </div>
 
                     <!-- Bloque de Resultado Exitoso (Oculto al inicio) -->
                     <div id="resultadoCertificado"
-                        class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
+                        class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div>
                             <p class="text-sm font-semibold text-green-800">¡Validación Exitosa!</p>
-                            <p class="text-xs text-green-600">Estado: REGULAR. El certificado está listo para imprimir o
+                            <p class="text-xs text-green-600 mt-0.5">Estado: REGULAR. El certificado está listo para imprimir o
                                 guardar en PDF.</p>
                         </div>
                         <button onclick="descargarPDF()"
-                            class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg text-xs hover:bg-green-500 transition">
+                            class="w-full sm:w-auto px-4 py-2.5 bg-green-600 text-white font-bold rounded-lg text-xs hover:bg-green-500 transition min-h-[44px] flex items-center justify-center shadow-sm">
                             🖨️ Imprimir / PDF
                         </button>
                     </div>
@@ -415,20 +427,25 @@
     <div id="vistaAdmin" class="hidden min-h-screen bg-slate-100 flex flex-col md:flex-row text-slate-800">
 
         <!-- Barra Lateral Institucional (Sidebar) -->
-        <aside class="w-full md:w-72 bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-950 text-white flex flex-col justify-between p-5 shadow-2xl shrink-0">
+        <aside class="w-full md:w-72 bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-950 text-white flex flex-col justify-between p-4 sm:p-5 shadow-2xl shrink-0">
             <div>
                 <!-- Encabezado del Centro y Etapa -->
-                <div class="mb-6 pb-5 border-b border-blue-800/80">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black text-lg shadow-md">
-                            <i class="fas fa-graduation-cap"></i>
+                <div class="mb-3 md:mb-6 pb-3 md:pb-5 border-b border-blue-800/80">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5 sm:gap-3">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black text-base sm:text-lg shadow-md shrink-0">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xs sm:text-sm font-black uppercase tracking-wider leading-tight">Educar para</h2>
+                                <span class="text-[10px] sm:text-xs font-black text-orange-400 uppercase tracking-widest">Transformar</span>
+                            </div>
                         </div>
-                        <div>
-                            <h2 class="text-sm font-black uppercase tracking-wider leading-tight">Educar para</h2>
-                            <span class="text-xs font-black text-orange-400 uppercase tracking-widest">Transformar</span>
-                        </div>
+                        <button id="btnToggleNavAdmin" onclick="toggleNavAdmin()" class="md:hidden px-3 py-1.5 bg-blue-800 hover:bg-blue-700 rounded-lg text-xs font-bold text-amber-300 border border-amber-400/30 flex items-center gap-1.5">
+                            <i class="fas fa-bars"></i> Módulos
+                        </button>
                     </div>
-                    <div class="mt-3 bg-blue-800/60 rounded-lg p-2 flex items-center justify-between border border-blue-700/50">
+                    <div class="mt-2.5 sm:mt-3 bg-blue-800/60 rounded-lg p-2 flex items-center justify-between border border-blue-700/50">
                         <span class="text-[9px] font-black uppercase tracking-widest text-amber-300">
                             <i class="fas fa-layer-group mr-1"></i> ETAPA 2: SISTEMA GESTIÓN
                         </span>
@@ -437,82 +454,82 @@
                 </div>
 
                 <!-- Navegación por Módulos -->
-                <nav class="space-y-1.5 text-xs font-bold uppercase tracking-wider">
+                <nav id="navAdminMenu" class="hidden md:block space-y-1.5 text-xs font-bold uppercase tracking-wider mt-2 md:mt-0">
                     <button data-tab="dashboard" onclick="cambiarAdminTab('dashboard')"
-                        class="admin-nav-item w-full flex items-center space-x-3 p-3 bg-blue-800 text-white rounded-xl shadow-md transition text-left">
+                        class="admin-nav-item w-full flex items-center space-x-3 p-3 bg-blue-800 text-white rounded-xl shadow-md transition text-left min-h-[44px]">
                         <i class="fas fa-chart-pie w-5 text-center text-sm"></i> <span>Dashboard General</span>
                     </button>
                     <button data-tab="solicitudes" onclick="cambiarAdminTab('solicitudes')"
-                        class="admin-nav-item w-full flex items-center justify-between p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left">
+                        class="admin-nav-item w-full flex items-center justify-between p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-inbox w-5 text-center text-sm"></i> <span>Solicitudes 2027</span>
                         </div>
                         <span id="badgeAdminPendientesNav" class="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">4</span>
                     </button>
                     <button data-tab="alumnos" onclick="cambiarAdminTab('alumnos')"
-                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left">
+                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <i class="fas fa-user-graduate w-5 text-center text-sm"></i> <span>Alumnos & Matrícula</span>
                     </button>
                     <button data-tab="docentes" onclick="cambiarAdminTab('docentes')"
-                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left">
+                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <i class="fas fa-chalkboard-teacher w-5 text-center text-sm"></i> <span>Docentes & Personal</span>
                     </button>
                     <button data-tab="servicios" onclick="cambiarAdminTab('servicios')"
-                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left">
+                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <i class="fas fa-bus-alt w-5 text-center text-sm"></i> <span>Servicios & Bienestar</span>
                     </button>
                     <button data-tab="deportes" onclick="cambiarAdminTab('deportes')"
-                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left">
+                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <i class="fas fa-swimmer w-5 text-center text-sm"></i> <span>Deportes & Sedes</span>
                     </button>
                     <button data-tab="circulares" onclick="cambiarAdminTab('circulares')"
-                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left">
+                        class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <i class="fas fa-bullhorn w-5 text-center text-sm"></i> <span>Circulares & Avisos</span>
                     </button>
                 </nav>
             </div>
 
             <!-- Accesos de Salida y Cambio de Rol -->
-            <div class="pt-6 border-t border-blue-800/80 space-y-2 mt-6">
+            <div id="navAdminFooter" class="hidden md:block pt-4 md:pt-6 border-t border-blue-800/80 space-y-2 mt-4 md:mt-6">
                 <button onclick="abrirPanelEstudianteDesdeAdmin()"
-                    class="w-full bg-blue-800/50 hover:bg-blue-800 text-blue-200 hover:text-white py-2.5 px-3 rounded-xl font-bold uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2">
+                    class="w-full bg-blue-800/50 hover:bg-blue-800 text-blue-200 hover:text-white py-2.5 px-3 rounded-xl font-bold uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px]">
                     <i class="fas fa-user-circle"></i> <span>Vista Estudiante</span>
                 </button>
                 <button onclick="volverALanding()"
-                    class="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition flex items-center justify-center space-x-2">
+                    class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 sm:py-3 px-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition flex items-center justify-center space-x-2 min-h-[44px]">
                     <i class="fas fa-arrow-left"></i> <span>Volver a la Web</span>
                 </button>
             </div>
         </aside>
 
         <!-- Contenedor Principal del Sistema de Gestión -->
-        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <main class="flex-1 flex flex-col min-h-screen md:h-screen overflow-y-auto">
 
             <!-- Barra Superior (Top Header) -->
-            <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-30 flex flex-col md:flex-row justify-between md:items-center gap-4 shadow-sm">
+            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex flex-col sm:flex-row justify-between sm:items-center gap-2 sm:gap-4 shadow-sm">
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black uppercase text-blue-900 bg-blue-50 px-2 py-0.5 rounded">UTN FRRe • Metodología II</span>
-                        <span class="text-[10px] font-bold text-slate-400">Resistencia, Chaco</span>
+                        <span class="text-[9px] sm:text-[10px] font-black uppercase text-blue-900 bg-blue-50 px-2 py-0.5 rounded">UTN FRRe • Metodología II</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400">Resistencia, Chaco</span>
                     </div>
-                    <h1 id="adminCurrentSectionTitle" class="text-xl font-black text-slate-800 tracking-tight mt-0.5">
+                    <h1 id="adminCurrentSectionTitle" class="text-base sm:text-xl font-black text-slate-800 tracking-tight mt-0.5">
                         Tablero General de Gestión y Métricas
                     </h1>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <div class="hidden sm:flex flex-col text-right">
+                <div class="flex items-center gap-3 sm:gap-4 self-end sm:self-auto">
+                    <div class="flex flex-col text-right">
                         <span class="text-xs font-bold text-slate-800">Lic. Carolina Vargas</span>
-                        <span class="text-[10px] font-semibold text-slate-400">Dirección General</span>
+                        <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400">Dirección General</span>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-blue-900 text-amber-300 font-black text-sm flex items-center justify-center shadow">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-900 text-amber-300 font-black text-xs sm:text-sm flex items-center justify-center shadow shrink-0">
                         CV
                     </div>
                 </div>
             </header>
 
             <!-- Área de Contenido Dinámico de las Pestañas -->
-            <div class="p-6 md:p-8 space-y-6">
+            <div class="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
 
                 <!-- 1. SECCIÓN: DASHBOARD GENERAL -->
                 <div id="admin-sec-dashboard" class="admin-tab-content space-y-6">
@@ -671,27 +688,30 @@
 
                         <!-- Filtros por nivel y estado -->
                         <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex flex-wrap items-center gap-1.5">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mr-1">Nivel:</span>
-                                <button onclick="setFiltroSolicitudNivel('todos', this)" class="btn-filtro-sol-nivel bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition">Todos</button>
-                                <button onclick="setFiltroSolicitudNivel('inicial', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition">Inicial</button>
-                                <button onclick="setFiltroSolicitudNivel('primario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition">Primario</button>
-                                <button onclick="setFiltroSolicitudNivel('secundario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition">Secundario</button>
+                                <button onclick="setFiltroSolicitudNivel('todos', this)" class="btn-filtro-sol-nivel bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition min-h-[36px]">Todos</button>
+                                <button onclick="setFiltroSolicitudNivel('inicial', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Inicial</button>
+                                <button onclick="setFiltroSolicitudNivel('primario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Primario</button>
+                                <button onclick="setFiltroSolicitudNivel('secundario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Secundario</button>
                             </div>
 
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex flex-wrap items-center gap-1.5">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase mr-1">Estado:</span>
-                                <button onclick="setFiltroSolicitudEstado('todos', this)" class="btn-filtro-sol-estado bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition">Todos</button>
-                                <button onclick="setFiltroSolicitudEstado('pendiente', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition">Pendientes</button>
-                                <button onclick="setFiltroSolicitudEstado('aprobada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition">Aprobadas</button>
-                                <button onclick="setFiltroSolicitudEstado('rechazada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition">Rechazadas</button>
+                                <button onclick="setFiltroSolicitudEstado('todos', this)" class="btn-filtro-sol-estado bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition min-h-[36px]">Todos</button>
+                                <button onclick="setFiltroSolicitudEstado('pendiente', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Pendientes</button>
+                                <button onclick="setFiltroSolicitudEstado('aprobada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Aprobadas</button>
+                                <button onclick="setFiltroSolicitudEstado('rechazada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Rechazadas</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tabla de Solicitudes -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
+                        <p class="text-[10px] text-slate-400 px-4 pt-3 pb-1 md:hidden flex items-center gap-1">
+                            <i class="fas fa-arrows-alt-h text-blue-500"></i> Deslizá horizontalmente para ver la tabla completa
+                        </p>
+                        <table class="w-full min-w-[680px] text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                                     <th class="p-4">Código</th>
@@ -717,17 +737,20 @@
                             <h3 class="text-base font-black text-slate-800">Nómina de Alumnos Matriculados</h3>
                             <p class="text-xs text-slate-500">Control de regularidad, idiomas obligatorios y actividades deportivas.</p>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                             <input type="text" id="searchAlumnos" placeholder="Buscar por nombre o legajo..."
-                                class="px-4 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-900 w-60">
-                            <button onclick="abrirModalNuevoAlumno()" class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition shadow flex items-center gap-1.5 shrink-0">
+                                class="px-4 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-900 w-full sm:w-60 min-h-[44px]">
+                            <button onclick="abrirModalNuevoAlumno()" class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5 shrink-0 min-h-[44px]">
                                 <i class="fas fa-plus"></i> Matricular Alumno
                             </button>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
+                        <p class="text-[10px] text-slate-400 px-4 pt-3 pb-1 md:hidden flex items-center gap-1">
+                            <i class="fas fa-arrows-alt-h text-blue-500"></i> Deslizá horizontalmente para ver la tabla completa
+                        </p>
+                        <table class="w-full min-w-[680px] text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                                     <th class="p-4">Legajo</th>
@@ -788,8 +811,11 @@
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
                             <h4 class="font-bold text-slate-800 text-sm mb-1">Flota de Transporte Escolar - Gran Resistencia</h4>
                             <p class="text-xs text-slate-500 mb-4">Servicio de traslados con monitoreo y paradas designadas para el campus.</p>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
+                            <div class="overflow-x-auto touch-scroll">
+                                <p class="text-[10px] text-slate-400 pb-2 md:hidden flex items-center gap-1">
+                                    <i class="fas fa-arrows-alt-h text-blue-500"></i> Deslizá horizontalmente para ver la tabla completa
+                                </p>
+                                <table class="w-full min-w-[560px] text-left">
                                     <thead>
                                         <tr class="border-b text-[10px] font-black uppercase text-slate-400">
                                             <th class="p-3">Línea</th>
@@ -938,9 +964,9 @@
     <!-- ============================================================== -->
 
     <!-- Modal Detalle de Solicitud de Admisión -->
-    <div id="modalDetalleSolicitud" class="hidden fixed inset-0 bg-black/50 z-[200] items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl relative">
-            <button onclick="cerrarModalDetalle()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-800 text-lg">
+    <div id="modalDetalleSolicitud" class="hidden fixed inset-0 bg-black/60 z-[200] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl p-5 sm:p-6 w-[calc(100%-1rem)] max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
+            <button onclick="cerrarModalDetalle()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 text-lg w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100">
                 <i class="fas fa-times"></i>
             </button>
             <div id="contenidoDetalleSolicitud"></div>
@@ -948,31 +974,31 @@
     </div>
 
     <!-- Modal Nuevo Alumno / Matrícula Manual -->
-    <div id="modalNuevoAlumno" class="hidden fixed inset-0 bg-black/50 z-[200] items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl relative">
-            <button onclick="cerrarModalNuevoAlumno()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-800 text-lg">
+    <div id="modalNuevoAlumno" class="hidden fixed inset-0 bg-black/60 z-[200] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl p-5 sm:p-6 w-[calc(100%-1rem)] max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
+            <button onclick="cerrarModalNuevoAlumno()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 text-lg w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100">
                 <i class="fas fa-times"></i>
             </button>
-            <h4 class="text-lg font-black text-slate-800 mb-1">Matricular Nuevo Alumno (Ciclo 2027)</h4>
+            <h4 class="text-base sm:text-lg font-black text-slate-800 mb-1 pr-8">Matricular Nuevo Alumno (Ciclo 2027)</h4>
             <p class="text-xs text-slate-500 mb-4">Complete los datos institucionales para dar de alta en la nómina.</p>
             <form onsubmit="guardarNuevoAlumno(event)" class="space-y-3 text-xs">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Nombre Completo:</label>
                         <input type="text" id="matNombre" required placeholder="Ej: Bautista Gómez"
-                            class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900">
+                            class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">DNI Alumno:</label>
                         <input type="text" id="matDni" required placeholder="Ej: 51.442.900"
-                            class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900">
+                            class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Nivel:</label>
-                        <select id="matNivel" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none">
+                        <select id="matNivel" class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
                             <option>Inicial</option>
                             <option selected>Primario</option>
                             <option>Secundario</option>
@@ -981,20 +1007,20 @@
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Curso / Sala:</label>
                         <input type="text" id="matCurso" required placeholder="Ej: 5to Grado 'B'"
-                            class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900">
+                            class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
                     </div>
                 </div>
 
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Tutor Responsable:</label>
                     <input type="text" id="matTutor" required placeholder="Ej: Marcelo Gómez"
-                        class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900">
+                        class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Idioma:</label>
-                        <select id="matIdioma" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none">
+                        <select id="matIdioma" class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
                             <option>Inglés</option>
                             <option>Portugués</option>
                             <option>Francés</option>
@@ -1002,7 +1028,7 @@
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Deporte:</label>
-                        <select id="matDeporte" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none">
+                        <select id="matDeporte" class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
                             <option>Natación</option>
                             <option>Fútbol</option>
                             <option>Atletismo</option>
@@ -1015,11 +1041,11 @@
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-3 border-t">
-                    <button type="button" onclick="cerrarModalNuevoAlumno()" class="px-4 py-2 border rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">
+                <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="cerrarModalNuevoAlumno()" class="w-full sm:w-auto px-4 py-2.5 border rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition min-h-[44px]">
                         Cancelar
                     </button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow">
+                    <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow min-h-[44px]">
                         Guardar Matrícula
                     </button>
                 </div>

@@ -189,6 +189,22 @@
             toggleModal(false);
         }
     }
+    // Toggle de navegación del panel de estudiante en móviles
+    function toggleNavEstudiante() {
+        const navMenu = document.getElementById('navEstudianteMenu');
+        const navFooter = document.getElementById('navEstudianteFooter');
+        if (!navMenu) return;
+
+        const estaOculto = navMenu.classList.contains('hidden');
+        if (estaOculto) {
+            navMenu.classList.remove('hidden');
+            if (navFooter) navFooter.classList.remove('hidden');
+        } else {
+            navMenu.classList.add('hidden');
+            if (navFooter) navFooter.classList.add('hidden');
+        }
+    }
+
     // Mejora D: Control de pestañas del panel con legibilidad mejorada
     function cambiarTab(tabSeleccionada) {
         const pestanasDisponibles = ['inicio', 'certificados'];
@@ -211,6 +227,14 @@
                 }
             }
         });
+
+        // En pantallas móviles, colapsar el menú al cambiar de pestaña
+        if (window.innerWidth < 768) {
+            const navMenu = document.getElementById('navEstudianteMenu');
+            const navFooter = document.getElementById('navEstudianteFooter');
+            if (navMenu) navMenu.classList.add('hidden');
+            if (navFooter) navFooter.classList.add('hidden');
+        }
     }
 
     // Mejora A: Módulo de certificados - Responsabilidad única
@@ -275,4 +299,5 @@
     window.mostrarResultadoCertificado = mostrarResultadoCertificado;
     window.procesarCertificado = procesarCertificado;
     window.descargarPDF = descargarPDF;
+    window.toggleNavEstudiante = toggleNavEstudiante;
 

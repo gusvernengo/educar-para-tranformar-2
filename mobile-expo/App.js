@@ -15,8 +15,9 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-// IP local por defecto detectada en la red Wi-Fi de tu computadora
-const DEFAULT_URL = 'http://192.168.100.63:3000';
+// URL configurable por variable de entorno (EXPO_PUBLIC_WEB_URL)
+// Por defecto en iOS Simulator usa 127.0.0.1:3000 para apuntar a Vite local
+const DEFAULT_URL = process.env.EXPO_PUBLIC_WEB_URL || 'http://127.0.0.1:3000';
 
 export default function App() {
   const [currentUrl, setCurrentUrl] = useState(DEFAULT_URL);
@@ -186,7 +187,7 @@ export default function App() {
               style={styles.modalInput}
               value={inputUrl}
               onChangeText={setInputUrl}
-              placeholder="http://192.168.100.63:3000"
+              placeholder="http://127.0.0.1:3000 o IP local"
               autoCapitalize="none"
               autoCorrect={false}
             />
@@ -217,6 +218,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#1e3a8a',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     height: 60,

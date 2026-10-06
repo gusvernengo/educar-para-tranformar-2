@@ -393,6 +393,24 @@ function abrirPanelEstudianteDesdeAdmin() {
 }
 
 /**
+ * Alterna la visibilidad del menú de navegación de administración en móviles
+ */
+function toggleNavAdmin() {
+    const navMenu = document.getElementById('navAdminMenu');
+    const navFooter = document.getElementById('navAdminFooter');
+    if (!navMenu) return;
+
+    const estaOculto = navMenu.classList.contains('hidden');
+    if (estaOculto) {
+        navMenu.classList.remove('hidden');
+        if (navFooter) navFooter.classList.remove('hidden');
+    } else {
+        navMenu.classList.add('hidden');
+        if (navFooter) navFooter.classList.add('hidden');
+    }
+}
+
+/**
  * Cambia la pestaña activa dentro del Sistema de Gestión
  */
 function cambiarAdminTab(nombreTab) {
@@ -418,6 +436,14 @@ function cambiarAdminTab(nombreTab) {
     const contenedorActivo = document.getElementById(`admin-sec-${nombreTab}`);
     if (contenedorActivo) {
         contenedorActivo.classList.remove('hidden');
+    }
+
+    // En móviles, colapsar el menú al seleccionar una opción
+    if (window.innerWidth < 768) {
+        const navMenu = document.getElementById('navAdminMenu');
+        const navFooter = document.getElementById('navAdminFooter');
+        if (navMenu) navMenu.classList.add('hidden');
+        if (navFooter) navFooter.classList.add('hidden');
     }
 
     // Actualizar título de sección en el header
@@ -1096,3 +1122,4 @@ window.setFiltroSolicitudNivel = setFiltroSolicitudNivel;
 window.setFiltroSolicitudEstado = setFiltroSolicitudEstado;
 window.setFiltroAlumnoNivel = setFiltroAlumnoNivel;
 window.actualizarEstilosBotonesFiltro = actualizarEstilosBotonesFiltro;
+window.toggleNavAdmin = toggleNavAdmin;
