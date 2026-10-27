@@ -114,69 +114,8 @@ const AdminState = {
         }
     ],
 
-    // Alumnos regulares del Centro
-    alumnos: [
-        {
-            legajo: 'ET-2027-0101',
-            nombre: 'Agustín Facundo Morales',
-            dni: '45.109.823',
-            nivel: 'Secundario',
-            curso: '5to Año - Tec. Informática',
-            idioma: 'Inglés Avanzado',
-            deporte: 'Básquet',
-            tutor: 'Eduardo Morales',
-            regularidad: 'Regular',
-            asistencia: '96%'
-        },
-        {
-            legajo: 'ET-2027-0102',
-            nombre: 'Candela Belén Aguirre',
-            dni: '49.882.100',
-            nivel: 'Primario',
-            curso: '6to Grado "A"',
-            idioma: 'Portugués',
-            deporte: 'Natación',
-            tutor: 'Lorena Aguirre',
-            regularidad: 'Regular',
-            asistencia: '98%'
-        },
-        {
-            legajo: 'ET-2027-0103',
-            nombre: 'Felipe Santino Ruiz',
-            dni: '52.330.401',
-            nivel: 'Inicial',
-            curso: 'Sala de 5 "B"',
-            idioma: 'Iniciación al Inglés',
-            deporte: 'Iniciación Deportiva',
-            tutor: 'Martín Ruiz',
-            regularidad: 'Regular',
-            asistencia: '92%'
-        },
-        {
-            legajo: 'ET-2027-0104',
-            nombre: 'Micaela Sol Navarro',
-            dni: '46.771.203',
-            nivel: 'Secundario',
-            curso: '4to Año - Ciencias Naturales',
-            idioma: 'Francés',
-            deporte: 'Vóleibol',
-            tutor: 'Silvina Prado',
-            regularidad: 'Condicional',
-            asistencia: '84%'
-        },
-        {
-            legajo: 'ET-2027-0105',
-            nombre: 'Benjamín David Torres',
-            dni: '48.229.014',
-            nivel: 'Primario',
-            curso: '3er Grado "B"',
-            idioma: 'Inglés',
-            deporte: 'Ajedrez',
-            tutor: 'Esteban Torres',
-            regularidad: 'Regular',
-            asistencia: '94%'
-        }
-    ],
+    // Alumnos regulares del Centro (Persistencia en Supabase)
+    alumnos: [],
 
     // Docentes, autoridades y especialistas del caso de estudio
     docentes: [
@@ -366,30 +305,35 @@ function getSupabaseClient() {
  */
 async function abrirPanelAdmin() {
     const client = getSupabaseClient();
-    if (client) {
-        try {
-            const { data: { session } } = await client.auth.getSession();
-            if (!session?.user) {
-                if (typeof window.toggleModal === 'function') {
-                    window.toggleModal(true);
-                }
-                mostrarToast('Inicie sesión con su cuenta de Administrador.', 'warning');
-                return;
-            }
+    if (!client) {
+        mostrarToast('No se pudo verificar la sesión. Reintente en unos instantes.', 'error');
+        return;
+    }
 
-            const { data: perfil } = await client
-                .from('profiles')
-                .select('role')
-                .eq('id', session.user.id)
-                .single();
-
-            if (perfil?.role !== 'admin') {
-                alert('Acceso restringido: Esta cuenta no posee permisos de Administrador.');
-                return;
+    try {
+        const { data: { session } } = await client.auth.getSession();
+        if (!session?.user) {
+            if (typeof window.toggleModal === 'function') {
+                window.toggleModal(true);
             }
-        } catch (err) {
-            console.error("Error al validar rol de administrador:", err);
+            mostrarToast('Inicie sesión con su cuenta de Administrador.', 'warning');
+            return;
         }
+
+        const { data: perfil, error } = await client
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+        if (error || perfil?.role !== 'admin') {
+            alert('Acceso restringido: Esta cuenta no posee permisos de Administrador.');
+            return;
+        }
+    } catch (err) {
+        console.error("Error al validar rol de administrador:", err);
+        alert('No se pudo verificar el permiso de Administrador.');
+        return;
     }
 
     const vistaLanding = document.getElementById('vistaLanding');
@@ -402,6 +346,7 @@ async function abrirPanelAdmin() {
         vistaAdmin.classList.remove('hidden');
         renderizarVistaAdmin();
         await obtenerSolicitudes();
+        await obtenerAlumnos();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     mostrarToast('Bienvenido al Sistema de Gestión', 'info');
@@ -422,17 +367,48 @@ function volverALanding() {
 }
 
 /**
- * Abre el panel de estudiante desde el admin
+ * Abre el panel de estudiante desde el admin (vista previa autorizada)
  */
-function abrirPanelEstudianteDesdeAdmin() {
-    const vistaLanding = document.getElementById('vistaLanding');
-    const vistaPanel = document.getElementById('vistaPanel');
-    const vistaAdmin = document.getElementById('vistaAdmin');
+async function abrirPanelEstudianteDesdeAdmin() {
+    const client = getSupabaseClient();
+    if (!client) return;
 
-    if (vistaAdmin) vistaAdmin.classList.add('hidden');
-    if (vistaLanding) vistaLanding.classList.add('hidden');
-    if (vistaPanel) vistaPanel.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+        const { data: { session } } = await client.auth.getSession();
+        if (!session?.user) {
+            volverALanding();
+            return;
+        }
+
+        const { data: perfil } = await client
+            .from('profiles')
+            .select('id, email, role')
+            .eq('id', session.user.id)
+            .single();
+
+        if (!perfil || (perfil.role !== 'admin' && perfil.role !== 'estudiante')) {
+            volverALanding();
+            return;
+        }
+
+        const vistaLanding = document.getElementById('vistaLanding');
+        const vistaPanel = document.getElementById('vistaPanel');
+        const vistaAdmin = document.getElementById('vistaAdmin');
+
+        if (vistaAdmin) vistaAdmin.classList.add('hidden');
+        if (vistaLanding) vistaLanding.classList.add('hidden');
+        if (vistaPanel) vistaPanel.classList.remove('hidden');
+
+        if (typeof window.cambiarTab === 'function') {
+            window.cambiarTab('inicio');
+        }
+        if (typeof window.cargarCampusEstudiante === 'function') {
+            await window.cargarCampusEstudiante(session.user, perfil);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+        console.error("Error al abrir vista previa de estudiante:", err);
+    }
 }
 
 /**
@@ -441,15 +417,18 @@ function abrirPanelEstudianteDesdeAdmin() {
 function toggleNavAdmin() {
     const navMenu = document.getElementById('navAdminMenu');
     const navFooter = document.getElementById('navAdminFooter');
+    const btnToggle = document.getElementById('btnToggleNavAdmin');
     if (!navMenu) return;
 
     const estaOculto = navMenu.classList.contains('hidden');
     if (estaOculto) {
         navMenu.classList.remove('hidden');
         if (navFooter) navFooter.classList.remove('hidden');
+        if (btnToggle) btnToggle.setAttribute('aria-expanded', 'true');
     } else {
         navMenu.classList.add('hidden');
         if (navFooter) navFooter.classList.add('hidden');
+        if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
     }
 }
 
@@ -458,16 +437,18 @@ function toggleNavAdmin() {
  */
 function cambiarAdminTab(nombreTab) {
     AdminState.pestañaActiva = nombreTab;
-    
+
     // Actualizar estilos de los botones del menú lateral
     const botones = document.querySelectorAll('.admin-nav-item');
     botones.forEach(btn => {
         if (btn.getAttribute('data-tab') === nombreTab) {
             btn.classList.add('bg-blue-800', 'text-white', 'shadow-md');
             btn.classList.remove('text-slate-300', 'hover:bg-blue-900/60');
+            btn.setAttribute('aria-current', 'page');
         } else {
             btn.classList.remove('bg-blue-800', 'text-white', 'shadow-md');
             btn.classList.add('text-slate-300', 'hover:bg-blue-900/60');
+            btn.removeAttribute('aria-current');
         }
     });
 
@@ -485,8 +466,10 @@ function cambiarAdminTab(nombreTab) {
     if (window.innerWidth < 768) {
         const navMenu = document.getElementById('navAdminMenu');
         const navFooter = document.getElementById('navAdminFooter');
+        const btnToggle = document.getElementById('btnToggleNavAdmin');
         if (navMenu) navMenu.classList.add('hidden');
         if (navFooter) navFooter.classList.add('hidden');
+        if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
     }
 
     // Actualizar título de sección en el header
@@ -506,6 +489,9 @@ function cambiarAdminTab(nombreTab) {
 
     if (nombreTab === 'solicitudes' || nombreTab === 'dashboard') {
         obtenerSolicitudes();
+    }
+    if (nombreTab === 'alumnos' || nombreTab === 'dashboard') {
+        obtenerAlumnos();
     }
 }
 
@@ -595,6 +581,37 @@ async function obtenerSolicitudes() {
     }
 }
 
+/**
+ * Obtiene la nómina de alumnos matriculados desde Supabase
+ */
+async function obtenerAlumnos() {
+    const client = getSupabaseClient();
+    if (!client) {
+        console.warn("Cliente Supabase no inicializado aún.");
+        return;
+    }
+
+    try {
+        const { data, error } = await client
+            .from('alumnos')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Error al obtener alumnos de Supabase:", error.message);
+            mostrarToast("Error al cargar la nómina de alumnos: " + error.message, "error");
+            return;
+        }
+
+        AdminState.alumnos = data || [];
+        renderizarTablaAlumnos();
+        renderizarContadoresDashboard();
+    } catch (err) {
+        console.error("Fallo inesperado al consultar alumnos:", err);
+        mostrarToast("Error inesperado al cargar alumnos.", "error");
+    }
+}
+
 function renderizarContadoresDashboard() {
     const pendientes = AdminState.solicitudes.filter(s => (s.estado || '').toLowerCase() === 'pendiente').length;
     AdminState.stats.solicitudesPendientes = pendientes;
@@ -605,11 +622,20 @@ function renderizarContadoresDashboard() {
     const elMicros = document.getElementById('adminStatMicros');
     const badgePendientesNav = document.getElementById('badgeAdminPendientesNav');
 
-    if (elMatricula) elMatricula.innerText = AdminState.alumnos.length + 343;
+    if (elMatricula) elMatricula.innerText = AdminState.alumnos.length;
     if (elSolicitudes) elSolicitudes.innerText = pendientes;
     if (elDocentes) elDocentes.innerText = AdminState.docentes.length;
     if (elMicros) elMicros.innerText = AdminState.rutasMicros.length;
     if (badgePendientesNav) badgePendientesNav.innerText = pendientes;
+}
+
+function escaparHTML(valor) {
+    return String(valor ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 /**
@@ -622,7 +648,7 @@ function renderizarTablaSolicitudes() {
     let lista = AdminState.solicitudes.filter(item => {
         const coincideNivel = AdminState.filtroSolicitudNivel === 'todos' || (item.nivel || '').toLowerCase() === AdminState.filtroSolicitudNivel.toLowerCase();
         const coincideEstado = AdminState.filtroSolicitudEstado === 'todos' || (item.estado || '').toLowerCase() === AdminState.filtroSolicitudEstado.toLowerCase();
-        const coincideBusqueda = AdminState.busquedaSolicitud === '' || 
+        const coincideBusqueda = AdminState.busquedaSolicitud === '' ||
             (item.nombreAspirante || item.nombre || '').toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase()) ||
             (item.dni || '').includes(AdminState.busquedaSolicitud) ||
             (item.tutor || '').toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase());
@@ -632,8 +658,8 @@ function renderizarTablaSolicitudes() {
     if (lista.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-8 text-slate-400 font-bold text-xs uppercase tracking-wider">
-                    <i class="fas fa-search text-2xl mb-2 block"></i>
+                <td colspan="7" class="text-center py-8 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                    <i class="fas fa-search text-2xl mb-2 block text-slate-400" aria-hidden="true"></i>
                     No se encontraron solicitudes con los filtros aplicados.
                 </td>
             </tr>
@@ -645,11 +671,11 @@ function renderizarTablaSolicitudes() {
         const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
         let badgeEstado = '';
         if (estadoNorm === 'pendiente') {
-            badgeEstado = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-clock mr-1"></i>Pendiente</span>';
+            badgeEstado = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-clock mr-1" aria-hidden="true"></i>Pendiente</span>';
         } else if (estadoNorm === 'aprobada') {
-            badgeEstado = '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-check-circle mr-1"></i>Aprobada</span>';
+            badgeEstado = '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-check-circle mr-1" aria-hidden="true"></i>Aprobada</span>';
         } else {
-            badgeEstado = '<span class="bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-times-circle mr-1"></i>Rechazada</span>';
+            badgeEstado = '<span class="bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-times-circle mr-1" aria-hidden="true"></i>Rechazada</span>';
         }
 
         let badgeNivel = '';
@@ -660,43 +686,45 @@ function renderizarTablaSolicitudes() {
 
         const fechaFormateada = sol.created_at ? new Date(sol.created_at).toLocaleDateString('es-AR') : (sol.fecha || '-');
         const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
+        const idSeguro = escaparHTML(sol.id);
+        const nombreSeguro = escaparHTML(sol.nombreAspirante || sol.nombre);
 
         return `
             <tr class="border-b border-slate-100 hover:bg-slate-50 transition ${badgeNivel}">
-                <td class="p-4 font-mono text-[11px] font-bold text-slate-500">${codigo}</td>
+                <td class="p-4 font-mono text-[11px] font-bold text-slate-600">${escaparHTML(codigo)}</td>
                 <td class="p-4">
-                    <p class="font-bold text-slate-800 text-xs">${sol.nombreAspirante || sol.nombre}</p>
-                    <p class="text-[10px] text-slate-400">DNI: ${sol.dni}</p>
+                    <p class="font-bold text-slate-800 text-xs break-words">${nombreSeguro}</p>
+                    <p class="text-[10px] text-slate-500">DNI: ${escaparHTML(sol.dni)}</p>
                 </td>
                 <td class="p-4">
-                    <span class="font-bold text-xs text-blue-900">${sol.nivel}</span>
-                    <p class="text-[10px] text-slate-500">${sol.grado || sol.nivel}</p>
+                    <span class="font-bold text-xs text-blue-900">${escaparHTML(sol.nivel)}</span>
+                    <p class="text-[10px] text-slate-500">${escaparHTML(sol.grado || sol.nivel)}</p>
                 </td>
                 <td class="p-4">
-                    <p class="text-xs font-semibold text-slate-700">${sol.tutor}</p>
-                    <p class="text-[10px] text-slate-400"><i class="fas fa-envelope mr-1"></i>${sol.email}</p>
+                    <p class="text-xs font-semibold text-slate-700 break-words">${escaparHTML(sol.tutor)}</p>
+                    <p class="text-[10px] text-slate-500 break-all"><i class="fas fa-envelope mr-1" aria-hidden="true"></i>${escaparHTML(sol.email)}</p>
                 </td>
                 <td class="p-4 text-center">
                     ${badgeEstado}
                 </td>
-                <td class="p-4 text-[11px] text-slate-500">${fechaFormateada}</td>
+                <td class="p-4 text-[11px] text-slate-600">${escaparHTML(fechaFormateada)}</td>
                 <td class="p-4 text-right">
                     <div class="flex justify-end gap-1.5">
-                        <button onclick="verDetalleSolicitud('${sol.id}')" title="Ver Detalles de Familia" class="p-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
-                            <i class="fas fa-eye"></i>
+                        <button type="button" data-solicitud-action="ver" data-id="${idSeguro}" title="Ver Detalles de Familia" aria-label="Ver detalles de ${nombreSeguro}" class="p-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
                         </button>
                         ${estadoNorm !== 'aprobada' ? `
-                            <button onclick="actualizarEstadoSolicitud('${sol.id}', 'aprobada')" title="Aprobar Vacante" class="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
-                                <i class="fas fa-check"></i>
+                            <button type="button" data-solicitud-action="estado" data-estado="aprobada" data-id="${idSeguro}" title="Aprobar Vacante" aria-label="Aprobar vacante de ${nombreSeguro}" class="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                                <i class="fas fa-check" aria-hidden="true"></i>
                             </button>
                         ` : ''}
                         ${estadoNorm !== 'rechazada' ? `
-                            <button onclick="actualizarEstadoSolicitud('${sol.id}', 'rechazada')" title="Rechazar Vacante" class="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
-                                <i class="fas fa-times"></i>
+                            <button type="button" data-solicitud-action="estado" data-estado="rechazada" data-id="${idSeguro}" title="Rechazar Vacante" aria-label="Rechazar vacante de ${nombreSeguro}" class="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                                <i class="fas fa-times" aria-hidden="true"></i>
                             </button>
                         ` : ''}
-                        <button onclick="eliminarSolicitud('${sol.id}')" title="Eliminar Solicitud" class="p-2 bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs transition min-w-[32px] min-h-[32px]">
-                            <i class="fas fa-trash-alt"></i>
+                        <button type="button" data-solicitud-action="eliminar" data-id="${idSeguro}" title="Eliminar Solicitud" aria-label="Eliminar solicitud de ${nombreSeguro}" class="p-2 bg-slate-100 text-slate-600 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
                         </button>
                     </div>
                 </td>
@@ -795,54 +823,55 @@ function verDetalleSolicitud(id) {
     const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
     const badgeClass = estadoNorm === 'aprobada' ? 'bg-emerald-100 text-emerald-800' : (estadoNorm === 'pendiente' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
     const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
+    const idSeguro = escaparHTML(sol.id);
 
     contenido.innerHTML = `
         <div class="space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b">
-                <div>
-                    <span class="text-[10px] font-black uppercase text-blue-800 bg-blue-50 px-2 py-0.5 rounded">${codigo}</span>
-                    <h4 class="text-lg font-black text-slate-800 mt-1">${sol.nombreAspirante || sol.nombre}</h4>
+            <div class="flex items-center justify-between pb-3 border-b pr-8">
+                <div class="min-w-0">
+                    <span class="text-[10px] font-black uppercase text-blue-800 bg-blue-50 px-2 py-0.5 rounded">${escaparHTML(codigo)}</span>
+                    <h4 class="text-lg font-black text-slate-800 mt-1 break-words">${escaparHTML(sol.nombreAspirante || sol.nombre)}</h4>
                 </div>
-                <div>
+                <div class="shrink-0">
                     <span class="px-3 py-1 rounded-full text-xs font-bold capitalize ${badgeClass}">
-                        ${estadoNorm}
+                        ${escaparHTML(estadoNorm)}
                     </span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div class="bg-slate-50 p-3 rounded-xl">
-                    <p class="text-slate-400 font-bold uppercase text-[9px]">DNI Alumno</p>
-                    <p class="font-bold text-slate-700">${sol.dni}</p>
+                    <p class="text-slate-500 font-bold uppercase text-[9px]">DNI Alumno</p>
+                    <p class="font-bold text-slate-800 break-words">${escaparHTML(sol.dni)}</p>
                 </div>
                 <div class="bg-slate-50 p-3 rounded-xl">
-                    <p class="text-slate-400 font-bold uppercase text-[9px]">Nivel Solicitado</p>
-                    <p class="font-bold text-blue-900">${sol.nivel} - ${sol.grado}</p>
+                    <p class="text-slate-500 font-bold uppercase text-[9px]">Nivel Solicitado</p>
+                    <p class="font-bold text-blue-900 break-words">${escaparHTML(sol.nivel)} - ${escaparHTML(sol.grado || sol.nivel)}</p>
                 </div>
                 <div class="bg-slate-50 p-3 rounded-xl">
-                    <p class="text-slate-400 font-bold uppercase text-[9px]">Tutor Responsable</p>
-                    <p class="font-bold text-slate-700">${sol.tutor}</p>
+                    <p class="text-slate-500 font-bold uppercase text-[9px]">Tutor Responsable</p>
+                    <p class="font-bold text-slate-800 break-words">${escaparHTML(sol.tutor || 'No especificado')}</p>
                 </div>
                 <div class="bg-slate-50 p-3 rounded-xl">
-                    <p class="text-slate-400 font-bold uppercase text-[9px]">Teléfono Contacto</p>
-                    <p class="font-bold text-slate-700">${sol.telefono}</p>
+                    <p class="text-slate-500 font-bold uppercase text-[9px]">Teléfono Contacto</p>
+                    <p class="font-bold text-slate-800 break-words">${escaparHTML(sol.telefono || 'No especificado')}</p>
                 </div>
             </div>
 
             <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 text-xs">
                 <p class="text-blue-900 font-bold uppercase text-[10px] mb-1">Email Registrado:</p>
-                <p class="text-slate-700">${sol.email}</p>
+                <p class="text-slate-700 break-all">${escaparHTML(sol.email)}</p>
             </div>
 
             <div class="bg-slate-50 p-3 rounded-xl text-xs">
-                <p class="text-slate-400 font-bold uppercase text-[10px] mb-1">Mensaje de la Familia:</p>
-                <p class="text-slate-700 italic">"${sol.mensaje}"</p>
+                <p class="text-slate-500 font-bold uppercase text-[10px] mb-1">Mensaje de la Familia:</p>
+                <p class="text-slate-700 italic break-words">"${escaparHTML(sol.mensaje || 'Sin mensaje adicional')}"</p>
             </div>
 
-            <div class="flex justify-end gap-2 pt-3 border-t">
-                <button onclick="cerrarModalDetalle()" class="px-4 py-2 border rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">Cerrar</button>
-                <button onclick="cambiarEstadoSolicitud('${sol.id}', 'Aprobada'); cerrarModalDetalle();" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition">
-                    <i class="fas fa-check mr-1"></i> Aprobar Vacante
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3 border-t">
+                <button type="button" onclick="cerrarModalDetalle()" class="min-h-[44px] px-4 py-2 border rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">Cerrar</button>
+                <button type="button" data-solicitud-action="estado" data-estado="Aprobada" data-id="${idSeguro}" data-close-modal="true" class="min-h-[44px] px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition flex items-center justify-center gap-1.5">
+                    <i class="fas fa-check" aria-hidden="true"></i> <span>Aprobar Vacante</span>
                 </button>
             </div>
         </div>
@@ -861,68 +890,311 @@ function cerrarModalDetalle() {
 }
 
 /**
- * Renderiza la nómina de Alumnos y Cursos
+ * Renderiza la nómina de Alumnos y Cursos (Sincroniza Tabla Desktop y Tarjetas Mobile)
  */
 function renderizarTablaAlumnos() {
     const tbody = document.getElementById('tablaAlumnosBody');
-    if (!tbody) return;
+    const cardsContainer = document.getElementById('listaAlumnosCards');
+    if (!tbody && !cardsContainer) return;
 
-    let lista = AdminState.alumnos.filter(al => {
-        const coincideNivel = AdminState.filtroAlumnoNivel === 'todos' || al.nivel.toLowerCase() === AdminState.filtroAlumnoNivel.toLowerCase();
-        const coincideBusqueda = AdminState.busquedaAlumno === '' || 
-            al.nombre.toLowerCase().includes(AdminState.busquedaAlumno.toLowerCase()) ||
-            al.dni.includes(AdminState.busquedaAlumno) ||
-            al.legajo.toLowerCase().includes(AdminState.busquedaAlumno.toLowerCase());
+    const termino = (AdminState.busquedaAlumno || '').trim().toLowerCase();
+    const lista = AdminState.alumnos.filter(al => {
+        const coincideNivel = AdminState.filtroAlumnoNivel === 'todos' || (al.nivel || '').toLowerCase() === AdminState.filtroAlumnoNivel.toLowerCase();
+        const coincideBusqueda = termino === '' ||
+            (al.nombre || '').toLowerCase().includes(termino) ||
+            (al.dni || '').toLowerCase().includes(termino) ||
+            (al.legajo || '').toLowerCase().includes(termino) ||
+            (al.curso || '').toLowerCase().includes(termino) ||
+            (al.nivel || '').toLowerCase().includes(termino);
         return coincideNivel && coincideBusqueda;
     });
 
-    tbody.innerHTML = lista.map(al => {
-        return `
-            <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                <td class="p-4 font-mono text-[11px] font-bold text-blue-900">${al.legajo}</td>
-                <td class="p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center">
-                            ${al.nombre.charAt(0)}
+    const totalAlumnos = AdminState.alumnos.length;
+    const hayFiltroActivo = termino !== '' || AdminState.filtroAlumnoNivel !== 'todos';
+
+    // Mostrar u ocultar botón de limpiar búsqueda
+    const btnLimpiar = document.getElementById('btnLimpiarBusquedaAlumnos');
+    if (btnLimpiar) {
+        if (termino !== '') {
+            btnLimpiar.classList.remove('hidden');
+            btnLimpiar.classList.add('flex');
+        } else {
+            btnLimpiar.classList.add('hidden');
+            btnLimpiar.classList.remove('flex');
+        }
+    }
+
+    // Actualizar contador de resultados
+    const contadorEl = document.getElementById('contadorAlumnosResultados');
+    if (contadorEl) {
+        if (hayFiltroActivo) {
+            contadorEl.textContent = `Mostrando ${lista.length} de ${totalAlumnos} ${totalAlumnos === 1 ? 'alumno' : 'alumnos'}`;
+        } else {
+            contadorEl.textContent = `${totalAlumnos} ${totalAlumnos === 1 ? 'alumno matriculado' : 'alumnos matriculados'}`;
+        }
+    }
+
+    if (lista.length === 0) {
+        if (tbody) {
+            tbody.innerHTML = hayFiltroActivo ? `
+                <tr>
+                    <td colspan="7" class="text-center py-10 px-4">
+                        <i class="fas fa-search text-2xl text-slate-400 mb-2 block" aria-hidden="true"></i>
+                        <p class="text-slate-700 font-bold text-xs uppercase tracking-wider">No se encontraron alumnos para la búsqueda actual.</p>
+                        <p class="text-slate-500 text-xs mt-1">Probá con otro nombre, DNI, legajo o curso.</p>
+                        <button type="button" onclick="limpiarBusquedaAlumnos()" class="mt-3 inline-flex items-center justify-center gap-1.5 min-h-[40px] px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl transition">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i> Limpiar búsqueda
+                        </button>
+                    </td>
+                </tr>
+            ` : `
+                <tr>
+                    <td colspan="7" class="text-center py-10 px-4 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                        <i class="fas fa-user-graduate text-2xl text-slate-400 mb-2 block" aria-hidden="true"></i>
+                        No se encontraron alumnos registrados.
+                    </td>
+                </tr>
+            `;
+        }
+
+        if (cardsContainer) {
+            cardsContainer.innerHTML = hayFiltroActivo ? `
+                <div class="bg-white rounded-2xl p-6 text-center border border-slate-200/80 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-search text-lg" aria-hidden="true"></i>
+                    </div>
+                    <p class="text-slate-800 font-black text-sm">Sin resultados para tu búsqueda</p>
+                    <p class="text-slate-600 text-xs mt-1">No hay alumnos que coincidan con el criterio ingresado.</p>
+                    <button type="button" onclick="limpiarBusquedaAlumnos()" class="mt-4 w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl transition active:scale-95">
+                        <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        <span>Limpiar búsqueda</span>
+                    </button>
+                </div>
+            ` : `
+                <div class="bg-white rounded-2xl p-6 text-center border border-slate-200/80 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-900 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-user-graduate text-lg" aria-hidden="true"></i>
+                    </div>
+                    <p class="text-slate-800 font-black text-sm">No se encontraron alumnos registrados</p>
+                    <p class="text-slate-600 text-xs mt-1">Utilizá el botón superior para matricular un nuevo alumno en el padrón oficial.</p>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    if (tbody) {
+        tbody.innerHTML = lista.map(al => {
+            const initial = escaparHTML(((al.nombre || 'A').trim().charAt(0) || 'A').toUpperCase());
+            const legajoSeguro = escaparHTML(al.legajo);
+            const nombreSeguro = escaparHTML(al.nombre);
+            const condicionActual = al.regularidad || 'Regular';
+            const esRegular = condicionActual === 'Regular';
+            return `
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td class="p-4 font-mono text-[11px] font-bold text-blue-900 whitespace-nowrap">${legajoSeguro}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
+                                ${initial}
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-slate-800 text-xs break-words">${nombreSeguro}</p>
+                                <p class="text-[10px] text-slate-500">DNI: ${escaparHTML(al.dni)}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-bold text-slate-800 text-xs">${al.nombre}</p>
-                            <p class="text-[10px] text-slate-400">DNI: ${al.dni}</p>
+                    </td>
+                    <td class="p-4">
+                        <span class="font-bold text-xs text-slate-700 block break-words">${escaparHTML(al.curso)}</span>
+                        <span class="block text-[10px] text-slate-500">${escaparHTML(al.nivel)}</span>
+                    </td>
+                    <td class="p-4">
+                        <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">${escaparHTML(al.idioma || 'Sin idioma')}</span>
+                        <span class="block text-[10px] text-slate-600 mt-0.5"><i class="fas fa-running mr-1" aria-hidden="true"></i>${escaparHTML(al.deporte || 'Sin deporte')}</span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button type="button" data-alumno-action="regularidad" data-legajo="${legajoSeguro}" title="Click para alternar condición" aria-label="Alternar condición ${escaparHTML(condicionActual)} de ${nombreSeguro}" class="cursor-pointer text-[10px] font-black px-2.5 py-1 rounded-full uppercase ${esRegular ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                            ${escaparHTML(condicionActual)}
+                        </button>
+                    </td>
+                    <td class="p-4 text-center font-bold text-xs text-slate-700">
+                        ${escaparHTML(al.asistencia || '100%')}
+                    </td>
+                    <td class="p-4 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button type="button" data-alumno-action="certificado" data-legajo="${legajoSeguro}" aria-label="Emitir certificado de ${nombreSeguro}" class="px-2.5 py-1.5 bg-blue-900 text-white hover:bg-blue-800 rounded-lg text-[10px] font-bold transition flex items-center gap-1">
+                                <i class="fas fa-file-pdf" aria-hidden="true"></i> <span>Certificado</span>
+                            </button>
+                            <button type="button" data-alumno-action="eliminar" data-legajo="${legajoSeguro}" title="Dar de baja alumno" aria-label="Dar de baja a ${nombreSeguro}" class="px-2.5 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-[10px] font-bold transition flex items-center gap-1">
+                                <i class="fas fa-trash-alt" aria-hidden="true"></i> <span>Dar de baja</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    if (cardsContainer) {
+        cardsContainer.innerHTML = lista.map(al => {
+            const initial = escaparHTML(((al.nombre || 'A').trim().charAt(0) || 'A').toUpperCase());
+            const legajoSeguro = escaparHTML(al.legajo);
+            const nombreSeguro = escaparHTML(al.nombre);
+            const condicionActual = al.regularidad || 'Regular';
+            const esRegular = condicionActual === 'Regular';
+
+            return `
+                <article class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5 transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 rounded-xl bg-blue-900 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm" aria-hidden="true">
+                                ${initial}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="inline-block font-mono text-[11px] font-bold text-blue-900 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md mb-1 break-all">
+                                    ${legajoSeguro}
+                                </span>
+                                <h4 class="font-black text-slate-900 text-sm leading-snug break-words">
+                                    ${nombreSeguro}
+                                </h4>
+                                <p class="text-xs font-semibold text-slate-600 mt-0.5">
+                                    DNI: <span class="font-bold text-slate-800">${escaparHTML(al.dni)}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button"
+                            data-alumno-action="regularidad"
+                            data-legajo="${legajoSeguro}"
+                            title="Toque para alternar condición de regularidad"
+                            aria-label="Condición ${escaparHTML(condicionActual)} de ${nombreSeguro}. Toque para cambiar estado"
+                            class="shrink-0 min-h-[44px] min-w-[44px] px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wide flex items-center justify-center gap-1.5 border transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 ${esRegular ? 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'}">
+                            <span class="w-2 h-2 rounded-full ${esRegular ? 'bg-emerald-600' : 'bg-amber-600'}" aria-hidden="true"></span>
+                            <span>${escaparHTML(condicionActual)}</span>
+                            <i class="fas fa-sync-alt text-[10px] opacity-70 ml-0.5" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                        <div class="min-w-0">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Nivel y Curso</span>
+                            <p class="font-bold text-slate-800 mt-0.5 break-words">${escaparHTML(al.nivel || 'Sin nivel')} · ${escaparHTML(al.curso || 'Sin curso')}</p>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Idioma & Deporte</span>
+                            <p class="font-bold text-slate-800 mt-0.5 break-words">${escaparHTML(al.idioma || 'Sin idioma')} · ${escaparHTML(al.deporte || 'Sin deporte')}</p>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Tutor Responsable</span>
+                            <p class="font-semibold text-slate-700 mt-0.5 break-words">${escaparHTML(al.tutor || 'No especificado')}</p>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Asistencia</span>
+                            <p class="font-bold text-emerald-700 mt-0.5">${escaparHTML(al.asistencia || '100%')}</p>
                         </div>
                     </div>
-                </td>
-                <td class="p-4">
-                    <span class="font-bold text-xs text-slate-700">${al.curso}</span>
-                    <span class="block text-[10px] text-slate-400">${al.nivel}</span>
-                </td>
-                <td class="p-4">
-                    <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">${al.idioma}</span>
-                    <span class="block text-[10px] text-slate-500 mt-0.5"><i class="fas fa-running mr-1"></i>${al.deporte}</span>
-                </td>
-                <td class="p-4 text-center">
-                    <button onclick="alternarRegularidadAlumno('${al.legajo}')" title="Click para alternar condición" class="cursor-pointer text-[10px] font-black px-2.5 py-1 rounded-full uppercase ${al.regularidad === 'Regular' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                        ${al.regularidad}
-                    </button>
-                </td>
-                <td class="p-4 text-center font-bold text-xs text-slate-700">
-                    ${al.asistencia}
-                </td>
-                <td class="p-4 text-right">
-                    <button onclick="emitirCertificadoDesdeAdmin('${al.legajo}', '${al.nombre}')" class="px-2.5 py-1 bg-blue-900 text-white hover:bg-blue-800 rounded-lg text-[10px] font-bold transition">
-                        <i class="fas fa-file-pdf mr-1"></i> Certificado
-                    </button>
-                </td>
-            </tr>
-        `;
-    }).join('');
+
+                    <div class="grid grid-cols-2 gap-2.5 pt-0.5">
+                        <button type="button"
+                            data-alumno-action="certificado"
+                            data-legajo="${legajoSeguro}"
+                            aria-label="Emitir certificado de ${nombreSeguro}"
+                            class="min-h-[44px] px-3 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition active:scale-95 flex items-center justify-center gap-2 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 focus-visible:ring-offset-1">
+                            <i class="fas fa-file-pdf text-xs" aria-hidden="true"></i>
+                            <span>Certificado</span>
+                        </button>
+                        <button type="button"
+                            data-alumno-action="eliminar"
+                            data-legajo="${legajoSeguro}"
+                            aria-label="Dar de baja a ${nombreSeguro}"
+                            class="min-h-[44px] px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition active:scale-95 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:ring-offset-1">
+                            <i class="fas fa-trash-alt text-xs" aria-hidden="true"></i>
+                            <span>Dar de baja</span>
+                        </button>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    }
 }
 
-function alternarRegularidadAlumno(legajo) {
+function limpiarBusquedaAlumnos() {
+    AdminState.busquedaAlumno = '';
+    AdminState.filtroAlumnoNivel = 'todos';
+    const inputSearchAl = document.getElementById('searchAlumnos');
+    if (inputSearchAl) {
+        inputSearchAl.value = '';
+    }
+    renderizarTablaAlumnos();
+}
+
+async function alternarRegularidadAlumno(legajo) {
     const alumno = AdminState.alumnos.find(a => a.legajo === legajo);
     if (!alumno) return;
-    alumno.regularidad = (alumno.regularidad === 'Regular') ? 'Condicional' : 'Regular';
-    renderizarTablaAlumnos();
-    mostrarToast(`Condición de ${alumno.nombre} actualizada a: ${alumno.regularidad}`, 'info');
+
+    const client = getSupabaseClient();
+    if (!client) {
+        mostrarToast('Cliente de base de datos no disponible.', 'error');
+        return;
+    }
+
+    const nuevoEstado = (alumno.regularidad === 'Regular') ? 'Condicional' : 'Regular';
+
+    try {
+        const { data, error } = await client
+            .from('alumnos')
+            .update({ regularidad: nuevoEstado })
+            .eq('legajo', legajo)
+            .select()
+            .single();
+
+        if (error) {
+            console.error("Error al actualizar regularidad del alumno en Supabase:", error);
+            mostrarToast("Error al actualizar regularidad: " + error.message, 'error');
+            return;
+        }
+
+        alumno.regularidad = nuevoEstado;
+        renderizarTablaAlumnos();
+        mostrarToast(`Condición de ${alumno.nombre} actualizada a: ${nuevoEstado}`, 'info');
+    } catch (err) {
+        console.error("Error inesperado al actualizar regularidad:", err);
+        mostrarToast("Error inesperado al cambiar condición.", 'error');
+    }
+}
+
+async function eliminarAlumno(legajo, nombre) {
+    const alumno = AdminState.alumnos.find(a => a.legajo === legajo);
+    const nombreConfirm = nombre || alumno?.nombre || legajo;
+
+    if (!confirm(`¿Dar de baja a ${nombreConfirm}?`)) {
+        return;
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+        mostrarToast('Cliente de base de datos no disponible.', 'error');
+        return;
+    }
+
+    try {
+        const { error } = await client
+            .from('alumnos')
+            .delete()
+            .eq('legajo', legajo);
+
+        if (error) {
+            console.error("Error al dar de baja alumno en Supabase:", error);
+            mostrarToast("Error al dar de baja: " + error.message, 'error');
+            return;
+        }
+
+        await obtenerAlumnos();
+        mostrarToast(`Alumno ${nombreConfirm} dado de baja exitosamente.`, 'success');
+    } catch (err) {
+        console.error("Error inesperado al dar de baja alumno:", err);
+        mostrarToast("Error inesperado al procesar la baja.", 'error');
+    }
 }
 
 function emitirCertificadoDesdeAdmin(legajo, nombre) {
@@ -1106,53 +1378,80 @@ function publicarNuevaCircular(e) {
  */
 function abrirModalNuevoAlumno() {
     const modal = document.getElementById('modalNuevoAlumno');
-    if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+    if (!modal) {
+        console.error('No se encontró #modalNuevoAlumno');
+        return;
     }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 }
 
 function cerrarModalNuevoAlumno() {
     const modal = document.getElementById('modalNuevoAlumno');
-    if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
 }
 
-function guardarNuevoAlumno(e) {
+async function guardarNuevoAlumno(e) {
     if (e) e.preventDefault();
-    const nombre = document.getElementById('matNombre').value.trim();
-    const dni = document.getElementById('matDni').value.trim();
-    const nivel = document.getElementById('matNivel').value;
-    const curso = document.getElementById('matCurso').value.trim();
-    const tutor = document.getElementById('matTutor').value.trim();
-    const idioma = document.getElementById('matIdioma').value;
-    const deporte = document.getElementById('matDeporte').value;
+    const nombre = document.getElementById('matNombre')?.value.trim();
+    const dni = document.getElementById('matDni')?.value.trim();
+    const nivel = document.getElementById('matNivel')?.value;
+    const curso = document.getElementById('matCurso')?.value.trim();
+    const tutor = document.getElementById('matTutor')?.value.trim();
+    const idioma = document.getElementById('matIdioma')?.value;
+    const deporte = document.getElementById('matDeporte')?.value;
 
     if (!nombre || !dni || !curso || !tutor) {
         mostrarToast('Complete los datos obligatorios del alumno y tutor.', 'warning');
         return;
     }
 
-    const nuevoLegajo = `ET-2027-0${100 + AdminState.alumnos.length + 1}`;
-    AdminState.alumnos.unshift({
-        legajo: nuevoLegajo,
-        nombre,
-        dni,
-        nivel,
-        curso,
-        idioma,
-        deporte,
-        tutor,
-        regularidad: 'Regular',
-        asistencia: '100%'
-    });
+    const client = getSupabaseClient();
+    if (!client) {
+        mostrarToast('Error de conexión con la base de datos.', 'error');
+        return;
+    }
 
-    renderizarContadoresDashboard();
-    renderizarTablaAlumnos();
-    cerrarModalNuevoAlumno();
-    mostrarToast(`¡Alumno ${nombre} matriculado exitosamente con legajo ${nuevoLegajo}!`, 'success');
+    const nuevoLegajo = `ET-2027-${Date.now()}`;
+
+    try {
+        const { data, error } = await client
+            .from('alumnos')
+            .insert({
+                legajo: nuevoLegajo,
+                nombre,
+                dni,
+                nivel,
+                curso,
+                idioma,
+                deporte,
+                tutor,
+                regularidad: 'Regular',
+                asistencia: '100%'
+            })
+            .select()
+            .single();
+
+        if (error) {
+            console.error("Error al matricular alumno en Supabase:", error);
+            mostrarToast("Error al matricular alumno: " + error.message, 'error');
+            return;
+        }
+
+        await obtenerAlumnos();
+        cerrarModalNuevoAlumno();
+
+        // Limpiar formulario
+        const form = document.querySelector('#modalNuevoAlumno form');
+        if (form) form.reset();
+
+        mostrarToast("Alumno matriculado exitosamente", 'success');
+    } catch (err) {
+        console.error("Error inesperado al guardar alumno:", err);
+        mostrarToast("Error inesperado al guardar matrícula.", 'error');
+    }
 }
 
 // ====================================================================
@@ -1164,12 +1463,15 @@ function mostrarToast(mensaje, tipo = 'info') {
     if (!contenedor) {
         contenedor = document.createElement('div');
         contenedor.id = 'adminToastContainer';
-        contenedor.className = 'fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 max-w-sm pointer-events-none';
+        contenedor.setAttribute('role', 'status');
+        contenedor.setAttribute('aria-live', 'polite');
+        contenedor.setAttribute('aria-atomic', 'true');
+        contenedor.className = 'fixed z-[9999] flex flex-col gap-2 pointer-events-none left-4 right-4 sm:left-auto sm:right-5 sm:max-w-sm bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))]';
         document.body.appendChild(contenedor);
     }
 
     const toast = document.createElement('div');
-    toast.className = 'pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0 flex items-center p-3 rounded-xl shadow-xl border text-xs font-bold';
+    toast.className = 'pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0 flex items-center p-3.5 rounded-xl shadow-xl border text-xs font-bold';
 
     let icon = 'fa-info-circle';
     let style = 'bg-slate-900 text-white border-slate-700';
@@ -1179,18 +1481,27 @@ function mostrarToast(mensaje, tipo = 'info') {
         style = 'bg-emerald-600 text-white border-emerald-500';
     } else if (tipo === 'warning') {
         icon = 'fa-exclamation-triangle';
-        style = 'bg-amber-500 text-white border-amber-400';
+        style = 'bg-amber-600 text-white border-amber-500';
+    } else if (tipo === 'error') {
+        icon = 'fa-exclamation-circle';
+        style = 'bg-rose-600 text-white border-rose-500';
     } else if (tipo === 'info') {
         icon = 'fa-bell';
         style = 'bg-blue-900 text-white border-blue-700';
     }
 
     toast.className += ` ${style}`;
-    toast.innerHTML = `
-        <i class="fas ${icon} text-base mr-2.5"></i>
-        <span class="flex-1">${mensaje}</span>
-    `;
 
+    const iconEl = document.createElement('i');
+    iconEl.className = `fas ${icon} text-base mr-2.5 shrink-0`;
+    iconEl.setAttribute('aria-hidden', 'true');
+
+    const textEl = document.createElement('span');
+    textEl.className = 'flex-1 break-words';
+    textEl.textContent = String(mensaje ?? '');
+
+    toast.appendChild(iconEl);
+    toast.appendChild(textEl);
     contenedor.appendChild(toast);
 
     // Animación de entrada
@@ -1235,10 +1546,11 @@ function actualizarEstilosBotonesFiltro(selector, btnActivo) {
     }
 }
 
-// Inicialización de escuchadores de búsqueda
-document.addEventListener('DOMContentLoaded', () => {
+// Inicialización de escuchadores de búsqueda, delegación segura de acciones y teclado
+function inicializarListenersAdmin() {
     const inputSearchSol = document.getElementById('searchSolicitudes');
-    if (inputSearchSol) {
+    if (inputSearchSol && !inputSearchSol.dataset.listenerBound) {
+        inputSearchSol.dataset.listenerBound = 'true';
         inputSearchSol.addEventListener('input', (e) => {
             AdminState.busquedaSolicitud = e.target.value;
             renderizarTablaSolicitudes();
@@ -1246,11 +1558,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const inputSearchAl = document.getElementById('searchAlumnos');
-    if (inputSearchAl) {
+    if (inputSearchAl && !inputSearchAl.dataset.listenerBound) {
+        inputSearchAl.dataset.listenerBound = 'true';
         inputSearchAl.addEventListener('input', (e) => {
             AdminState.busquedaAlumno = e.target.value;
             renderizarTablaAlumnos();
         });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarListenersAdmin);
+} else {
+    inicializarListenersAdmin();
+}
+
+// Delegación segura de eventos en DOM para evitar handlers inline con datos de base de datos
+document.addEventListener('click', (e) => {
+    const btnAlumno = e.target.closest('[data-alumno-action]');
+    if (btnAlumno) {
+        const action = btnAlumno.getAttribute('data-alumno-action');
+        const legajo = btnAlumno.getAttribute('data-legajo');
+        if (!legajo) return;
+
+        const alumno = AdminState.alumnos.find(a => String(a.legajo) === String(legajo));
+        const nombre = alumno?.nombre || legajo;
+
+        if (action === 'regularidad') {
+            alternarRegularidadAlumno(legajo);
+        } else if (action === 'certificado') {
+            emitirCertificadoDesdeAdmin(legajo, nombre);
+        } else if (action === 'eliminar') {
+            eliminarAlumno(legajo, nombre);
+        }
+        return;
+    }
+
+    const btnSolicitud = e.target.closest('[data-solicitud-action]');
+    if (btnSolicitud) {
+        const action = btnSolicitud.getAttribute('data-solicitud-action');
+        const id = btnSolicitud.getAttribute('data-id');
+        if (!id) return;
+
+        if (action === 'ver') {
+            verDetalleSolicitud(id);
+        } else if (action === 'estado') {
+            const estado = btnSolicitud.getAttribute('data-estado') || 'aprobada';
+            actualizarEstadoSolicitud(id, estado);
+            if (btnSolicitud.getAttribute('data-close-modal') === 'true') {
+                cerrarModalDetalle();
+            }
+        } else if (action === 'eliminar') {
+            eliminarSolicitud(id);
+        }
+    }
+});
+
+// Soporte accesible de teclado (Escape para cerrar modales abiertos)
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const modalAlumno = document.getElementById('modalNuevoAlumno');
+    if (modalAlumno && !modalAlumno.classList.contains('hidden')) {
+        cerrarModalNuevoAlumno();
+        return;
+    }
+    const modalDetalle = document.getElementById('modalDetalleSolicitud');
+    if (modalDetalle && !modalDetalle.classList.contains('hidden')) {
+        cerrarModalDetalle();
     }
 });
 
@@ -1264,7 +1638,7 @@ window.cambiarSubpestañaServicios = cambiarSubpestañaServicios;
 window.renderizarVistaAdmin = renderizarVistaAdmin;
 window.renderizarContadoresDashboard = renderizarContadoresDashboard;
 window.renderizarTablaSolicitudes = renderizarTablaSolicitudes;
-window.cambiarEstadoSolicitud = cambiarEstadoSolicitud;
+window.cambiarEstadoSolicitud = actualizarEstadoSolicitud;
 window.verDetalleSolicitud = verDetalleSolicitud;
 window.cerrarModalDetalle = cerrarModalDetalle;
 window.renderizarTablaAlumnos = renderizarTablaAlumnos;
@@ -1288,3 +1662,7 @@ window.obtenerSolicitudes = obtenerSolicitudes;
 window.actualizarEstadoSolicitud = actualizarEstadoSolicitud;
 window.eliminarSolicitud = eliminarSolicitud;
 window.cargarSolicitudesAdmin = obtenerSolicitudes;
+window.obtenerAlumnos = obtenerAlumnos;
+window.eliminarAlumno = eliminarAlumno;
+window.cargarAlumnosAdmin = obtenerAlumnos;
+window.limpiarBusquedaAlumnos = limpiarBusquedaAlumnos;

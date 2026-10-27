@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Educar para Transformar | Centro Educativo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231e3a8a'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='56'>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
@@ -199,20 +200,35 @@
                     </div>
                 </div>
                 <form class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl text-slate-800 space-y-3 sm:space-y-4 shadow-xl" id="formAdmision">
-                    <input type="text" placeholder="Nombre completo"
-                        class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <input type="text" placeholder="DNI" class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
-                        <select class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
-                            <option>Nivel Inicial</option>
-                            <option>Nivel Primario</option>
-                            <option>Nivel Secundario</option>
-                        </select>
+                    <div>
+                        <label for="admNombre" class="sr-only">Nombre completo del aspirante</label>
+                        <input type="text" id="admNombre" placeholder="Nombre completo"
+                            class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
                     </div>
-                    <input type="email" placeholder="Correo electrónico del tutor"
-                        class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
-                    <textarea placeholder="Mensaje o consulta adicional"
-                        class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl h-28 sm:h-32 outline-none focus:border-orange-500 text-base"></textarea>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label for="admDni" class="sr-only">DNI del aspirante</label>
+                            <input type="text" id="admDni" inputmode="numeric" placeholder="DNI" class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
+                        </div>
+                        <div>
+                            <label for="admNivel" class="sr-only">Nivel educativo solicitado</label>
+                            <select id="admNivel" class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
+                                <option>Nivel Inicial</option>
+                                <option>Nivel Primario</option>
+                                <option>Nivel Secundario</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="admEmail" class="sr-only">Correo electrónico del tutor</label>
+                        <input type="email" id="admEmail" placeholder="Correo electrónico del tutor"
+                            class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-base min-h-[44px]">
+                    </div>
+                    <div>
+                        <label for="admMensaje" class="sr-only">Mensaje o consulta adicional</label>
+                        <textarea id="admMensaje" placeholder="Mensaje o consulta adicional"
+                            class="w-full p-3 sm:p-3.5 bg-slate-50 border border-slate-200 rounded-xl h-28 sm:h-32 outline-none focus:border-orange-500 text-base"></textarea>
+                    </div>
                     <button type="button" onclick="enviarForm()"
                         class="w-full bg-orange-500 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-orange-600 transition min-h-[48px] flex items-center justify-center">Enviar
                         Solicitud de Vacante</button>
@@ -220,47 +236,48 @@
             </div>
         </section>
 
-        <div id="modalLogin" class="modal">
+        <div id="modalLogin" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalLoginTitle">
             <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] w-full max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto">
-                <button onclick="toggleModal(false)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-800 absolute top-3 right-3 sm:top-5 sm:right-5 text-lg transition rounded-full hover:bg-slate-100" aria-label="Cerrar modal">
-                    <i class="fas fa-times"></i>
+                <button type="button" onclick="toggleModal(false)" class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-500 hover:text-slate-800 absolute top-3 right-3 sm:top-5 sm:right-5 text-lg transition rounded-full hover:bg-slate-100" aria-label="Cerrar modal de acceso">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
-                <h3 class="text-lg sm:text-xl font-black text-blue-900 uppercase mb-4 sm:mb-6 text-center">Acceso al Campus</h3>
+                <h3 id="modalLoginTitle" class="text-lg sm:text-xl font-black text-blue-900 uppercase mb-4 sm:mb-6 text-center pr-6 sm:pr-0">Acceso al Campus</h3>
                 <div class="space-y-3 sm:space-y-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Correo electrónico:</label>
-                        <input type="email" id="loginEmail" placeholder="Usuario o email"
+                        <label for="loginEmail" class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Correo electrónico:</label>
+                        <input type="email" id="loginEmail" autocomplete="email" placeholder="Usuario o email"
                             class="w-full p-3.5 sm:p-4 bg-slate-100 border border-slate-200/60 rounded-xl outline-none text-base min-h-[46px] focus:ring-2 focus:ring-blue-900">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Contraseña:</label>
-                        <input type="password" id="loginPassword" placeholder="Contraseña"
+                        <label for="loginPassword" class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Contraseña:</label>
+                        <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Contraseña"
                             class="w-full p-3.5 sm:p-4 bg-slate-100 border border-slate-200/60 rounded-xl outline-none text-base min-h-[46px] focus:ring-2 focus:ring-blue-900">
                     </div>
-                    <button onclick="iniciarSesion()"
+                    <button type="button" onclick="iniciarSesion()"
                         class="w-full bg-blue-900 hover:bg-blue-800 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest min-h-[48px] transition flex items-center justify-center shadow-md">Ingresar</button>
-                    <p onclick="abrirModalRecuperarContraseña()"
-                        class="text-[11px] text-center font-bold text-slate-500 uppercase cursor-pointer hover:text-blue-900 transition py-1">
-                        ¿Olvidaste tu contraseña?</p>
+                    <button type="button" onclick="abrirModalRecuperarContraseña()"
+                        class="w-full min-h-[44px] text-[11px] text-center font-bold text-slate-600 uppercase cursor-pointer hover:text-blue-900 transition py-2 rounded-lg">
+                        ¿Olvidaste tu contraseña?</button>
                 </div>
             </div>
         </div>
 
-        <div id="modalOlvidePassword" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4">
+        <div id="modalOlvidePassword" role="dialog" aria-modal="true" aria-labelledby="modalOlvideTitle" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
             <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] w-full max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto">
-                <button onclick="toggleModalOlvide(false)"
-                    class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-800 absolute top-3 right-3 sm:top-5 sm:right-5 text-lg transition rounded-full hover:bg-slate-100" aria-label="Cerrar modal">
-                    <i class="fas fa-times"></i>
+                <button type="button" onclick="toggleModalOlvide(false)"
+                    class="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-500 hover:text-slate-800 absolute top-3 right-3 sm:top-5 sm:right-5 text-lg transition rounded-full hover:bg-slate-100" aria-label="Cerrar modal de recuperación">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
 
-                <h3 class="text-lg sm:text-xl font-black text-blue-900 uppercase mb-3 sm:mb-4 text-center">Recuperar Contraseña</h3>
-                <p class="text-xs text-slate-500 text-center mb-5 sm:mb-6 leading-relaxed">Ingresa tu correo electrónico registrado y te
+                <h3 id="modalOlvideTitle" class="text-lg sm:text-xl font-black text-blue-900 uppercase mb-3 sm:mb-4 text-center pr-6 sm:pr-0">Recuperar Contraseña</h3>
+                <p class="text-xs text-slate-600 text-center mb-5 sm:mb-6 leading-relaxed">Ingresa tu correo electrónico registrado y te
                     enviaremos las instrucciones para restablecer tu contraseña.</p>
 
                 <div class="space-y-3 sm:space-y-4">
-                    <input type="email" id="olvideEmail" placeholder="Tu correo electrónico"
+                    <label for="olvideEmail" class="sr-only">Tu correo electrónico</label>
+                    <input type="email" id="olvideEmail" autocomplete="email" placeholder="Tu correo electrónico"
                         class="w-full p-3.5 sm:p-4 bg-slate-100 border border-slate-200/60 rounded-xl outline-none text-base text-slate-800 min-h-[46px] focus:ring-2 focus:ring-blue-900">
-                    <button onclick="procesarRecuperacionContraseña()"
+                    <button type="button" onclick="procesarRecuperacionContraseña()"
                         class="w-full bg-blue-900 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-blue-800 transition min-h-[48px] flex items-center justify-center shadow-md">
                         Confirmar Correo
                     </button>
@@ -268,19 +285,19 @@
             </div>
         </div>
 
-        <div id="modalExitoRecuperacion"
-            class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[120] p-4">
+        <div id="modalExitoRecuperacion" role="dialog" aria-modal="true" aria-labelledby="modalExitoTitle"
+            class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[120] p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
             <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] w-full max-w-md shadow-2xl relative text-center">
                 <div
                     class="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl sm:text-2xl">
-                    <i class="fas fa-paper-plane"></i>
+                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
                 </div>
 
-                <h3 class="text-lg sm:text-xl font-black text-slate-800 uppercase mb-2">¡Correo Enviado!</h3>
-                <p class="text-xs text-slate-500 mb-6 leading-relaxed">Hemos enviado un enlace de recuperación a tu casilla de correo.
+                <h3 id="modalExitoTitle" class="text-lg sm:text-xl font-black text-slate-800 uppercase mb-2">¡Correo Enviado!</h3>
+                <p class="text-xs text-slate-600 mb-6 leading-relaxed">Hemos enviado un enlace de recuperación a tu casilla de correo.
                     Por favor, revisa tu bandeja de entrada y la carpeta de spam.</p>
 
-                <button onclick="alternarVisibilidadModal('modalExitoRecuperacion', false)"
+                <button type="button" onclick="alternarVisibilidadModal('modalExitoRecuperacion', false)"
                     class="w-full bg-emerald-600 text-white py-3.5 sm:py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-emerald-500 transition min-h-[48px] flex items-center justify-center shadow-md">
                     Entendido
                 </button>
@@ -291,157 +308,405 @@
     <!-- ========================================== -->
     <!--          VISTA PANEL DEL ESTUDIANTE        -->
     <!-- ========================================== -->
-    <div id="vistaPanel" class="hidden min-h-screen bg-slate-100 flex flex-col md:flex-row">
+    <div id="vistaPanel" class="hidden min-h-screen bg-slate-100 flex flex-col md:flex-row text-slate-800">
 
-        <aside class="w-full md:w-64 bg-blue-900 text-white flex flex-col justify-between p-4 sm:p-6 shadow-xl shrink-0">
+        <aside class="w-full md:w-64 bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-950 text-white flex flex-col justify-between p-4 sm:p-5 shadow-xl shrink-0">
             <div>
-                <div class="flex items-center justify-between md:block mb-3 md:mb-8">
-                    <div>
-                        <h2 class="text-base md:text-lg font-black tracking-wider uppercase">Educar Para Transformar</h2>
-                        <p class="text-[9px] md:text-[10px] text-blue-300 uppercase">Panel del Estudiante</p>
+                <div class="flex items-center justify-between md:block mb-3 md:mb-6 pb-3 md:pb-5 border-b border-blue-800/80">
+                    <div class="flex items-center gap-2.5 sm:gap-3">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-800 border border-blue-700 text-amber-300 flex items-center justify-center font-black text-base sm:text-lg shadow-md shrink-0">
+                            <i class="fas fa-user-graduate" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xs sm:text-sm font-black tracking-wider uppercase leading-tight">Educar para Transformar</h2>
+                            <p class="text-[9px] sm:text-[10px] text-amber-300 font-bold uppercase tracking-widest mt-0.5">Campus del Estudiante</p>
+                        </div>
                     </div>
-                    <button id="btnToggleNavEstudiante" onclick="toggleNavEstudiante()" class="md:hidden px-3 py-1.5 bg-blue-800 hover:bg-blue-700 rounded-lg text-xs font-bold text-amber-300 flex items-center gap-1.5 border border-amber-400/30">
-                        <i class="fas fa-bars"></i> Menú
+                    <button type="button" id="btnToggleNavEstudiante" onclick="toggleNavEstudiante()" aria-expanded="false" aria-controls="navEstudianteMenu" class="md:hidden min-h-[44px] min-w-[44px] px-3.5 py-2 bg-blue-800 hover:bg-blue-700 rounded-xl text-xs font-bold text-amber-300 flex items-center justify-center gap-1.5 border border-amber-400/30 transition active:scale-95">
+                        <i class="fas fa-bars" aria-hidden="true"></i> <span>Menú</span>
                     </button>
                 </div>
 
-                <nav id="navEstudianteMenu" class="hidden md:block space-y-1.5 sm:space-y-2 mt-2 md:mt-0">
-                    <button id="btn-tab-inicio" onclick="cambiarTab('inicio')"
-                        class="w-full flex items-center space-x-3 p-3 bg-blue-800 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
-                        <i class="fas fa-home text-sm"></i> <span>Inicio</span>
+                <nav id="navEstudianteMenu" aria-label="Navegación del Campus del Estudiante" class="hidden md:block space-y-1.5 mt-2 md:mt-0">
+                    <button type="button" id="btn-tab-inicio" data-est-tab="inicio" onclick="cambiarTab('inicio')" aria-current="page"
+                        class="w-full flex items-center space-x-3 p-3 bg-blue-800 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px] shadow-sm">
+                        <i class="fas fa-home w-5 text-center text-sm" aria-hidden="true"></i> <span>Inicio</span>
                     </button>
-                    <button id="btn-tab-cursos" onclick="cambiarTab('cursos')"
-                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
-                        <i class="fas fa-graduation-cap text-sm"></i> <span>Mis Cursos</span>
+                    <button type="button" id="btn-tab-perfil" data-est-tab="perfil" onclick="cambiarTab('perfil')"
+                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800/70 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
+                        <i class="fas fa-id-card w-5 text-center text-sm" aria-hidden="true"></i> <span>Mi Perfil Académico</span>
                     </button>
-                    <button id="btn-tab-pagos" onclick="cambiarTab('pagos')"
-                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
-                        <i class="fas fa-file-invoice-dollar text-sm"></i> <span>Mis Pagos</span>
+                    <button type="button" id="btn-tab-cursos" data-est-tab="cursos" onclick="cambiarTab('cursos')"
+                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800/70 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
+                        <i class="fas fa-graduation-cap w-5 text-center text-sm" aria-hidden="true"></i> <span>Mis Cursos</span>
                     </button>
-                    <button id="btn-tab-certificados" onclick="cambiarTab('certificados')"
-                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
-                        <i class="fas fa-certificate text-sm"></i> <span>Certificados</span>
+                    <button type="button" id="btn-tab-pagos" data-est-tab="pagos" onclick="cambiarTab('pagos')"
+                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800/70 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
+                        <i class="fas fa-file-invoice-dollar w-5 text-center text-sm" aria-hidden="true"></i> <span>Mis Pagos</span>
+                    </button>
+                    <button type="button" id="btn-tab-certificados" data-est-tab="certificados" onclick="cambiarTab('certificados')"
+                        class="w-full flex items-center space-x-3 p-3 text-blue-200 hover:bg-blue-800/70 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition text-left min-h-[44px]">
+                        <i class="fas fa-certificate w-5 text-center text-sm" aria-hidden="true"></i> <span>Certificados</span>
                     </button>
                 </nav>
             </div>
 
-            <div id="navEstudianteFooter" class="hidden md:block pt-3 md:pt-0 mt-3 md:mt-6 border-t border-blue-800/80 md:border-t-0">
-                <button onclick="cerrarSesion()"
-                    class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-black uppercase text-xs tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px]">
-                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+            <div id="navEstudianteFooter" class="hidden md:block pt-4 md:pt-6 mt-4 md:mt-6 border-t border-blue-800/80 space-y-2">
+                <button type="button" id="btnVolverAdminDesdeEstudiante" onclick="abrirPanelAdmin()"
+                    class="hidden w-full bg-blue-800/60 hover:bg-blue-800 text-amber-300 border border-amber-400/30 py-2.5 px-3 rounded-xl font-bold uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px]">
+                    <i class="fas fa-shield-alt" aria-hidden="true"></i> <span>Volver a Gestión Admin</span>
+                </button>
+                <button type="button" onclick="cerrarSesion()"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-md transition flex items-center justify-center space-x-2 min-h-[44px]">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i> <span>Cerrar Sesión</span>
                 </button>
             </div>
         </aside>
 
-        <main class="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto">
-            <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-6 sm:mb-8 bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-black text-slate-800">¡Bienvenido de nuevo!</h1>
-                    <p id="panelUserEmail" class="text-xs font-bold text-slate-400 mt-1 break-all">cargando_usuario@colegio.com</p>
+        <main class="flex-1 flex flex-col min-h-screen md:h-screen overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3.5 sm:py-4 sticky top-0 z-30 flex items-center justify-between gap-3 shadow-sm">
+                <div class="min-w-0 flex-1">
+                    <span id="estudianteCurrentSectionSubtitle" class="text-[10px] font-black uppercase tracking-widest text-blue-900 block">
+                        Campus Virtual • Ciclo Lectivo 2027
+                    </span>
+                    <h1 id="panelWelcomeTitle" class="text-base sm:text-xl font-black text-slate-800 truncate">
+                        Campus del Estudiante
+                    </h1>
                 </div>
-                <div class="flex items-center space-x-3 self-end sm:self-auto">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 font-black shadow-sm shrink-0"
-                        id="userAvatarInitials">U</div>
+                <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+                    <div class="text-right">
+                        <p id="panelUserEmail" class="text-xs font-bold text-slate-700 max-w-[160px] sm:max-w-[240px] truncate">Usuario</p>
+                        <span id="panelUserRoleBadge" class="inline-block text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-900 border border-blue-200">
+                            Estudiante
+                        </span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-blue-900 text-white flex items-center justify-center font-black shadow-sm shrink-0"
+                        id="userAvatarInitials" aria-hidden="true">U</div>
                 </div>
             </header>
 
-            <!-- ========================================== -->
-            <!-- CONTENEDOR DE LA PESTAÑA INICIO            -->
-            <!-- ========================================== -->
-            <div id="tabInicio" class="space-y-4 sm:space-y-6">
-                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border-l-4 border-blue-600">
-                        <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Estado Académico</p>
-                        <p class="text-xl sm:text-2xl font-black text-slate-800 mt-1 sm:mt-2">Regular</p>
-                    </div>
-                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border-l-4 border-emerald-500">
-                        <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Asistencia General</p>
-                        <p class="text-xl sm:text-2xl font-black text-slate-800 mt-1 sm:mt-2">94%</p>
-                    </div>
-                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border-l-4 border-amber-500">
-                        <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Avisos Pendientes</p>
-                        <p class="text-xl sm:text-2xl font-black text-slate-800 mt-1 sm:mt-2">2 Nuevos</p>
-                    </div>
-                </section>
+            <div class="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 flex-1">
 
-                <section class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm">
-                    <h3 class="font-black text-slate-800 uppercase text-xs tracking-wider mb-3 sm:mb-4">Circular Informativa</h3>
-                    <div class="p-3.5 sm:p-4 bg-slate-50 rounded-xl text-slate-600 text-xs leading-relaxed">
-                        Estimado alumno/tutor, le recordamos que las mesas de examen del periodo Julio ya se encuentran
-                        abiertas para la inscripción desde la sección "Mis Cursos". Ante cualquier duda técnica,
-                        contactar a soporte.
-                    </div>
-                </section>
-            </div>
+                <!-- ========================================== -->
+                <!-- 1. CONTENEDOR DE LA PESTAÑA INICIO         -->
+                <!-- ========================================== -->
+                <div id="tabInicio" class="space-y-4 sm:space-y-6">
 
-            <!-- ========================================== -->
-            <!-- CONTENEDOR DE LA PESTAÑA MIS CURSOS        -->
-            <!-- ========================================== -->
-            <div id="tabCursos" class="hidden space-y-4 sm:space-y-6">
-                <div class="bg-white p-8 sm:p-12 rounded-2xl shadow-sm border border-slate-100 text-center max-w-xl mx-auto my-6">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="text-base sm:text-lg font-black text-slate-800 mb-2">
-                        No hay cursos asociados a esta cuenta.
-                    </h3>
-                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
-                        Cuando la institución asocie cursos o movimientos a tu perfil, aparecerán aquí.
-                    </p>
-                </div>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- CONTENEDOR DE LA PESTAÑA MIS PAGOS         -->
-            <!-- ========================================== -->
-            <div id="tabPagos" class="hidden space-y-4 sm:space-y-6">
-                <div class="bg-white p-8 sm:p-12 rounded-2xl shadow-sm border border-slate-100 text-center max-w-xl mx-auto my-6">
-                    <div class="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                    </div>
-                    <h3 class="text-base sm:text-lg font-black text-slate-800 mb-2">
-                        No hay información de pagos disponible para esta cuenta.
-                    </h3>
-                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
-                        Cuando la institución asocie cursos o movimientos a tu perfil, aparecerán aquí.
-                    </p>
-                </div>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- CONTENEDOR DE LA PESTAÑA CERTIFICADOS      -->
-            <!-- ========================================== -->
-            <div id="tabCertificados" class="hidden space-y-4 sm:space-y-6">
-                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1 sm:mb-2">Generar Certificado de Alumno Regular</h3>
-                    <p class="text-xs sm:text-sm text-slate-500 mb-4 leading-relaxed">Ingrese su número de documento o legajo para verificar su
-                        estado institucional.</p>
-
-                    <div class="flex flex-col sm:flex-row gap-3 max-w-md">
-                        <input type="text" id="certDocumento" placeholder="Ej: 45678912 o Legajo"
-                            class="w-full sm:flex-1 px-4 py-3 border border-gray-300 rounded-xl text-base sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 min-h-[44px]">
-                        <button id="btnGenerarCert" onclick="procesarCertificado()"
-                            class="w-full sm:w-auto px-6 py-3 bg-blue-900 text-white font-bold rounded-xl text-xs sm:text-sm hover:bg-blue-800 transition min-h-[44px] flex items-center justify-center uppercase tracking-wider shadow-md">
-                            GENERAR CERTIFICADO
-                        </button>
+                    <!-- Estado de carga inicial -->
+                    <div id="inicioEstadoCargando" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center">
+                        <p class="text-xs sm:text-sm font-bold text-slate-600">
+                            <i class="fas fa-circle-notch fa-spin mr-2 text-blue-900" aria-hidden="true"></i>
+                            Verificando matrícula vinculada a tu cuenta...
+                        </p>
                     </div>
 
-                    <!-- Bloque de Resultado Exitoso (Oculto al inicio) -->
-                    <div id="resultadoCertificado"
-                        class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div>
-                            <p class="text-sm font-semibold text-green-800">¡Validación Exitosa!</p>
-                            <p class="text-xs text-green-600 mt-0.5">Estado: REGULAR. El certificado está listo para imprimir o
-                                guardar en PDF.</p>
+                    <!-- Tarjetas de resumen académico (visibles cuando existe matrícula vinculada real) -->
+                    <section id="inicioContenidoMatricula" class="hidden space-y-4 sm:space-y-6" aria-label="Resumen académico del estudiante">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 border-l-4 border-l-blue-900">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Estudiante / Legajo</p>
+                                <p id="estInicioNombre" class="text-base sm:text-lg font-black text-slate-800 mt-1 break-words">—</p>
+                                <p id="estInicioLegajo" class="text-xs font-mono font-bold text-blue-900 mt-1">—</p>
+                            </div>
+                            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 border-l-4 border-l-indigo-600">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Nivel y Curso</p>
+                                <p id="estInicioNivel" class="text-base sm:text-lg font-black text-slate-800 mt-1">—</p>
+                                <p id="estInicioCurso" class="text-xs font-bold text-slate-600 mt-1">—</p>
+                            </div>
+                            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 border-l-4 border-l-emerald-600">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Condición Académica</p>
+                                <div class="mt-2">
+                                    <span id="estInicioRegularidad" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-100 text-slate-700">
+                                        —
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 font-semibold mt-1.5">Padrón Ciclo 2027</p>
+                            </div>
+                            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 border-l-4 border-l-amber-500">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Asistencia General</p>
+                                <p id="estInicioAsistencia" class="text-xl sm:text-2xl font-black text-slate-800 mt-1">—</p>
+                                <p class="text-[11px] text-slate-500 font-semibold mt-1">Registro oficial</p>
+                            </div>
                         </div>
-                        <button onclick="descargarPDF()"
-                            class="w-full sm:w-auto px-4 py-2.5 bg-green-600 text-white font-bold rounded-lg text-xs hover:bg-green-500 transition min-h-[44px] flex items-center justify-center shadow-sm">
-                            🖨️ Imprimir / PDF
-                        </button>
+
+                        <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h2 class="text-sm sm:text-base font-black text-slate-800">Matrícula Institucional Vinculada</h2>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    Los datos exhibidos provienen directamente de tu legajo oficial en el sistema de gestión escolar.
+                                </p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2.5 shrink-0">
+                                <button type="button" onclick="cambiarTab('perfil')"
+                                    class="min-h-[44px] px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm">
+                                    <i class="fas fa-id-card" aria-hidden="true"></i>
+                                    <span>Ver Ficha Completa</span>
+                                </button>
+                                <button type="button" onclick="cambiarTab('certificados')"
+                                    class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-certificate text-blue-900" aria-hidden="true"></i>
+                                    <span>Constancia</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Estado vacío claro cuando la cuenta no tiene matrícula vinculada en public.alumnos -->
+                    <section id="inicioEstadoVacio" class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80 space-y-5" aria-live="polite">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-xl sm:text-2xl shrink-0">
+                                <i class="fas fa-user-clock" aria-hidden="true"></i>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">
+                                    Sin Matrícula Vinculada
+                                </span>
+                                <h2 class="text-base sm:text-lg font-black text-slate-800">
+                                    Tu cuenta no registra una matrícula asociada todavía
+                                </h2>
+                                <p id="inicioEstadoVacioDetalle" class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
+                                    Has iniciado sesión correctamente, pero tu usuario aún no se encuentra vinculado a un legajo de alumno en el padrón del Ciclo Lectivo 2027. Cuando Secretaría Académica asocie tu cuenta a tu matrícula, verás aquí tu legajo, nivel, curso, condición de regularidad y asistencia.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Estado Académico</p>
+                                <p class="text-sm font-bold text-slate-500 mt-1">Sin registro vinculado</p>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Nivel y Curso</p>
+                                <p class="text-sm font-bold text-slate-500 mt-1">Sin asignar</p>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                                <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Asistencia General</p>
+                                <p class="text-sm font-bold text-slate-500 mt-1">No disponible</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+                            <button type="button" onclick="cambiarTab('perfil')"
+                                class="min-h-[44px] px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto">
+                                <i class="fas fa-id-card" aria-hidden="true"></i>
+                                <span>Consultar Mi Perfil Académico</span>
+                            </button>
+                            <button type="button" onclick="recargarDatosEstudiante()"
+                                class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-2 w-full sm:w-auto">
+                                <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                <span>Actualizar Estado</span>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 2. CONTENEDOR MI PERFIL ACADÉMICO          -->
+                <!-- ========================================== -->
+                <div id="tabPerfil" class="hidden space-y-4 sm:space-y-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+                        <i class="fas fa-shield-alt text-blue-900 text-base mt-0.5 shrink-0" aria-hidden="true"></i>
+                        <div class="text-xs text-blue-950 leading-relaxed">
+                            <p class="font-black uppercase tracking-wider text-[11px]">Ficha Académica de Solo Lectura</p>
+                            <p class="mt-0.5 text-slate-700">
+                                Por seguridad institucional, esta vista consulta exclusivamente la matrícula vinculada a tu usuario autenticado y no permite modificar datos administrativos. Para actualizar datos filiatorios o de tutoría, comunicate con Secretaría Académica.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Ficha con datos reales cuando existe matrícula vinculada -->
+                    <section id="perfilContenidoMatricula" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden" aria-label="Datos de matrícula del estudiante">
+                        <div class="bg-slate-50 px-5 py-4 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <h2 id="estPerfilNombre" class="text-base sm:text-lg font-black text-slate-800">—</h2>
+                                <p class="text-xs text-slate-600 font-semibold">Legajo Oficial: <span id="estPerfilLegajo" class="font-mono font-bold text-blue-900">—</span></p>
+                            </div>
+                            <span id="estPerfilRegularidadBadge" class="inline-flex items-center self-start sm:self-auto px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-100 text-slate-700">
+                                —
+                            </span>
+                        </div>
+
+                        <dl class="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Documento (DNI)</dt>
+                                <dd id="estPerfilDni" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Nivel Educativo</dt>
+                                <dd id="estPerfilNivel" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Curso / Sala / Año</dt>
+                                <dd id="estPerfilCurso" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Asistencia Registrada</dt>
+                                <dd id="estPerfilAsistencia" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Idioma Asignado</dt>
+                                <dd id="estPerfilIdioma" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Deporte / Actividad</dt>
+                                <dd id="estPerfilDeporte" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60 sm:col-span-2 lg:col-span-3">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Adulto / Tutor Responsable Registrado</dt>
+                                <dd id="estPerfilTutor" class="text-sm font-bold text-slate-800 mt-1">—</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <!-- Estado vacío honesto en Mi Perfil Académico -->
+                    <section id="perfilEstadoVacio" class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg shrink-0">
+                                <i class="fas fa-id-card" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-black text-slate-800">Sin ficha de matrícula asociada</h2>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                                    No se encontró un registro en la nómina de alumnos (<code class="text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">public.alumnos</code>) vinculado a tu identificador de usuario autenticado.
+                                </p>
+                            </div>
+                        </div>
+
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Correo de la Cuenta</dt>
+                                <dd id="estPerfilCuentaEmail" class="text-sm font-bold text-slate-800 mt-1 break-all">—</dd>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <dt class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Rol de Acceso Verificado</dt>
+                                <dd id="estPerfilCuentaRol" class="text-sm font-bold text-blue-900 mt-1 uppercase">Estudiante</dd>
+                            </div>
+                        </dl>
+                    </section>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 3. CONTENEDOR DE LA PESTAÑA MIS CURSOS     -->
+                <!-- ========================================== -->
+                <div id="tabCursos" class="hidden space-y-4 sm:space-y-6">
+                    <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 text-center max-w-xl mx-auto my-4">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-4">
+                            <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                        </div>
+                        <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mb-2">
+                            Sin Comisiones Asociadas
+                        </span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-800 mb-2">
+                            No hay cursos ni materias asociados a esta cuenta
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
+                            El módulo de cursada, asignaturas y calificaciones no registra comisiones vinculadas en la base de datos para tu perfil en esta etapa.
+                        </p>
+                        <div id="cursosReferenciaMatricula" class="hidden mt-5 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-left text-xs text-slate-700">
+                            <p class="font-black text-slate-800 uppercase text-[10px] tracking-wider mb-1">Referencia de tu Matrícula Activa:</p>
+                            <p id="cursosReferenciaTexto" class="font-semibold text-slate-600">—</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+                <!-- ========================================== -->
+                <!-- 4. CONTENEDOR DE LA PESTAÑA MIS PAGOS      -->
+                <!-- ========================================== -->
+                <div id="tabPagos" class="hidden space-y-4 sm:space-y-6">
+                    <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 text-center max-w-xl mx-auto my-4">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-emerald-50 text-emerald-800 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-4">
+                            <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                        </div>
+                        <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mb-2">
+                            Módulo Informativo
+                        </span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-800 mb-2">
+                            No hay información de pagos disponible para esta cuenta
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
+                            Este campus no procesa cobros en línea ni registra estados de deuda o transacciones contables. Para consultas arancelarias o comprobantes, comunicate con Administración Institucional.
+                        </p>
+                        <div class="mt-5 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 max-w-md mx-auto">
+                            <p class="font-bold text-slate-800"><i class="fas fa-clock text-blue-900 mr-1.5" aria-hidden="true"></i>Atención de Tesorería:</p>
+                            <p class="mt-0.5">Lunes a Viernes de 07:30 a 17:30 hs • info@educarparatransformar.edu.ar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 5. CONTENEDOR DE LA PESTAÑA CERTIFICADOS   -->
+                <!-- ========================================== -->
+                <div id="tabCertificados" class="hidden space-y-4 sm:space-y-6">
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                            <div>
+                                <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 mb-1.5">
+                                    Consulta sujeta a Matrícula Autorizada
+                                </span>
+                                <h2 class="text-base sm:text-lg font-black text-slate-800">Constancia de Alumno Regular</h2>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed max-w-2xl">
+                                    La verificación se realiza exclusivamente sobre el legajo vinculado a tu usuario autenticado. Esta versión ofrece una vista previa informativa en pantalla y no emite documentos con firma digital ni descarga PDF certificada.
+                                </p>
+                            </div>
+                            <button type="button" id="btnGenerarCert" onclick="procesarCertificado()"
+                                class="w-full sm:w-auto px-5 py-3 bg-blue-900 text-white font-black rounded-xl text-xs hover:bg-blue-800 transition min-h-[44px] flex items-center justify-center gap-2 uppercase tracking-wider shadow-sm shrink-0">
+                                <i class="fas fa-check-double" aria-hidden="true"></i>
+                                <span>Verificar Mi Condición</span>
+                            </button>
+                        </div>
+
+                        <!-- Aviso cuando no existe matrícula vinculada o el alumno no es Regular -->
+                        <div id="estadoCertificadoNoDisponible" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 leading-relaxed" role="status" aria-live="polite">
+                            <p id="estadoCertificadoMensaje" class="font-semibold text-slate-700">
+                                Presioná «Verificar Mi Condición» para comprobar si tu cuenta posee una matrícula activa con estado Regular en el padrón oficial.
+                            </p>
+                        </div>
+
+                        <!-- Vista previa demostrativa en pantalla (solo visible si existe matrícula real vinculada con regularidad === 'Regular') -->
+                        <div id="resultadoCertificado"
+                            class="hidden p-5 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-4" role="region" aria-label="Vista previa demostrativa de constancia">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-emerald-200/80">
+                                <div>
+                                    <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-emerald-700 text-white">
+                                        Condición Verificada en Padrón
+                                    </span>
+                                    <h3 class="text-sm sm:text-base font-black text-emerald-950 mt-1">
+                                        Vista Previa Informativa — Constancia de Alumno Regular
+                                    </h3>
+                                </div>
+                                <span id="certFechaConsulta" class="text-[11px] font-bold text-emerald-900">—</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs bg-white p-4 rounded-xl border border-emerald-100">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-slate-500">Estudiante</p>
+                                    <p id="certDatoNombre" class="font-bold text-slate-800 mt-0.5">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-slate-500">DNI</p>
+                                    <p id="certDatoDni" class="font-bold text-slate-800 mt-0.5">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-slate-500">Legajo</p>
+                                    <p id="certDatoLegajo" class="font-mono font-bold text-blue-900 mt-0.5">—</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-slate-500">Nivel / Curso</p>
+                                    <p id="certDatoCurso" class="font-bold text-slate-800 mt-0.5">—</p>
+                                </div>
+                            </div>
+
+                            <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-950 flex items-start gap-2.5">
+                                <i class="fas fa-info-circle text-amber-700 mt-0.5 shrink-0" aria-hidden="true"></i>
+                                <p class="leading-relaxed">
+                                    <strong>Alcance demostrativo:</strong> Esta constancia en pantalla es únicamente informativa y <strong>no posee firma digital ni validez de documento oficial descargable</strong>. Para obtener un certificado sellado, solicítelo en Secretaría Académica.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </main>
     </div>
 
@@ -465,63 +730,63 @@
                                 <span class="text-[10px] sm:text-xs font-black text-orange-400 uppercase tracking-widest">Transformar</span>
                             </div>
                         </div>
-                        <button id="btnToggleNavAdmin" onclick="toggleNavAdmin()" class="md:hidden px-3 py-1.5 bg-blue-800 hover:bg-blue-700 rounded-lg text-xs font-bold text-amber-300 border border-amber-400/30 flex items-center gap-1.5">
-                            <i class="fas fa-bars"></i> Módulos
+                        <button type="button" id="btnToggleNavAdmin" onclick="toggleNavAdmin()" aria-expanded="false" aria-controls="navAdminMenu" class="md:hidden min-h-[44px] min-w-[44px] px-3.5 py-2 bg-blue-800 hover:bg-blue-700 rounded-xl text-xs font-bold text-amber-300 border border-amber-400/30 flex items-center justify-center gap-1.5 transition active:scale-95">
+                            <i class="fas fa-bars" aria-hidden="true"></i> <span>Módulos</span>
                         </button>
                     </div>
                     <div class="mt-2.5 sm:mt-3 bg-blue-800/60 rounded-lg p-2 flex items-center justify-between border border-blue-700/50">
                         <span class="text-[9px] font-black uppercase tracking-widest text-amber-300">
-                            <i class="fas fa-layer-group mr-1"></i> ETAPA 2: SISTEMA GESTIÓN
+                            <i class="fas fa-layer-group mr-1" aria-hidden="true"></i> ETAPA 2: SISTEMA GESTIÓN
                         </span>
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
                     </div>
                 </div>
 
                 <!-- Navegación por Módulos -->
-                <nav id="navAdminMenu" class="hidden md:block space-y-1.5 text-xs font-bold uppercase tracking-wider mt-2 md:mt-0">
-                    <button data-tab="dashboard" onclick="cambiarAdminTab('dashboard')"
+                <nav id="navAdminMenu" aria-label="Módulos del sistema de gestión" class="hidden md:block space-y-1.5 text-xs font-bold uppercase tracking-wider mt-2 md:mt-0">
+                    <button type="button" data-tab="dashboard" onclick="cambiarAdminTab('dashboard')"
                         class="admin-nav-item w-full flex items-center space-x-3 p-3 bg-blue-800 text-white rounded-xl shadow-md transition text-left min-h-[44px]">
-                        <i class="fas fa-chart-pie w-5 text-center text-sm"></i> <span>Dashboard General</span>
+                        <i class="fas fa-chart-pie w-5 text-center text-sm" aria-hidden="true"></i> <span>Dashboard General</span>
                     </button>
-                    <button data-tab="solicitudes" onclick="cambiarAdminTab('solicitudes')"
+                    <button type="button" data-tab="solicitudes" onclick="cambiarAdminTab('solicitudes')"
                         class="admin-nav-item w-full flex items-center justify-between p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-inbox w-5 text-center text-sm"></i> <span>Solicitudes 2027</span>
+                            <i class="fas fa-inbox w-5 text-center text-sm" aria-hidden="true"></i> <span>Solicitudes 2027</span>
                         </div>
                         <span id="badgeAdminPendientesNav" class="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">4</span>
                     </button>
-                    <button data-tab="alumnos" onclick="cambiarAdminTab('alumnos')"
+                    <button type="button" data-tab="alumnos" onclick="cambiarAdminTab('alumnos')"
                         class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
-                        <i class="fas fa-user-graduate w-5 text-center text-sm"></i> <span>Alumnos & Matrícula</span>
+                        <i class="fas fa-user-graduate w-5 text-center text-sm" aria-hidden="true"></i> <span>Alumnos & Matrícula</span>
                     </button>
-                    <button data-tab="docentes" onclick="cambiarAdminTab('docentes')"
+                    <button type="button" data-tab="docentes" onclick="cambiarAdminTab('docentes')"
                         class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
-                        <i class="fas fa-chalkboard-teacher w-5 text-center text-sm"></i> <span>Docentes & Personal</span>
+                        <i class="fas fa-chalkboard-teacher w-5 text-center text-sm" aria-hidden="true"></i> <span>Docentes & Personal</span>
                     </button>
-                    <button data-tab="servicios" onclick="cambiarAdminTab('servicios')"
+                    <button type="button" data-tab="servicios" onclick="cambiarAdminTab('servicios')"
                         class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
-                        <i class="fas fa-bus-alt w-5 text-center text-sm"></i> <span>Servicios & Bienestar</span>
+                        <i class="fas fa-bus-alt w-5 text-center text-sm" aria-hidden="true"></i> <span>Servicios & Bienestar</span>
                     </button>
-                    <button data-tab="deportes" onclick="cambiarAdminTab('deportes')"
+                    <button type="button" data-tab="deportes" onclick="cambiarAdminTab('deportes')"
                         class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
-                        <i class="fas fa-swimmer w-5 text-center text-sm"></i> <span>Deportes & Sedes</span>
+                        <i class="fas fa-swimmer w-5 text-center text-sm" aria-hidden="true"></i> <span>Deportes & Sedes</span>
                     </button>
-                    <button data-tab="circulares" onclick="cambiarAdminTab('circulares')"
+                    <button type="button" data-tab="circulares" onclick="cambiarAdminTab('circulares')"
                         class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
-                        <i class="fas fa-bullhorn w-5 text-center text-sm"></i> <span>Circulares & Avisos</span>
+                        <i class="fas fa-bullhorn w-5 text-center text-sm" aria-hidden="true"></i> <span>Circulares & Avisos</span>
                     </button>
                 </nav>
             </div>
 
             <!-- Accesos de Salida y Cambio de Rol -->
             <div id="navAdminFooter" class="hidden md:block pt-4 md:pt-6 border-t border-blue-800/80 space-y-2 mt-4 md:mt-6">
-                <button onclick="abrirPanelEstudianteDesdeAdmin()"
+                <button type="button" onclick="abrirPanelEstudianteDesdeAdmin()"
                     class="w-full bg-blue-800/50 hover:bg-blue-800 text-blue-200 hover:text-white py-2.5 px-3 rounded-xl font-bold uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px]">
-                    <i class="fas fa-user-circle"></i> <span>Vista Estudiante</span>
+                    <i class="fas fa-user-circle" aria-hidden="true"></i> <span>Vista Estudiante</span>
                 </button>
-                <button onclick="cerrarSesion()"
+                <button type="button" onclick="cerrarSesion()"
                     class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 sm:py-3 px-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition flex items-center justify-center space-x-2 min-h-[44px]">
-                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i> <span>Cerrar Sesión</span>
                 </button>
             </div>
         </aside>
@@ -530,23 +795,23 @@
         <main class="flex-1 flex flex-col min-h-screen md:h-screen overflow-y-auto">
 
             <!-- Barra Superior (Top Header) -->
-            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex flex-col sm:flex-row justify-between sm:items-center gap-2 sm:gap-4 shadow-sm">
-                <div>
-                    <div class="flex items-center gap-2">
+            <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between gap-3 shadow-sm">
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span class="text-[9px] sm:text-[10px] font-black uppercase text-blue-900 bg-blue-50 px-2 py-0.5 rounded">UTN FRRe • Metodología II</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400">Resistencia, Chaco</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-500">Resistencia, Chaco</span>
                     </div>
-                    <h1 id="adminCurrentSectionTitle" class="text-base sm:text-xl font-black text-slate-800 tracking-tight mt-0.5">
+                    <h1 id="adminCurrentSectionTitle" class="text-sm sm:text-xl font-black text-slate-900 tracking-tight mt-0.5 leading-snug break-words">
                         Tablero General de Gestión y Métricas
                     </h1>
                 </div>
 
-                <div class="flex items-center gap-3 sm:gap-4 self-end sm:self-auto">
-                    <div class="flex flex-col text-right">
+                <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
+                    <div class="hidden sm:flex flex-col text-right">
                         <span class="text-xs font-bold text-slate-800">Lic. Carolina Vargas</span>
-                        <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400">Dirección General</span>
+                        <span class="text-[10px] font-semibold text-slate-500">Dirección General</span>
                     </div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-900 text-amber-300 font-black text-xs sm:text-sm flex items-center justify-center shadow shrink-0">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-900 text-amber-300 font-black text-xs sm:text-sm flex items-center justify-center shadow shrink-0" title="Lic. Carolina Vargas - Dirección General" aria-label="Lic. Carolina Vargas - Dirección General">
                         CV
                     </div>
                 </div>
@@ -615,11 +880,11 @@
                                 Plataforma de gestión institucional integral: administración de admisiones, seguimiento académico de jornada extendida, coordinación de idiomas (Inglés, Portugués y Francés), logística de micros escolares y bienestar estudiantil.
                             </p>
                         </div>
-                        <div class="flex gap-3 shrink-0">
-                            <button onclick="cambiarAdminTab('solicitudes')" class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition shadow">
+                        <div class="flex flex-col sm:flex-row gap-2.5 w-full md:w-auto shrink-0">
+                            <button type="button" onclick="cambiarAdminTab('solicitudes')" class="min-h-[44px] bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition shadow flex items-center justify-center">
                                 Revisar Solicitudes
                             </button>
-                            <button onclick="abrirModalNuevoAlumno()" class="bg-white text-blue-900 hover:bg-blue-50 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition shadow">
+                            <button type="button" onclick="abrirModalNuevoAlumno()" class="min-h-[44px] bg-white text-blue-900 hover:bg-blue-50 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition shadow flex items-center justify-center">
                                 + Nueva Matrícula
                             </button>
                         </div>
@@ -698,46 +963,47 @@
 
                 <!-- 2. SECCIÓN: SOLICITUDES DE ADMISIÓN (FORMULARIO WEB) -->
                 <div id="admin-sec-solicitudes" class="admin-tab-content hidden space-y-5">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                             <div>
-                                <h3 class="text-base font-black text-slate-800">Solicitudes de Inscripción (Ciclo 2027)</h3>
-                                <p class="text-xs text-slate-500">Postulaciones enviadas por familias mediante la Landing Page institucional.</p>
+                                <h3 class="text-base font-black text-slate-900">Solicitudes de Inscripción (Ciclo 2027)</h3>
+                                <p class="text-xs text-slate-600">Postulaciones enviadas por familias mediante la Landing Page institucional.</p>
                             </div>
                             <div class="w-full sm:w-72">
+                                <label for="searchSolicitudes" class="sr-only">Buscar solicitud por aspirante, DNI o tutor</label>
                                 <input type="text" id="searchSolicitudes" placeholder="Buscar por aspirante, DNI o tutor..."
-                                    class="w-full px-4 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-900">
+                                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-base sm:text-xs min-h-[44px] outline-none focus:ring-2 focus:ring-blue-900">
                             </div>
                         </div>
 
                         <!-- Filtros por nivel y estado -->
                         <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
                             <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase mr-1">Nivel:</span>
-                                <button onclick="setFiltroSolicitudNivel('todos', this)" class="btn-filtro-sol-nivel bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition min-h-[36px]">Todos</button>
-                                <button onclick="setFiltroSolicitudNivel('inicial', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Inicial</button>
-                                <button onclick="setFiltroSolicitudNivel('primario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Primario</button>
-                                <button onclick="setFiltroSolicitudNivel('secundario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Secundario</button>
+                                <span class="text-[10px] font-bold text-slate-500 uppercase mr-1">Nivel:</span>
+                                <button type="button" onclick="setFiltroSolicitudNivel('todos', this)" class="btn-filtro-sol-nivel bg-blue-900 text-white px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] transition min-h-[44px] sm:min-h-[36px]">Todos</button>
+                                <button type="button" onclick="setFiltroSolicitudNivel('inicial', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] hover:bg-slate-50 transition min-h-[44px] sm:min-h-[36px]">Inicial</button>
+                                <button type="button" onclick="setFiltroSolicitudNivel('primario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] hover:bg-slate-50 transition min-h-[44px] sm:min-h-[36px]">Primario</button>
+                                <button type="button" onclick="setFiltroSolicitudNivel('secundario', this)" class="btn-filtro-sol-nivel bg-white text-slate-600 border px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] hover:bg-slate-50 transition min-h-[44px] sm:min-h-[36px]">Secundario</button>
                             </div>
 
                             <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase mr-1">Estado:</span>
-                                <button onclick="setFiltroSolicitudEstado('todos', this)" class="btn-filtro-sol-estado bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition min-h-[36px]">Todos</button>
-                                <button onclick="setFiltroSolicitudEstado('pendiente', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Pendientes</button>
-                                <button onclick="setFiltroSolicitudEstado('aprobada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Aprobadas</button>
-                                <button onclick="setFiltroSolicitudEstado('rechazada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-50 transition min-h-[36px]">Rechazadas</button>
+                                <span class="text-[10px] font-bold text-slate-500 uppercase mr-1">Estado:</span>
+                                <button type="button" onclick="setFiltroSolicitudEstado('todos', this)" class="btn-filtro-sol-estado bg-blue-900 text-white px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] transition min-h-[44px] sm:min-h-[36px]">Todos</button>
+                                <button type="button" onclick="setFiltroSolicitudEstado('pendiente', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] hover:bg-slate-50 transition min-h-[44px] sm:min-h-[36px]">Pendientes</button>
+                                <button type="button" onclick="setFiltroSolicitudEstado('aprobada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] hover:bg-slate-50 transition min-h-[44px] sm:min-h-[36px]">Aprobadas</button>
+                                <button type="button" onclick="setFiltroSolicitudEstado('rechazada', this)" class="btn-filtro-sol-estado bg-white text-slate-600 border px-3.5 py-2 sm:py-1.5 rounded-lg font-bold text-[11px] sm:text-[10px] hover:bg-slate-50 transition min-h-[44px] sm:min-h-[36px]">Rechazadas</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tabla de Solicitudes -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
-                        <p class="text-[10px] text-slate-400 px-4 pt-3 pb-1 md:hidden flex items-center gap-1">
-                            <i class="fas fa-arrows-alt-h text-blue-500"></i> Deslizá horizontalmente para ver la tabla completa
+                        <p class="text-[10px] text-slate-500 px-4 pt-3 pb-1 md:hidden flex items-center gap-1">
+                            <i class="fas fa-arrows-alt-h text-blue-500" aria-hidden="true"></i> Deslizá horizontalmente para ver la tabla completa
                         </p>
                         <table class="w-full min-w-[680px] text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-wider">
                                     <th class="p-4">Código</th>
                                     <th class="p-4">Aspirante / DNI</th>
                                     <th class="p-4">Nivel & Grado</th>
@@ -755,35 +1021,60 @@
                 </div>
 
                 <!-- 3. SECCIÓN: ALUMNOS & MATRÍCULA -->
-                <div id="admin-sec-alumnos" class="admin-tab-content hidden space-y-5">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                        <div>
-                            <h3 class="text-base font-black text-slate-800">Nómina de Alumnos Matriculados</h3>
-                            <p class="text-xs text-slate-500">Control de regularidad, idiomas obligatorios y actividades deportivas.</p>
-                        </div>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                            <input type="text" id="searchAlumnos" placeholder="Buscar por nombre o legajo..."
-                                class="px-4 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-900 w-full sm:w-60 min-h-[44px]">
-                            <button onclick="abrirModalNuevoAlumno()" class="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5 shrink-0 min-h-[44px]">
-                                <i class="fas fa-plus"></i> Matricular Alumno
+                <div id="admin-sec-alumnos" class="admin-tab-content hidden space-y-4 sm:space-y-5">
+                    <!-- Cabecera y Controles -->
+                    <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 sm:gap-4">
+                            <div>
+                                <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Nómina de Alumnos Matriculados</h3>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Control de regularidad, idiomas obligatorios y actividades deportivas.</p>
+                            </div>
+                            <button type="button" onclick="abrirModalNuevoAlumno()" class="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white px-5 py-3 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition shadow-md active:scale-95 flex items-center justify-center gap-2 shrink-0 min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 focus-visible:ring-offset-2">
+                                <i class="fas fa-plus text-xs" aria-hidden="true"></i>
+                                <span>Matricular Alumno</span>
                             </button>
+                        </div>
+
+                        <!-- Barra de Búsqueda Mejorada + Contador de Resultados -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+                            <div class="relative flex-1 max-w-md">
+                                <label for="searchAlumnos" class="sr-only">Buscar alumno por nombre, DNI, legajo o curso</label>
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fas fa-search text-sm" aria-hidden="true"></i>
+                                </span>
+                                <input type="text" id="searchAlumnos" placeholder="Buscar alumno, DNI o legajo..." autocomplete="off"
+                                    class="w-full pl-10 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-xs text-slate-800 placeholder:text-slate-500 outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 min-h-[44px] transition">
+                                <button type="button" id="btnLimpiarBusquedaAlumnos" onclick="limpiarBusquedaAlumnos()" aria-label="Limpiar búsqueda de alumnos"
+                                    class="hidden absolute inset-y-0 right-0 w-11 min-w-[44px] min-h-[44px] items-center justify-center text-slate-400 hover:text-slate-700 rounded-r-xl transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900">
+                                    <i class="fas fa-times-circle text-base" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between sm:justify-end gap-2">
+                                <span id="contadorAlumnosResultados" aria-live="polite" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/60">
+                                    0 alumnos matriculados
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
-                        <p class="text-[10px] text-slate-400 px-4 pt-3 pb-1 md:hidden flex items-center gap-1">
-                            <i class="fas fa-arrows-alt-h text-blue-500"></i> Deslizá horizontalmente para ver la tabla completa
-                        </p>
+                    <!-- Vista Mobile: Tarjetas de Alumnos (< 768px) -->
+                    <div id="listaAlumnosCards" class="md:hidden space-y-3" role="region" aria-label="Listado móvil de alumnos matriculados">
+                        <!-- Renderizado dinámico por admin.js -->
+                    </div>
+
+                    <!-- Vista Desktop: Tabla de Alumnos (>= 768px) -->
+                    <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
                         <table class="w-full min-w-[680px] text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-wider">
                                     <th class="p-4">Legajo</th>
                                     <th class="p-4">Alumno</th>
                                     <th class="p-4">Curso / Nivel</th>
                                     <th class="p-4">Idioma & Deporte</th>
                                     <th class="p-4 text-center">Condición</th>
                                     <th class="p-4 text-center">Asistencia</th>
-                                    <th class="p-4 text-right">Documentos</th>
+                                    <th class="p-4 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaAlumnosBody">
@@ -812,21 +1103,21 @@
                 <div id="admin-sec-servicios" class="admin-tab-content hidden space-y-5">
                     <!-- Selector de Subpestañas -->
                     <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
-                        <button id="btn-sub-micros" onclick="cambiarSubpestañaServicios('micros')"
-                            class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-900 text-white transition flex items-center gap-2">
-                            <i class="fas fa-bus"></i> Micros de Traslado
+                        <button type="button" id="btn-sub-micros" onclick="cambiarSubpestañaServicios('micros')"
+                            class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-900 text-white transition flex items-center gap-2">
+                            <i class="fas fa-bus" aria-hidden="true"></i> Micros de Traslado
                         </button>
-                        <button id="btn-sub-comedor" onclick="cambiarSubpestañaServicios('comedor')"
-                            class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
-                            <i class="fas fa-utensils"></i> Comedor Institucional
+                        <button type="button" id="btn-sub-comedor" onclick="cambiarSubpestañaServicios('comedor')"
+                            class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
+                            <i class="fas fa-utensils" aria-hidden="true"></i> Comedor Institucional
                         </button>
-                        <button id="btn-sub-enfermeria" onclick="cambiarSubpestañaServicios('enfermeria')"
-                            class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
-                            <i class="fas fa-first-aid"></i> Sala de Enfermería
+                        <button type="button" id="btn-sub-enfermeria" onclick="cambiarSubpestañaServicios('enfermeria')"
+                            class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
+                            <i class="fas fa-first-aid" aria-hidden="true"></i> Sala de Enfermería
                         </button>
-                        <button id="btn-sub-apoyo" onclick="cambiarSubpestañaServicios('apoyo')"
-                            class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
-                            <i class="fas fa-heartbeat"></i> Apoyo Estudiantil
+                        <button type="button" id="btn-sub-apoyo" onclick="cambiarSubpestañaServicios('apoyo')"
+                            class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
+                            <i class="fas fa-heartbeat" aria-hidden="true"></i> Apoyo Estudiantil
                         </button>
                     </div>
 
@@ -935,14 +1226,14 @@
                             <h4 class="font-black text-slate-800 text-sm uppercase tracking-wider mb-4">Redactar Circular Oficial</h4>
                             <form onsubmit="publicarNuevaCircular(event)" class="space-y-3 text-xs">
                                 <div>
-                                    <label class="block font-bold text-slate-700 mb-1">Título de la Circular:</label>
+                                    <label for="cirTitulo" class="block font-bold text-slate-700 mb-1">Título de la Circular:</label>
                                     <input type="text" id="cirTitulo" required placeholder="Ej: Convocatoria a reunión de tutores"
-                                        class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900">
+                                        class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                     <div>
-                                        <label class="block font-bold text-slate-700 mb-1">Categoría:</label>
-                                        <select id="cirCategoria" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none">
+                                        <label for="cirCategoria" class="block font-bold text-slate-700 mb-1">Categoría:</label>
+                                        <select id="cirCategoria" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
                                             <option>Académica</option>
                                             <option>Deportes</option>
                                             <option>Salud</option>
@@ -951,8 +1242,8 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block font-bold text-slate-700 mb-1">Destinatario:</label>
-                                        <select id="cirDestinatario" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none">
+                                        <label for="cirDestinatario" class="block font-bold text-slate-700 mb-1">Destinatario:</label>
+                                        <select id="cirDestinatario" class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
                                             <option>Toda la Comunidad</option>
                                             <option>Tutores</option>
                                             <option>Docentes</option>
@@ -961,11 +1252,11 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block font-bold text-slate-700 mb-1">Contenido:</label>
+                                    <label for="cirContenido" class="block font-bold text-slate-700 mb-1">Contenido:</label>
                                     <textarea id="cirContenido" required rows="4" placeholder="Escriba el comunicado..."
-                                        class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900"></textarea>
+                                        class="w-full p-2.5 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs"></textarea>
                                 </div>
-                                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-xl font-black uppercase text-[11px] tracking-wider transition shadow">
+                                <button type="submit" class="w-full min-h-[44px] bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-xl font-black uppercase text-[11px] tracking-wider transition shadow">
                                     Publicar Circular
                                 </button>
                             </form>
@@ -988,89 +1279,125 @@
     <!-- ============================================================== -->
 
     <!-- Modal Detalle de Solicitud de Admisión -->
-    <div id="modalDetalleSolicitud" class="hidden fixed inset-0 bg-black/60 z-[200] items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl p-5 sm:p-6 w-[calc(100%-1rem)] max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
-            <button onclick="cerrarModalDetalle()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 text-lg w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100">
-                <i class="fas fa-times"></i>
+    <div id="modalDetalleSolicitud" role="dialog" aria-modal="true" aria-label="Detalle de solicitud de admisión" onclick="if(event.target === this) cerrarModalDetalle()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto border border-slate-100">
+            <button type="button" onclick="cerrarModalDetalle()" aria-label="Cerrar detalle de solicitud" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-500 hover:text-slate-800 text-lg w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
             <div id="contenidoDetalleSolicitud"></div>
         </div>
     </div>
 
     <!-- Modal Nuevo Alumno / Matrícula Manual -->
-    <div id="modalNuevoAlumno" class="hidden fixed inset-0 bg-black/60 z-[200] items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl p-5 sm:p-6 w-[calc(100%-1rem)] max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
-            <button onclick="cerrarModalNuevoAlumno()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 text-lg w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100">
-                <i class="fas fa-times"></i>
-            </button>
-            <h4 class="text-base sm:text-lg font-black text-slate-800 mb-1 pr-8">Matricular Nuevo Alumno (Ciclo 2027)</h4>
-            <p class="text-xs text-slate-500 mb-4">Complete los datos institucionales para dar de alta en la nómina.</p>
-            <form onsubmit="guardarNuevoAlumno(event)" class="space-y-3 text-xs">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Nombre Completo:</label>
-                        <input type="text" id="matNombre" required placeholder="Ej: Bautista Gómez"
-                            class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
+    <div id="modalNuevoAlumno" role="dialog" aria-modal="true" aria-labelledby="modalNuevoAlumnoTitle" onclick="if(event.target === this) cerrarModalNuevoAlumno()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div class="bg-white rounded-2xl sm:rounded-3xl w-full max-w-lg max-h-[calc(100dvh-2rem)] sm:max-h-[88vh] flex flex-col shadow-2xl relative overflow-hidden my-auto border border-slate-100">
+            <!-- Header Compacto -->
+            <div class="flex-shrink-0 bg-white px-5 py-4 sm:px-6 sm:py-5 border-b border-slate-100 flex items-center justify-between">
+                <div class="pr-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-900 inline-block shrink-0" aria-hidden="true"></span>
+                        <h3 id="modalNuevoAlumnoTitle" class="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-tight">
+                            Nueva Matrícula
+                        </h3>
                     </div>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Ciclo 2027 · Padrón Oficial</p>
+                </div>
+                <button type="button" onclick="cerrarModalNuevoAlumno()" class="w-11 h-11 min-w-[44px] min-h-[44px] -mr-2 text-slate-400 hover:text-slate-800 flex items-center justify-center rounded-full hover:bg-slate-100 transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900" aria-label="Cerrar modal de matrícula">
+                    <i class="fas fa-times text-base" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Formulario con scroll independiente y footer persistente -->
+            <form onsubmit="guardarNuevoAlumno(event)" class="flex flex-col min-h-0 flex-1 overflow-hidden">
+                <!-- Cuerpo con Scroll Vertical Independiente -->
+                <div class="flex-1 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6 sm:py-5 space-y-4 touch-scroll text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="matNombre" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                                Nombre Completo <span class="text-rose-600" aria-hidden="true">*</span>
+                            </label>
+                            <input type="text" id="matNombre" required aria-required="true" autocomplete="name" placeholder="Ej: Bautista Gómez"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800 placeholder:text-slate-400">
+                        </div>
+                        <div>
+                            <label for="matDni" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                                DNI Alumno <span class="text-rose-600" aria-hidden="true">*</span>
+                            </label>
+                            <input type="text" id="matDni" required aria-required="true" inputmode="numeric" placeholder="Ej: 51.442.900"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800 placeholder:text-slate-400">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="matNivel" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                                Nivel Educativo <span class="text-rose-600" aria-hidden="true">*</span>
+                            </label>
+                            <select id="matNivel" required aria-required="true"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800">
+                                <option value="Inicial">Inicial</option>
+                                <option value="Primario" selected>Primario</option>
+                                <option value="Secundario">Secundario</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="matCurso" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                                Curso / Sala <span class="text-rose-600" aria-hidden="true">*</span>
+                            </label>
+                            <input type="text" id="matCurso" required aria-required="true" placeholder="Ej: 5to Grado 'B'"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800 placeholder:text-slate-400">
+                        </div>
+                    </div>
+
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">DNI Alumno:</label>
-                        <input type="text" id="matDni" required placeholder="Ej: 51.442.900"
-                            class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
+                        <label for="matTutor" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                            Tutor Responsable <span class="text-rose-600" aria-hidden="true">*</span>
+                        </label>
+                        <input type="text" id="matTutor" required aria-required="true" autocomplete="name" placeholder="Ej: Marcelo Gómez"
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800 placeholder:text-slate-400">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="matIdioma" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                                Idioma Extracurricular
+                            </label>
+                            <select id="matIdioma"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800">
+                                <option value="Inglés">Inglés</option>
+                                <option value="Portugués">Portugués</option>
+                                <option value="Francés">Francés</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="matDeporte" class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wide">
+                                Deporte Institucional
+                            </label>
+                            <select id="matDeporte"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 text-base sm:text-sm min-h-[44px] transition text-slate-800">
+                                <option value="Natación">Natación</option>
+                                <option value="Fútbol">Fútbol</option>
+                                <option value="Atletismo">Atletismo</option>
+                                <option value="Básquet">Básquet</option>
+                                <option value="Vóleibol">Vóleibol</option>
+                                <option value="Ajedrez">Ajedrez</option>
+                                <option value="Danza">Danza</option>
+                                <option value="Artes Marciales">Artes Marciales</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Nivel:</label>
-                        <select id="matNivel" class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
-                            <option>Inicial</option>
-                            <option selected>Primario</option>
-                            <option>Secundario</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Curso / Sala:</label>
-                        <input type="text" id="matCurso" required placeholder="Ej: 5to Grado 'B'"
-                            class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Tutor Responsable:</label>
-                    <input type="text" id="matTutor" required placeholder="Ej: Marcelo Gómez"
-                        class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 text-base sm:text-xs min-h-[44px]">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Idioma:</label>
-                        <select id="matIdioma" class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
-                            <option>Inglés</option>
-                            <option>Portugués</option>
-                            <option>Francés</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Deporte:</label>
-                        <select id="matDeporte" class="w-full p-2.5 sm:p-3 bg-slate-50 border rounded-xl outline-none text-base sm:text-xs min-h-[44px]">
-                            <option>Natación</option>
-                            <option>Fútbol</option>
-                            <option>Atletismo</option>
-                            <option>Básquet</option>
-                            <option>Vóleibol</option>
-                            <option>Ajedrez</option>
-                            <option>Danza</option>
-                            <option>Artes Marciales</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3 border-t">
-                    <button type="button" onclick="cerrarModalNuevoAlumno()" class="w-full sm:w-auto px-4 py-2.5 border rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition min-h-[44px]">
+                <!-- Footer de Acciones Accesible y Persistente -->
+                <div class="flex-shrink-0 px-5 py-3.5 sm:px-6 bg-slate-50/95 backdrop-blur-sm border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-2.5 pb-[max(0.875rem,env(safe-area-inset-bottom))]">
+                    <button type="button" onclick="cerrarModalNuevoAlumno()"
+                        class="w-full sm:w-auto min-h-[44px] px-5 py-2.5 border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-sm transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900">
                         Cancelar
                     </button>
-                    <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow min-h-[44px]">
-                        Guardar Matrícula
+                    <button type="submit"
+                        class="w-full sm:w-auto min-h-[44px] px-6 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-sm uppercase tracking-wider transition shadow-md active:scale-95 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 focus-visible:ring-offset-2">
+                        <i class="fas fa-user-plus text-xs" aria-hidden="true"></i>
+                        <span>Guardar Matrícula</span>
                     </button>
                 </div>
             </form>
