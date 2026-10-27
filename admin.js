@@ -336,6 +336,10 @@ async function abrirPanelAdmin() {
         return;
     }
 
+    if (typeof window.cerrarTodosLosDrawersMobile === 'function') {
+        window.cerrarTodosLosDrawersMobile();
+    }
+
     const vistaLanding = document.getElementById('vistaLanding');
     const vistaPanel = document.getElementById('vistaPanel');
     const vistaAdmin = document.getElementById('vistaAdmin');
@@ -356,6 +360,10 @@ async function abrirPanelAdmin() {
  * Regresa a la Landing Page pública
  */
 function volverALanding() {
+    if (typeof window.cerrarTodosLosDrawersMobile === 'function') {
+        window.cerrarTodosLosDrawersMobile();
+    }
+
     const vistaLanding = document.getElementById('vistaLanding');
     const vistaPanel = document.getElementById('vistaPanel');
     const vistaAdmin = document.getElementById('vistaAdmin');
@@ -370,6 +378,9 @@ function volverALanding() {
  * Abre el panel de estudiante desde el admin (vista previa autorizada)
  */
 async function abrirPanelEstudianteDesdeAdmin() {
+    if (typeof window.cerrarTodosLosDrawersMobile === 'function') {
+        window.cerrarTodosLosDrawersMobile();
+    }
     const client = getSupabaseClient();
     if (!client) return;
 
@@ -412,23 +423,48 @@ async function abrirPanelEstudianteDesdeAdmin() {
 }
 
 /**
- * Alterna la visibilidad del menú de navegación de administración en móviles
+ * Alterna la visibilidad del menú de navegación de administración en móviles (Drawer Lateral)
  */
-function toggleNavAdmin() {
+function toggleNavAdmin(forzarEstado, gestionarFoco = true) {
+    const drawer = document.getElementById('drawerNavAdmin');
+    const backdrop = document.getElementById('backdropNavAdmin');
     const navMenu = document.getElementById('navAdminMenu');
     const navFooter = document.getElementById('navAdminFooter');
     const btnToggle = document.getElementById('btnToggleNavAdmin');
+    const btnCerrar = document.getElementById('btnCerrarNavAdmin');
     if (!navMenu) return;
 
-    const estaOculto = navMenu.classList.contains('hidden');
-    if (estaOculto) {
+    const estaAbierto = drawer
+        ? drawer.classList.contains('is-open')
+        : !navMenu.classList.contains('hidden');
+    const abrir = typeof forzarEstado === 'boolean' ? forzarEstado : !estaAbierto;
+
+    if (abrir) {
+        if (typeof window.toggleNavLanding === 'function') window.toggleNavLanding(false, false);
+        if (typeof window.toggleNavEstudiante === 'function') window.toggleNavEstudiante(false, false);
         navMenu.classList.remove('hidden');
         if (navFooter) navFooter.classList.remove('hidden');
-        if (btnToggle) btnToggle.setAttribute('aria-expanded', 'true');
+        drawer?.classList.add('is-open');
+        backdrop?.classList.add('is-open');
+        btnToggle?.setAttribute('aria-expanded', 'true');
+        if (typeof window.sincronizarBloqueoScrollDrawer === 'function') {
+            window.sincronizarBloqueoScrollDrawer();
+        }
+        if (gestionarFoco && window.innerWidth < 768) {
+            requestAnimationFrame(() => btnCerrar?.focus());
+        }
     } else {
         navMenu.classList.add('hidden');
         if (navFooter) navFooter.classList.add('hidden');
-        if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
+        drawer?.classList.remove('is-open');
+        backdrop?.classList.remove('is-open');
+        btnToggle?.setAttribute('aria-expanded', 'false');
+        if (typeof window.sincronizarBloqueoScrollDrawer === 'function') {
+            window.sincronizarBloqueoScrollDrawer();
+        }
+        if (gestionarFoco && estaAbierto && window.innerWidth < 768) {
+            requestAnimationFrame(() => btnToggle?.focus());
+        }
     }
 }
 
@@ -462,14 +498,9 @@ function cambiarAdminTab(nombreTab) {
         contenedorActivo.classList.remove('hidden');
     }
 
-    // En móviles, colapsar el menú al seleccionar una opción
+    // En móviles, cerrar el drawer al seleccionar una opción
     if (window.innerWidth < 768) {
-        const navMenu = document.getElementById('navAdminMenu');
-        const navFooter = document.getElementById('navAdminFooter');
-        const btnToggle = document.getElementById('btnToggleNavAdmin');
-        if (navMenu) navMenu.classList.add('hidden');
-        if (navFooter) navFooter.classList.add('hidden');
-        if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
+        toggleNavAdmin(false, false);
     }
 
     // Actualizar título de sección en el header

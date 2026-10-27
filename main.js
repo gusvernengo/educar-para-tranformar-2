@@ -8,6 +8,9 @@
     function toggleModal(mostrar) {
         const modalLogin = document.getElementById('modalLogin');
         if (mostrar) {
+            if (typeof cerrarTodosLosDrawersMobile === 'function') {
+                cerrarTodosLosDrawersMobile();
+            }
             modalLogin.classList.add('active');
             document.body.style.overflow = 'hidden';
         } else {
@@ -344,6 +347,7 @@
 
     // Gestión dinámica de vistas según el rol del usuario (public.profiles.role)
     async function gestionarVistasPorRol(usuario) {
+        cerrarTodosLosDrawersMobile();
         const vistaLanding = document.getElementById('vistaLanding');
         const vistaPanel = document.getElementById('vistaPanel');
         const vistaAdmin = document.getElementById('vistaAdmin');
@@ -495,43 +499,234 @@
         }
     };
 
-    // Soporte de tecla Escape para modales públicos
-    document.addEventListener('keydown', (e) => {
-        if (e.key !== 'Escape') return;
-        const modalLogin = document.getElementById('modalLogin');
-        if (modalLogin && modalLogin.classList.contains('active')) {
-            toggleModal(false);
-            return;
-        }
-        const modalOlvide = document.getElementById('modalOlvidePassword');
-        if (modalOlvide && !modalOlvide.classList.contains('hidden')) {
-            alternarVisibilidadModal('modalOlvidePassword', false);
-            return;
-        }
-        const modalExito = document.getElementById('modalExitoRecuperacion');
-        if (modalExito && !modalExito.classList.contains('hidden')) {
-            alternarVisibilidadModal('modalExitoRecuperacion', false);
-        }
-    });
+    // Control unificado de scroll-lock para drawers móviles
+    function sincronizarBloqueoScrollDrawer() {
+        const hayDrawerAbierto = Boolean(
+            document.querySelector('.mobile-drawer-panel.is-open')
+        );
+        document.body.classList.toggle('drawer-open', hayDrawerAbierto && window.innerWidth < 768);
+    }
 
-    // Toggle de navegación del panel de estudiante en móviles
-    function toggleNavEstudiante() {
+    // Cerrar todos los drawers móviles activos (al cambiar de vista, abrir modal o redimensionar a desktop)
+    function cerrarTodosLosDrawersMobile() {
+        toggleNavLanding(false, false);
+        toggleNavEstudiante(false, false);
+        if (typeof window.toggleNavAdmin === 'function') {
+            window.toggleNavAdmin(false, false);
+        }
+        document.body.classList.remove('drawer-open');
+    }
+
+    // Toggle del Drawer Mobile de la Landing Pública (#vistaLanding)
+    function toggleNavLanding(forzarEstado, gestionarFoco = true) {
+        const drawer = document.getElementById('drawerNavLanding');
+        const backdrop = document.getElementById('backdropNavLanding');
+        const btnToggle = document.getElementById('btnToggleNavLanding');
+        const btnCerrar = document.getElementById('btnCerrarNavLanding');
+        if (!drawer) return;
+
+        const estaAbierto = drawer.classList.contains('is-open');
+        const abrir = typeof forzarEstado === 'boolean' ? forzarEstado : !estaAbierto;
+
+        if (abrir) {
+            toggleNavEstudiante(false, false);
+            if (typeof window.toggleNavAdmin === 'function') window.toggleNavAdmin(false, false);
+            drawer.classList.add('is-open');
+            backdrop?.classList.add('is-open');
+            btnToggle?.setAttribute('aria-expanded', 'true');
+            sincronizarBloqueoScrollDrawer();
+            if (gestionarFoco && window.innerWidth < 768) {
+                requestAnimationFrame(() => btnCerrar?.focus());
+            }
+        } else {
+            drawer.classList.remove('is-open');
+            backdrop?.classList.remove('is-open');
+            btnToggle?.setAttribute('aria-expanded', 'false');
+            sincronizarBloqueoScrollDrawer();
+            if (gestionarFoco && estaAbierto && window.innerWidth < 768) {
+                requestAnimationFrame(() => btnToggle?.focus());
+            }
+        }
+    }
+
+    // Navegación por secciones de la Landing (actualiza elemento activo y cierra drawer mobile)
+    function navegarSeccionLanding(seccionId, event) {
+        if (event && typeof event.preventDefault === 'function') {
+            event.preventDefault();
+        }
+
+        // Actualizar estado activo en el drawer mobile
+        document.querySelectorAll('[data-landing-item]').forEach(el => {
+            const activo = el.getAttribute('data-landing-item') === seccionId;
+            const icon = el.querySelector('i');
+            if (activo) {
+                el.classList.add('bg-blue-800', 'text-white', 'shadow-sm');
+                el.classList.remove('text-blue-100', 'hover:bg-blue-800/70');
+                el.setAttribute('aria-current', 'page');
+                if (icon) {
+                    icon.classList.add('text-amber-300');
+                    icon.classList.remove('text-blue-300');
+                }
+            } else {
+                el.classList.remove('bg-blue-800', 'text-white', 'shadow-sm');
+                el.classList.add('text-blue-100', 'hover:bg-blue-800/70');
+                el.removeAttribute('aria-current');
+                if (icon) {
+                    icon.classList.remove('text-amber-300');
+                    icon.classList.add('text-blue-300');
+                }
+            }
+        });
+
+        // Actualizar estado activo en barra desktop
+        document.querySelectorAll('[data-landing-desktop]').forEach(el => {
+            const activo = el.getAttribute('data-landing-desktop') === seccionId;
+            if (activo) {
+                el.classList.add('text-blue-900');
+                el.setAttribute('aria-current', 'page');
+            } else {
+                el.classList.remove('text-blue-900');
+                el.removeAttribute('aria-current');
+            }
+        });
+
+        toggleNavLanding(false, false);
+
+        const destino = document.getElementById(seccionId);
+        if (destino) {
+            destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Acciones del pie del menú mobile en la Landing Pública
+    function accionMenuLanding(accion) {
+        toggleNavLanding(false, false);
+
+        if (accion === 'inscripcion') {
+            navegarSeccionLanding('contacto');
+            setTimeout(() => {
+                document.getElementById('admNombre')?.focus({ preventScroll: true });
+            }, 350);
+        } else if (accion === 'acceso') {
+            toggleModal(true);
+            setTimeout(() => {
+                document.getElementById('loginEmail')?.focus();
+            }, 150);
+        } else if (accion === 'admin') {
+            if (typeof window.abrirPanelAdmin === 'function') {
+                window.abrirPanelAdmin();
+            }
+        }
+    }
+
+    // Toggle de navegación del panel de estudiante en móviles (Drawer Lateral)
+    function toggleNavEstudiante(forzarEstado, gestionarFoco = true) {
+        const drawer = document.getElementById('drawerNavEstudiante');
+        const backdrop = document.getElementById('backdropNavEstudiante');
         const navMenu = document.getElementById('navEstudianteMenu');
         const navFooter = document.getElementById('navEstudianteFooter');
         const btnToggle = document.getElementById('btnToggleNavEstudiante');
+        const btnCerrar = document.getElementById('btnCerrarNavEstudiante');
         if (!navMenu) return;
 
-        const estaOculto = navMenu.classList.contains('hidden');
-        if (estaOculto) {
+        const estaAbierto = drawer
+            ? drawer.classList.contains('is-open')
+            : !navMenu.classList.contains('hidden');
+        const abrir = typeof forzarEstado === 'boolean' ? forzarEstado : !estaAbierto;
+
+        if (abrir) {
+            toggleNavLanding(false, false);
+            if (typeof window.toggleNavAdmin === 'function') window.toggleNavAdmin(false, false);
             navMenu.classList.remove('hidden');
             if (navFooter) navFooter.classList.remove('hidden');
-            if (btnToggle) btnToggle.setAttribute('aria-expanded', 'true');
+            drawer?.classList.add('is-open');
+            backdrop?.classList.add('is-open');
+            btnToggle?.setAttribute('aria-expanded', 'true');
+            sincronizarBloqueoScrollDrawer();
+            if (gestionarFoco && window.innerWidth < 768) {
+                requestAnimationFrame(() => btnCerrar?.focus());
+            }
         } else {
             navMenu.classList.add('hidden');
             if (navFooter) navFooter.classList.add('hidden');
-            if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
+            drawer?.classList.remove('is-open');
+            backdrop?.classList.remove('is-open');
+            btnToggle?.setAttribute('aria-expanded', 'false');
+            sincronizarBloqueoScrollDrawer();
+            if (gestionarFoco && estaAbierto && window.innerWidth < 768) {
+                requestAnimationFrame(() => btnToggle?.focus());
+            }
         }
     }
+
+    // Restaurar estado limpio de navegación al pasar a vista de escritorio (>= 768px)
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+            cerrarTodosLosDrawersMobile();
+        }
+    });
+
+    // Soporte accesible de teclado (Escape para cerrar drawers/modales y Focus Trap en drawers abiertos)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const drawerLanding = document.getElementById('drawerNavLanding');
+            if (drawerLanding && drawerLanding.classList.contains('is-open')) {
+                e.preventDefault();
+                toggleNavLanding(false, true);
+                return;
+            }
+            const drawerEstudiante = document.getElementById('drawerNavEstudiante');
+            if (drawerEstudiante && drawerEstudiante.classList.contains('is-open')) {
+                e.preventDefault();
+                toggleNavEstudiante(false, true);
+                return;
+            }
+            const drawerAdmin = document.getElementById('drawerNavAdmin');
+            if (drawerAdmin && drawerAdmin.classList.contains('is-open') && typeof window.toggleNavAdmin === 'function') {
+                e.preventDefault();
+                window.toggleNavAdmin(false, true);
+                return;
+            }
+
+            const modalLogin = document.getElementById('modalLogin');
+            if (modalLogin && modalLogin.classList.contains('active')) {
+                toggleModal(false);
+                return;
+            }
+            const modalOlvide = document.getElementById('modalOlvidePassword');
+            if (modalOlvide && !modalOlvide.classList.contains('hidden')) {
+                alternarVisibilidadModal('modalOlvidePassword', false);
+                return;
+            }
+            const modalExito = document.getElementById('modalExitoRecuperacion');
+            if (modalExito && !modalExito.classList.contains('hidden')) {
+                alternarVisibilidadModal('modalExitoRecuperacion', false);
+            }
+            return;
+        }
+
+        // Focus Trap dentro del drawer activo en mobile (< 768px)
+        if (e.key === 'Tab' && window.innerWidth < 768) {
+            const activeDrawer = document.querySelector('.mobile-drawer-panel.is-open');
+            if (!activeDrawer) return;
+
+            const focusables = Array.from(
+                activeDrawer.querySelectorAll('button:not([disabled]):not(.hidden), a[href]:not(.hidden)')
+            ).filter(el => el.offsetParent !== null);
+
+            if (focusables.length === 0) return;
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    });
 
     // Control de pestañas del panel con soporte accesible y móvil
     function cambiarTab(tabSeleccionada) {
@@ -573,14 +768,9 @@
             }
         });
 
-        // En pantallas móviles, colapsar el menú al cambiar de pestaña
+        // En pantallas móviles, cerrar el drawer al cambiar de pestaña
         if (window.innerWidth < 768) {
-            const navMenu = document.getElementById('navEstudianteMenu');
-            const navFooter = document.getElementById('navEstudianteFooter');
-            const btnToggle = document.getElementById('btnToggleNavEstudiante');
-            if (navMenu) navMenu.classList.add('hidden');
-            if (navFooter) navFooter.classList.add('hidden');
-            if (btnToggle) btnToggle.setAttribute('aria-expanded', 'false');
+            toggleNavEstudiante(false, false);
         }
     }
 
@@ -684,6 +874,11 @@
     window.procesarCertificado = procesarCertificado;
     window.descargarPDF = descargarPDF;
     window.toggleNavEstudiante = toggleNavEstudiante;
+    window.toggleNavLanding = toggleNavLanding;
+    window.navegarSeccionLanding = navegarSeccionLanding;
+    window.accionMenuLanding = accionMenuLanding;
+    window.cerrarTodosLosDrawersMobile = cerrarTodosLosDrawersMobile;
+    window.sincronizarBloqueoScrollDrawer = sincronizarBloqueoScrollDrawer;
     window.obtenerPerfilUsuario = obtenerPerfilUsuario;
     window.obtenerMatriculaEstudianteAutenticado = obtenerMatriculaEstudianteAutenticado;
     window.cargarCampusEstudiante = cargarCampusEstudiante;
