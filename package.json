@@ -1,0 +1,20 @@
+{
+  "name": "educar-para-transformar",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android",
+    "expo:start": "npm --prefix mobile-expo start",
+    "expo:clear": "npm --prefix mobile-expo start -- -c"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^7.6.9",
+    "@capacitor/core": "^8.5.2",
+    "vite": "^5.4.10"
+  }
+}
