@@ -1088,17 +1088,33 @@
                 </div>
 
                 <!-- 2. SECCIÓN: SOLICITUDES DE ADMISIÓN (FORMULARIO WEB) -->
-                <div id="admin-sec-solicitudes" class="admin-tab-content hidden space-y-5">
+                <div id="admin-sec-solicitudes" class="admin-tab-content hidden space-y-4 sm:space-y-5">
                     <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                             <div>
-                                <h3 class="text-base font-black text-slate-900">Solicitudes de Inscripción (Ciclo 2027)</h3>
-                                <p class="text-xs text-slate-600">Postulaciones enviadas por familias mediante la Landing Page institucional.</p>
+                                <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Solicitudes de Inscripción (Ciclo 2027)</h3>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Postulaciones enviadas por familias mediante la Landing Page institucional.</p>
                             </div>
-                            <div class="w-full sm:w-72">
+                            <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+                                <span id="contadorSolicitudesResultados" aria-live="polite" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/60">
+                                    0 solicitudes registradas
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Barra de búsqueda accesible con botón limpiar -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <div class="relative w-full max-w-md">
                                 <label for="searchSolicitudes" class="sr-only">Buscar solicitud por aspirante, DNI o tutor</label>
-                                <input type="text" id="searchSolicitudes" placeholder="Buscar por aspirante, DNI o tutor..."
-                                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-base sm:text-xs min-h-[44px] outline-none focus:ring-2 focus:ring-blue-900">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fas fa-search text-sm" aria-hidden="true"></i>
+                                </span>
+                                <input type="text" id="searchSolicitudes" placeholder="Buscar por aspirante, DNI o tutor..." autocomplete="off"
+                                    class="w-full pl-10 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-xs text-slate-800 placeholder:text-slate-500 min-h-[44px] outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 transition">
+                                <button type="button" id="btnLimpiarBusquedaSolicitudes" onclick="limpiarBusquedaSolicitudes()" aria-label="Limpiar búsqueda de solicitudes"
+                                    class="hidden absolute inset-y-0 right-0 w-11 min-w-[44px] min-h-[44px] items-center justify-center text-slate-400 hover:text-slate-700 rounded-r-xl transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900">
+                                    <i class="fas fa-times-circle text-base" aria-hidden="true"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -1122,11 +1138,13 @@
                         </div>
                     </div>
 
-                    <!-- Tabla de Solicitudes -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
-                        <p class="text-[10px] text-slate-500 px-4 pt-3 pb-1 md:hidden flex items-center gap-1">
-                            <i class="fas fa-arrows-alt-h text-blue-500" aria-hidden="true"></i> Deslizá horizontalmente para ver la tabla completa
-                        </p>
+                    <!-- Vista Mobile: Tarjetas de Solicitudes de Admisión (< 768px) -->
+                    <div id="listaSolicitudesCards" class="md:hidden space-y-3" role="region" aria-label="Listado móvil de solicitudes de admisión">
+                        <!-- Renderizado dinámico por admin.js -->
+                    </div>
+
+                    <!-- Vista Desktop: Tabla de Solicitudes (>= 768px) -->
+                    <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
                         <table class="w-full min-w-[680px] text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-wider">
@@ -1527,6 +1545,31 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación Accesible y Mobile-First (Reemplazo de window.confirm) -->
+    <div id="modalConfirmacionGenerica" role="dialog" aria-modal="true" aria-labelledby="modalConfirmacionTitulo" aria-describedby="modalConfirmacionMensaje" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[250] items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-sm shadow-2xl relative my-auto border border-slate-100 text-center space-y-4">
+            <div id="modalConfirmacionIcono" class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl shadow-sm">
+                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+            </div>
+            <div>
+                <h3 id="modalConfirmacionTitulo" class="text-base font-black text-slate-900 leading-snug">
+                    ¿Confirmar acción?
+                </h3>
+                <p id="modalConfirmacionMensaje" class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                    Esta operación no se puede deshacer.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5 pt-2">
+                <button type="button" id="btnModalConfirmacionCancelar" class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400">
+                    Cancelar
+                </button>
+                <button type="button" id="btnModalConfirmacionAceptar" class="min-h-[44px] px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-xl text-xs transition active:scale-95 shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600">
+                    Confirmar
+                </button>
+            </div>
         </div>
     </div>
 

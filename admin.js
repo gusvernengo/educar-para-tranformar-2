@@ -327,12 +327,12 @@ async function abrirPanelAdmin() {
             .single();
 
         if (error || perfil?.role !== 'admin') {
-            alert('Acceso restringido: Esta cuenta no posee permisos de Administrador.');
+            mostrarToast('Acceso restringido: Esta cuenta no posee permisos de Administrador.', 'warning');
             return;
         }
     } catch (err) {
         console.error("Error al validar rol de administrador:", err);
-        alert('No se pudo verificar el permiso de Administrador.');
+        mostrarToast('No se pudo verificar el permiso de Administrador.', 'error');
         return;
     }
 
@@ -670,98 +670,308 @@ function escaparHTML(valor) {
 }
 
 /**
- * Renderiza la tabla de Solicitudes de Admisión con filtros y acciones completas
+ * Renderiza la tabla de Solicitudes de Admisión (Desktop >= 768px) y Tarjetas Mobile (< 768px)
  */
 function renderizarTablaSolicitudes() {
     const tbody = document.getElementById('tablaSolicitudesBody');
-    if (!tbody) return;
+    const cardsContainer = document.getElementById('listaSolicitudesCards');
+    if (!tbody && !cardsContainer) return;
 
-    let lista = AdminState.solicitudes.filter(item => {
+    const termino = (AdminState.busquedaSolicitud || '').trim().toLowerCase();
+    const lista = AdminState.solicitudes.filter(item => {
         const coincideNivel = AdminState.filtroSolicitudNivel === 'todos' || (item.nivel || '').toLowerCase() === AdminState.filtroSolicitudNivel.toLowerCase();
         const coincideEstado = AdminState.filtroSolicitudEstado === 'todos' || (item.estado || '').toLowerCase() === AdminState.filtroSolicitudEstado.toLowerCase();
-        const coincideBusqueda = AdminState.busquedaSolicitud === '' ||
-            (item.nombreAspirante || item.nombre || '').toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase()) ||
-            (item.dni || '').includes(AdminState.busquedaSolicitud) ||
-            (item.tutor || '').toLowerCase().includes(AdminState.busquedaSolicitud.toLowerCase());
+        const coincideBusqueda = termino === '' ||
+            (item.nombreAspirante || item.nombre || '').toLowerCase().includes(termino) ||
+            (item.dni || '').toLowerCase().includes(termino) ||
+            (item.tutor || '').toLowerCase().includes(termino) ||
+            (item.email || '').toLowerCase().includes(termino);
         return coincideNivel && coincideEstado && coincideBusqueda;
     });
 
+    const totalSolicitudes = AdminState.solicitudes.length;
+    const hayFiltroActivo =
+        termino !== '' ||
+        AdminState.filtroSolicitudNivel !== 'todos' ||
+        AdminState.filtroSolicitudEstado !== 'todos';
+
+    // Mostrar u ocultar botón de limpiar búsqueda de solicitudes
+    const btnLimpiar = document.getElementById('btnLimpiarBusquedaSolicitudes');
+    if (btnLimpiar) {
+        if (termino !== '') {
+            btnLimpiar.classList.remove('hidden');
+            btnLimpiar.classList.add('flex');
+        } else {
+            btnLimpiar.classList.add('hidden');
+            btnLimpiar.classList.remove('flex');
+        }
+    }
+
+    // Actualizar contador de resultados
+    const contadorEl = document.getElementById('contadorSolicitudesResultados');
+    if (contadorEl) {
+        if (hayFiltroActivo) {
+            contadorEl.textContent = `Mostrando ${lista.length} de ${totalSolicitudes} ${totalSolicitudes === 1 ? 'solicitud' : 'solicitudes'}`;
+        } else {
+            contadorEl.textContent = `${totalSolicitudes} ${totalSolicitudes === 1 ? 'solicitud registrada' : 'solicitudes registradas'}`;
+        }
+    }
+
     if (lista.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="text-center py-8 text-slate-500 font-bold text-xs uppercase tracking-wider">
-                    <i class="fas fa-search text-2xl mb-2 block text-slate-400" aria-hidden="true"></i>
-                    No se encontraron solicitudes con los filtros aplicados.
-                </td>
-            </tr>
-        `;
+        if (tbody) {
+            tbody.innerHTML = hayFiltroActivo ? `
+                <tr>
+                    <td colspan="7" class="text-center py-8 px-4 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                        <i class="fas fa-search text-2xl mb-2 block text-slate-400" aria-hidden="true"></i>
+                        <p>No se encontraron solicitudes con los filtros aplicados.</p>
+                        <button type="button" onclick="limpiarBusquedaSolicitudes()" class="mt-3 inline-flex items-center justify-center gap-1.5 min-h-[40px] px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl transition">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i> Restablecer filtros
+                        </button>
+                    </td>
+                </tr>
+            ` : `
+                <tr>
+                    <td colspan="7" class="text-center py-8 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                        <i class="fas fa-inbox text-2xl mb-2 block text-slate-400" aria-hidden="true"></i>
+                        No se encontraron solicitudes registradas.
+                    </td>
+                </tr>
+            `;
+        }
+
+        if (cardsContainer) {
+            cardsContainer.innerHTML = hayFiltroActivo ? `
+                <div class="bg-white rounded-2xl p-6 text-center border border-slate-200/80 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-search text-lg" aria-hidden="true"></i>
+                    </div>
+                    <p class="text-slate-800 font-black text-sm">Sin solicitudes para este filtro</p>
+                    <p class="text-slate-600 text-xs mt-1">No hay postulaciones que coincidan con el nivel, estado o búsqueda actual.</p>
+                    <button type="button" onclick="limpiarBusquedaSolicitudes()" class="mt-4 w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl transition active:scale-95">
+                        <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        <span>Restablecer filtros</span>
+                    </button>
+                </div>
+            ` : `
+                <div class="bg-white rounded-2xl p-6 text-center border border-slate-200/80 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-900 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-inbox text-lg" aria-hidden="true"></i>
+                    </div>
+                    <p class="text-slate-800 font-black text-sm">No hay solicitudes de admisión</p>
+                    <p class="text-slate-600 text-xs mt-1">Las postulaciones enviadas desde el formulario público aparecerán aquí.</p>
+                </div>
+            `;
+        }
         return;
     }
 
-    tbody.innerHTML = lista.map(sol => {
-        const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
-        let badgeEstado = '';
-        if (estadoNorm === 'pendiente') {
-            badgeEstado = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-clock mr-1" aria-hidden="true"></i>Pendiente</span>';
-        } else if (estadoNorm === 'aprobada') {
-            badgeEstado = '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-check-circle mr-1" aria-hidden="true"></i>Aprobada</span>';
-        } else {
-            badgeEstado = '<span class="bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-times-circle mr-1" aria-hidden="true"></i>Rechazada</span>';
-        }
+    if (tbody) {
+        tbody.innerHTML = lista.map(sol => {
+            const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
+            let badgeEstado = '';
+            if (estadoNorm === 'pendiente') {
+                badgeEstado = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-clock mr-1" aria-hidden="true"></i>Pendiente</span>';
+            } else if (estadoNorm === 'aprobada') {
+                badgeEstado = '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-check-circle mr-1" aria-hidden="true"></i>Aprobada</span>';
+            } else {
+                badgeEstado = '<span class="bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase"><i class="fas fa-times-circle mr-1" aria-hidden="true"></i>Rechazada</span>';
+            }
 
-        let badgeNivel = '';
-        const nivelNorm = (sol.nivel || '').toLowerCase();
-        if (nivelNorm === 'inicial') badgeNivel = 'border-l-4 border-green-500';
-        else if (nivelNorm === 'primario') badgeNivel = 'border-l-4 border-blue-500';
-        else badgeNivel = 'border-l-4 border-purple-500';
+            let badgeNivel = '';
+            const nivelNorm = (sol.nivel || '').toLowerCase();
+            if (nivelNorm === 'inicial') badgeNivel = 'border-l-4 border-green-500';
+            else if (nivelNorm === 'primario') badgeNivel = 'border-l-4 border-blue-500';
+            else badgeNivel = 'border-l-4 border-purple-500';
 
-        const fechaFormateada = sol.created_at ? new Date(sol.created_at).toLocaleDateString('es-AR') : (sol.fecha || '-');
-        const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
-        const idSeguro = escaparHTML(sol.id);
-        const nombreSeguro = escaparHTML(sol.nombreAspirante || sol.nombre);
+            const fechaFormateada = sol.created_at ? new Date(sol.created_at).toLocaleDateString('es-AR') : (sol.fecha || '-');
+            const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
+            const idSeguro = escaparHTML(sol.id);
+            const nombreSeguro = escaparHTML(sol.nombreAspirante || sol.nombre);
 
-        return `
-            <tr class="border-b border-slate-100 hover:bg-slate-50 transition ${badgeNivel}">
-                <td class="p-4 font-mono text-[11px] font-bold text-slate-600">${escaparHTML(codigo)}</td>
-                <td class="p-4">
-                    <p class="font-bold text-slate-800 text-xs break-words">${nombreSeguro}</p>
-                    <p class="text-[10px] text-slate-500">DNI: ${escaparHTML(sol.dni)}</p>
-                </td>
-                <td class="p-4">
-                    <span class="font-bold text-xs text-blue-900">${escaparHTML(sol.nivel)}</span>
-                    <p class="text-[10px] text-slate-500">${escaparHTML(sol.grado || sol.nivel)}</p>
-                </td>
-                <td class="p-4">
-                    <p class="text-xs font-semibold text-slate-700 break-words">${escaparHTML(sol.tutor)}</p>
-                    <p class="text-[10px] text-slate-500 break-all"><i class="fas fa-envelope mr-1" aria-hidden="true"></i>${escaparHTML(sol.email)}</p>
-                </td>
-                <td class="p-4 text-center">
-                    ${badgeEstado}
-                </td>
-                <td class="p-4 text-[11px] text-slate-600">${escaparHTML(fechaFormateada)}</td>
-                <td class="p-4 text-right">
-                    <div class="flex justify-end gap-1.5">
-                        <button type="button" data-solicitud-action="ver" data-id="${idSeguro}" title="Ver Detalles de Familia" aria-label="Ver detalles de ${nombreSeguro}" class="p-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
-                            <i class="fas fa-eye" aria-hidden="true"></i>
+            return `
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition ${badgeNivel}">
+                    <td class="p-4 font-mono text-[11px] font-bold text-slate-600">${escaparHTML(codigo)}</td>
+                    <td class="p-4">
+                        <p class="font-bold text-slate-800 text-xs break-words">${nombreSeguro}</p>
+                        <p class="text-[10px] text-slate-500">DNI: ${escaparHTML(sol.dni)}</p>
+                    </td>
+                    <td class="p-4">
+                        <span class="font-bold text-xs text-blue-900">${escaparHTML(sol.nivel)}</span>
+                        <p class="text-[10px] text-slate-500">${escaparHTML(sol.grado || sol.nivel)}</p>
+                    </td>
+                    <td class="p-4">
+                        <p class="text-xs font-semibold text-slate-700 break-words">${escaparHTML(sol.tutor)}</p>
+                        <p class="text-[10px] text-slate-500 break-all"><i class="fas fa-envelope mr-1" aria-hidden="true"></i>${escaparHTML(sol.email)}</p>
+                    </td>
+                    <td class="p-4 text-center">
+                        ${badgeEstado}
+                    </td>
+                    <td class="p-4 text-[11px] text-slate-600">${escaparHTML(fechaFormateada)}</td>
+                    <td class="p-4 text-right">
+                        <div class="flex justify-end gap-1.5">
+                            <button type="button" data-solicitud-action="ver" data-id="${idSeguro}" title="Ver Detalles de Familia" aria-label="Ver detalles de ${nombreSeguro}" class="p-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
+                            ${estadoNorm !== 'aprobada' ? `
+                                <button type="button" data-solicitud-action="estado" data-estado="aprobada" data-id="${idSeguro}" title="Aprobar Vacante" aria-label="Aprobar vacante de ${nombreSeguro}" class="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                                    <i class="fas fa-check" aria-hidden="true"></i>
+                                </button>
+                            ` : ''}
+                            ${estadoNorm !== 'rechazada' ? `
+                                <button type="button" data-solicitud-action="estado" data-estado="rechazada" data-id="${idSeguro}" title="Rechazar Vacante" aria-label="Rechazar vacante de ${nombreSeguro}" class="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            ` : ''}
+                            <button type="button" data-solicitud-action="eliminar" data-id="${idSeguro}" title="Eliminar Solicitud" aria-label="Eliminar solicitud de ${nombreSeguro}" class="p-2 bg-slate-100 text-slate-600 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
+                                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    if (cardsContainer) {
+        cardsContainer.innerHTML = lista.map(sol => {
+            const nombreBase = sol.nombreAspirante || sol.nombre || 'Aspirante';
+            const initial = escaparHTML((nombreBase.trim().charAt(0) || 'A').toUpperCase());
+            const estadoNorm = (sol.estado || 'pendiente').toLowerCase();
+            const fechaFormateada = sol.created_at ? new Date(sol.created_at).toLocaleDateString('es-AR') : (sol.fecha || '-');
+            const codigo = typeof sol.id === 'number' ? `SOL-${String(sol.id).padStart(4, '0')}` : sol.id;
+            const idSeguro = escaparHTML(sol.id);
+            const nombreSeguro = escaparHTML(nombreBase);
+
+            let badgeEstadoMobile = '';
+            if (estadoNorm === 'pendiente') {
+                badgeEstadoMobile = `
+                    <span class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wide bg-amber-50 text-amber-800 border border-amber-200">
+                        <span class="w-2 h-2 rounded-full bg-amber-500" aria-hidden="true"></span>
+                        <span>Pendiente</span>
+                    </span>`;
+            } else if (estadoNorm === 'aprobada') {
+                badgeEstadoMobile = `
+                    <span class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600" aria-hidden="true"></span>
+                        <span>Aprobada</span>
+                    </span>`;
+            } else {
+                badgeEstadoMobile = `
+                    <span class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wide bg-rose-50 text-rose-800 border border-rose-200">
+                        <span class="w-2 h-2 rounded-full bg-rose-600" aria-hidden="true"></span>
+                        <span>Rechazada</span>
+                    </span>`;
+            }
+
+            const yaAprobada = estadoNorm === 'aprobada';
+            const yaRechazada = estadoNorm === 'rechazada';
+
+            return `
+                <article class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5 transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 rounded-xl bg-blue-900 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm" aria-hidden="true">
+                                ${initial}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="inline-block font-mono text-[11px] font-bold text-blue-900 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md mb-1 break-all">
+                                    ${escaparHTML(codigo)}
+                                </span>
+                                <h4 class="font-black text-slate-900 text-sm leading-snug break-words">
+                                    ${nombreSeguro}
+                                </h4>
+                                <p class="text-xs font-semibold text-slate-600 mt-0.5">
+                                    DNI: <span class="font-bold text-slate-800">${escaparHTML(sol.dni || 'No registrado')}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        ${badgeEstadoMobile}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                        <div class="min-w-0">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Nivel Solicitado</span>
+                            <p class="font-bold text-blue-900 mt-0.5 break-words">${escaparHTML(sol.nivel || 'Sin nivel')}</p>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Fecha de Postulación</span>
+                            <p class="font-bold text-slate-800 mt-0.5">${escaparHTML(fechaFormateada)}</p>
+                        </div>
+                        <div class="min-w-0 col-span-2">
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Tutor y Contacto Principal</span>
+                            <p class="font-semibold text-slate-800 mt-0.5 break-words">${escaparHTML(sol.tutor || 'Tutor responsable')}</p>
+                            <p class="text-[11px] text-slate-600 mt-0.5 break-all">
+                                <i class="fas fa-envelope mr-1 text-blue-700" aria-hidden="true"></i>${escaparHTML(sol.email || 'Sin correo')}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-0.5">
+                        <button type="button"
+                            data-solicitud-action="ver"
+                            data-id="${idSeguro}"
+                            aria-label="Ver detalle de ${nombreSeguro}"
+                            class="min-h-[44px] min-w-[44px] px-3 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 rounded-xl text-xs font-bold transition active:scale-95 flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900">
+                            <i class="fas fa-eye text-xs" aria-hidden="true"></i>
+                            <span>Ver detalle</span>
                         </button>
-                        ${estadoNorm !== 'aprobada' ? `
-                            <button type="button" data-solicitud-action="estado" data-estado="aprobada" data-id="${idSeguro}" title="Aprobar Vacante" aria-label="Aprobar vacante de ${nombreSeguro}" class="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
-                                <i class="fas fa-check" aria-hidden="true"></i>
-                            </button>
-                        ` : ''}
-                        ${estadoNorm !== 'rechazada' ? `
-                            <button type="button" data-solicitud-action="estado" data-estado="rechazada" data-id="${idSeguro}" title="Rechazar Vacante" aria-label="Rechazar vacante de ${nombreSeguro}" class="p-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
-                                <i class="fas fa-times" aria-hidden="true"></i>
-                            </button>
-                        ` : ''}
-                        <button type="button" data-solicitud-action="eliminar" data-id="${idSeguro}" title="Eliminar Solicitud" aria-label="Eliminar solicitud de ${nombreSeguro}" class="p-2 bg-slate-100 text-slate-600 hover:bg-red-100 hover:text-red-700 rounded-lg text-xs transition min-w-[36px] min-h-[36px] flex items-center justify-center">
-                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                        <button type="button"
+                            data-solicitud-action="estado"
+                            data-estado="aprobada"
+                            data-id="${idSeguro}"
+                            ${yaAprobada ? 'disabled aria-disabled="true"' : ''}
+                            aria-label="Aprobar solicitud de ${nombreSeguro}"
+                            class="min-h-[44px] min-w-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 ${yaAprobada ? 'bg-emerald-100/70 text-emerald-800 border border-emerald-200 opacity-60 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm active:scale-95'}">
+                            <i class="fas fa-check text-xs" aria-hidden="true"></i>
+                            <span>${yaAprobada ? 'Aprobada' : 'Aprobar'}</span>
+                        </button>
+                        <button type="button"
+                            data-solicitud-action="estado"
+                            data-estado="rechazada"
+                            data-id="${idSeguro}"
+                            ${yaRechazada ? 'disabled aria-disabled="true"' : ''}
+                            aria-label="Rechazar solicitud de ${nombreSeguro}"
+                            class="min-h-[44px] min-w-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 ${yaRechazada ? 'bg-amber-100/70 text-amber-800 border border-amber-200 opacity-60 cursor-not-allowed' : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 active:scale-95'}">
+                            <i class="fas fa-times text-xs" aria-hidden="true"></i>
+                            <span>${yaRechazada ? 'Rechazada' : 'Rechazar'}</span>
+                        </button>
+                        <button type="button"
+                            data-solicitud-action="eliminar"
+                            data-id="${idSeguro}"
+                            aria-label="Eliminar solicitud de ${nombreSeguro}"
+                            class="min-h-[44px] min-w-[44px] px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition active:scale-95 flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600">
+                            <i class="fas fa-trash-alt text-xs" aria-hidden="true"></i>
+                            <span>Eliminar</span>
                         </button>
                     </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
+                </article>
+            `;
+        }).join('');
+    }
+}
+
+function limpiarBusquedaSolicitudes() {
+    AdminState.busquedaSolicitud = '';
+    AdminState.filtroSolicitudNivel = 'todos';
+    AdminState.filtroSolicitudEstado = 'todos';
+
+    const inputSearchSol = document.getElementById('searchSolicitudes');
+    if (inputSearchSol) {
+        inputSearchSol.value = '';
+    }
+
+    const btnNivelTodos = document.querySelector('.btn-filtro-sol-nivel');
+    if (btnNivelTodos) {
+        actualizarEstilosBotonesFiltro('.btn-filtro-sol-nivel', btnNivelTodos);
+    }
+
+    const btnEstadoTodos = document.querySelector('.btn-filtro-sol-estado');
+    if (btnEstadoTodos) {
+        actualizarEstilosBotonesFiltro('.btn-filtro-sol-estado', btnEstadoTodos);
+    }
+
+    renderizarTablaSolicitudes();
 }
 
 /**
@@ -781,8 +991,7 @@ async function actualizarEstadoSolicitud(id, nuevoEstado) {
 
         if (error) {
             console.error("Error al actualizar estado en Supabase:", error.message);
-            alert("No se pudo actualizar el estado: " + error.message);
-            mostrarToast("Error al actualizar: " + error.message, "error");
+            mostrarToast("No se pudo actualizar el estado: " + error.message, "error");
             return;
         }
 
@@ -802,7 +1011,7 @@ async function actualizarEstadoSolicitud(id, nuevoEstado) {
         }
     } catch (err) {
         console.error("Fallo inesperado al actualizar solicitud:", err);
-        alert("Error de conexión al actualizar la solicitud.");
+        mostrarToast("Error de conexión al actualizar la solicitud.", "error");
     }
 }
 
@@ -810,7 +1019,16 @@ async function actualizarEstadoSolicitud(id, nuevoEstado) {
  * Elimina una solicitud de admisión de forma persistente en Supabase previa confirmación
  */
 async function eliminarSolicitud(id) {
-    const confirmar = confirm("¿Está seguro de que desea eliminar permanentemente esta solicitud de admisión? Esta acción no se puede deshacer.");
+    const sol = AdminState.solicitudes.find(s => String(s.id) === String(id));
+    const nombreAspirante = sol?.nombreAspirante || sol?.nombre || 'esta solicitud';
+
+    const confirmar = await pedirConfirmacionModal({
+        titulo: '¿Eliminar solicitud de admisión?',
+        mensaje: `¿Está seguro de eliminar permanentemente la solicitud de ${nombreAspirante}? Esta acción no se puede deshacer.`,
+        textoConfirmar: 'Eliminar',
+        textoCancelar: 'Cancelar',
+        peligroso: true
+    });
     if (!confirmar) return;
 
     const client = getSupabaseClient();
@@ -824,8 +1042,7 @@ async function eliminarSolicitud(id) {
 
         if (error) {
             console.error("Error al eliminar solicitud en Supabase:", error.message);
-            alert("No se pudo eliminar la solicitud: " + error.message);
-            mostrarToast("Error al eliminar: " + error.message, "error");
+            mostrarToast("No se pudo eliminar la solicitud: " + error.message, "error");
             return;
         }
 
@@ -836,7 +1053,7 @@ async function eliminarSolicitud(id) {
         mostrarToast("Solicitud eliminada correctamente de Supabase.", "success");
     } catch (err) {
         console.error("Fallo inesperado al eliminar solicitud:", err);
-        alert("Error de conexión al eliminar la solicitud.");
+        mostrarToast("Error de conexión al eliminar la solicitud.", "error");
     }
 }
 
@@ -1198,9 +1415,14 @@ async function eliminarAlumno(legajo, nombre) {
     const alumno = AdminState.alumnos.find(a => a.legajo === legajo);
     const nombreConfirm = nombre || alumno?.nombre || legajo;
 
-    if (!confirm(`¿Dar de baja a ${nombreConfirm}?`)) {
-        return;
-    }
+    const confirmar = await pedirConfirmacionModal({
+        titulo: '¿Dar de baja alumno?',
+        mensaje: `¿Confirma la baja de ${nombreConfirm} (${legajo}) del padrón oficial?`,
+        textoConfirmar: 'Dar de baja',
+        textoCancelar: 'Cancelar',
+        peligroso: true
+    });
+    if (!confirmar) return;
 
     const client = getSupabaseClient();
     if (!client) {
@@ -1486,6 +1708,83 @@ async function guardarNuevoAlumno(e) {
 }
 
 // ====================================================================
+// MODAL DE CONFIRMACIÓN ACCESIBLE (REEMPLAZA WINDOW.CONFIRM)
+// ====================================================================
+
+function pedirConfirmacionModal({
+    titulo = '¿Confirmar acción?',
+    mensaje = '¿Está seguro de continuar? Esta acción no se puede deshacer.',
+    textoConfirmar = 'Confirmar',
+    textoCancelar = 'Cancelar',
+    peligroso = true
+} = {}) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('modalConfirmacionGenerica');
+        const titEl = document.getElementById('modalConfirmacionTitulo');
+        const msgEl = document.getElementById('modalConfirmacionMensaje');
+        const btnAceptar = document.getElementById('btnModalConfirmacionAceptar');
+        const btnCancelar = document.getElementById('btnModalConfirmacionCancelar');
+        const iconEl = document.getElementById('modalConfirmacionIcono');
+
+        if (!modal || !btnAceptar || !btnCancelar) {
+            resolve(true);
+            return;
+        }
+
+        if (titEl) titEl.textContent = titulo;
+        if (msgEl) msgEl.textContent = mensaje;
+        if (btnAceptar) {
+            btnAceptar.textContent = textoConfirmar;
+            if (peligroso) {
+                btnAceptar.className = 'min-h-[44px] px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-xl text-xs transition active:scale-95 shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-600';
+                if (iconEl) iconEl.className = 'w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl shadow-sm';
+            } else {
+                btnAceptar.className = 'min-h-[44px] px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs transition active:scale-95 shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900';
+                if (iconEl) iconEl.className = 'w-12 h-12 rounded-2xl bg-blue-50 text-blue-900 flex items-center justify-center mx-auto text-xl shadow-sm';
+            }
+        }
+        if (btnCancelar) btnCancelar.textContent = textoCancelar;
+
+        const limpiar = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.removeEventListener('keydown', onKeyDown);
+            btnAceptar.onclick = null;
+            btnCancelar.onclick = null;
+            modal.onclick = null;
+        };
+
+        const onAceptar = () => {
+            limpiar();
+            resolve(true);
+        };
+
+        const onCancelar = () => {
+            limpiar();
+            resolve(false);
+        };
+
+        const onKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                onCancelar();
+            }
+        };
+
+        btnAceptar.onclick = onAceptar;
+        btnCancelar.onclick = onCancelar;
+        modal.onclick = (e) => {
+            if (e.target === modal) onCancelar();
+        };
+        document.addEventListener('keydown', onKeyDown);
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        requestAnimationFrame(() => btnCancelar?.focus());
+    });
+}
+
+// ====================================================================
 // COMPONENTE DE NOTIFICACIONES TOAST (MODERNO Y NO BLOQUEANTE)
 // ====================================================================
 
@@ -1497,7 +1796,8 @@ function mostrarToast(mensaje, tipo = 'info') {
         contenedor.setAttribute('role', 'status');
         contenedor.setAttribute('aria-live', 'polite');
         contenedor.setAttribute('aria-atomic', 'true');
-        contenedor.className = 'fixed z-[9999] flex flex-col gap-2 pointer-events-none left-4 right-4 sm:left-auto sm:right-5 sm:max-w-sm bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))]';
+        contenedor.className = 'fixed z-[10050] flex flex-col gap-2 pointer-events-none left-4 right-4 sm:left-auto sm:right-5 sm:max-w-sm top-[max(0.75rem,calc(env(safe-area-inset-top)+0.5rem))] sm:top-auto bottom-auto sm:bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))]';
+        contenedor.style.zIndex = '10050';
         document.body.appendChild(contenedor);
     }
 
@@ -1697,3 +1997,5 @@ window.obtenerAlumnos = obtenerAlumnos;
 window.eliminarAlumno = eliminarAlumno;
 window.cargarAlumnosAdmin = obtenerAlumnos;
 window.limpiarBusquedaAlumnos = limpiarBusquedaAlumnos;
+window.limpiarBusquedaSolicitudes = limpiarBusquedaSolicitudes;
+window.pedirConfirmacionModal = pedirConfirmacionModal;

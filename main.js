@@ -4,6 +4,64 @@
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
     window.supabaseClient = supabaseClient;
 
+    // Sistema unificado de notificaciones Toast accesible para las tres vistas (#vistaLanding, #vistaPanel, #vistaAdmin)
+    function mostrarToast(mensaje, tipo = 'info') {
+        let contenedor = document.getElementById('adminToastContainer');
+        if (!contenedor) {
+            contenedor = document.createElement('div');
+            contenedor.id = 'adminToastContainer';
+            contenedor.setAttribute('role', 'status');
+            contenedor.setAttribute('aria-live', 'polite');
+            contenedor.setAttribute('aria-atomic', 'true');
+            contenedor.className = 'fixed z-[10050] flex flex-col gap-2 pointer-events-none left-4 right-4 sm:left-auto sm:right-5 sm:max-w-sm top-[max(0.75rem,calc(env(safe-area-inset-top)+0.5rem))] sm:top-auto bottom-auto sm:bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))]';
+            contenedor.style.zIndex = '10050';
+            document.body.appendChild(contenedor);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0 flex items-center p-3.5 rounded-xl shadow-xl border text-xs font-bold';
+
+        let icon = 'fa-info-circle';
+        let style = 'bg-slate-900 text-white border-slate-700';
+
+        if (tipo === 'success') {
+            icon = 'fa-check-circle';
+            style = 'bg-emerald-600 text-white border-emerald-500';
+        } else if (tipo === 'warning') {
+            icon = 'fa-exclamation-triangle';
+            style = 'bg-amber-600 text-white border-amber-500';
+        } else if (tipo === 'error') {
+            icon = 'fa-exclamation-circle';
+            style = 'bg-rose-600 text-white border-rose-500';
+        } else if (tipo === 'info') {
+            icon = 'fa-bell';
+            style = 'bg-blue-900 text-white border-blue-700';
+        }
+
+        toast.className += ` ${style}`;
+
+        const iconEl = document.createElement('i');
+        iconEl.className = `fas ${icon} text-base mr-2.5 shrink-0`;
+        iconEl.setAttribute('aria-hidden', 'true');
+
+        const textEl = document.createElement('span');
+        textEl.className = 'flex-1 break-words';
+        textEl.textContent = String(mensaje ?? '');
+
+        toast.appendChild(iconEl);
+        toast.appendChild(textEl);
+        contenedor.appendChild(toast);
+
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-y-3', 'opacity-0');
+        });
+
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-2');
+            setTimeout(() => toast.remove(), 300);
+        }, 3800);
+    }
+
     // Mejora C y A: Función única para gestionar todos los modales
     function toggleModal(mostrar) {
         const modalLogin = document.getElementById('modalLogin');
@@ -36,7 +94,7 @@
     // 2. Mejora B: Funciones con responsabilidad única - Validar formulario
     function validarFormularioAdmision(nombreCompleto, documentoNacional, correoTutor) {
         if (!nombreCompleto || !documentoNacional || !correoTutor) {
-            alert('Por favor, completa los campos obligatorios (Nombre, DNI, Email).');
+            mostrarToast('Por favor, completa los campos obligatorios (Nombre, DNI, Email).', 'warning');
             return false;
         }
         return true;
@@ -93,7 +151,7 @@
         const resultado = await enviarDatosAdmisionASupabase(nombreCompleto, documentoNacional, nivelSeleccionado, correoTutor, mensajeAdicional);
         actualizarEstadoBotonEnvio(false);
 
-        alert(resultado.mensaje);
+        mostrarToast(resultado.mensaje, resultado.exito ? 'success' : 'error');
         if (resultado.exito) {
             limpiarFormularioAdmision();
         }
@@ -340,8 +398,10 @@
                 return;
             }
             await cargarCampusEstudiante(session.user, EstadoEstudiante.perfil);
+            mostrarToast("Información académica sincronizada con éxito.", "info");
         } catch (err) {
             console.error("Error al recargar datos del estudiante:", err);
+            mostrarToast("No se pudo sincronizar la información del estudiante.", "error");
         }
     }
 
@@ -403,7 +463,7 @@
                 console.error("Error al cerrar sesión de usuario sin rol válido:", errSignOut);
             }
 
-            alert("No se pudo determinar el perfil de acceso. Contacte al administrador.");
+            mostrarToast("No se pudo determinar el perfil de acceso. Contacte al administrador.", "error");
         }
     }
 
@@ -420,7 +480,7 @@
         const contraseñaUsuario = document.getElementById('loginPassword').value;
 
         if (!correoUsuario || !contraseñaUsuario) {
-            alert('Por favor, ingresa tu correo y contraseña.');
+            mostrarToast('Por favor, ingresa tu correo y contraseña.', 'warning');
             return;
         }
 
@@ -435,6 +495,7 @@
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
             toggleModal(false);
+            mostrarToast('Sesión iniciada correctamente.', 'success');
             await gestionarVistasPorRol(data.user);
 
         } catch (error) {
@@ -442,7 +503,7 @@
             const mensajeError = error.message === "Invalid login credentials" 
                 ? 'Credenciales inválidas. Verifica el correo o la contraseña.'
                 : 'Error al intentar ingresar: ' + error.message;
-            alert(mensajeError);
+            mostrarToast(mensajeError, 'error');
         }
     }
 
@@ -460,12 +521,13 @@
         const correoRecuperacion = document.getElementById('olvideEmail').value.trim();
 
         if (correoRecuperacion === "") {
-            alert("Por favor, introduce tu dirección de correo electrónico.");
+            mostrarToast("Por favor, introduce tu dirección de correo electrónico.", "warning");
             return;
         }
 
         alternarVisibilidadModal('modalOlvidePassword', false);
         alternarVisibilidadModal('modalExitoRecuperacion', true);
+        mostrarToast("Instrucciones de recuperación enviadas a tu correo.", "success");
     }
 
     // Cerrar sesión del usuario de forma completa
@@ -474,9 +536,9 @@
             const { error } = await supabaseClient.auth.signOut();
             if (error) throw error;
             await gestionarVistasPorRol(null);
-            alert('Sesión cerrada correctamente.');
+            mostrarToast('Sesión cerrada correctamente.', 'info');
         } catch (error) {
-            alert('Error al cerrar sesión: ' + error.message);
+            mostrarToast('Error al cerrar sesión: ' + error.message, 'error');
         }
     }
 
@@ -817,6 +879,7 @@
             if (msgInfo) {
                 msgInfo.textContent = 'No se encontró una matrícula activa vinculada a tu cuenta de usuario. No es posible declarar condición de alumno regular ni mostrar la vista previa.';
             }
+            mostrarToast('Tu cuenta no posee una matrícula vinculada para emitir certificados.', 'warning');
             return;
         }
 
@@ -828,6 +891,7 @@
             if (msgInfo) {
                 msgInfo.textContent = `Tu legajo (${matricula.legajo || 'sin código'}) registra condición «${matricula.regularidad || 'No regular'}». La constancia de alumno regular solo está disponible para matrículas con estado Regular.`;
             }
+            mostrarToast(`Condición actual: ${matricula.regularidad || 'No regular'}. Constancia no disponible.`, 'warning');
             return;
         }
 
@@ -846,14 +910,16 @@
         asignarTextoSeguro('certFechaConsulta', `Verificado: ${new Date().toLocaleDateString('es-AR')}`, '');
 
         mostrarResultadoCertificado(true);
+        mostrarToast('Condición de Alumno Regular verificada correctamente.', 'success');
     }
 
     function descargarPDF() {
-        alert("Aviso institucional: La emisión de certificados con firma digital y descarga PDF no se encuentra habilitada en esta versión. Solicite la constancia sellada en Secretaría Académica.");
+        mostrarToast("Aviso institucional: La emisión de certificados con firma digital y descarga PDF no se encuentra habilitada en esta versión. Solicite la constancia sellada en Secretaría Académica.", "info");
     }
 
     // Exposición global en window para eventos inline HTML y compatibilidad móvil
     window.EstadoEstudiante = EstadoEstudiante;
+    window.mostrarToast = mostrarToast;
     window.toggleModal = toggleModal;
     window.toggleModalOlvide = toggleModalOlvide;
     window.alternarVisibilidadModal = alternarVisibilidadModal;
