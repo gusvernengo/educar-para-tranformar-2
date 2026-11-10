@@ -16,9 +16,9 @@ import {
 import { WebView } from 'react-native-webview';
 
 // URLs predefinidas y configurables por entorno
-const VERCEL_PROD_URL = process.env.EXPO_PUBLIC_VERCEL_URL || 'https://educar-para-transformar.vercel.app';
+const VERCEL_PROD_URL = process.env.EXPO_PUBLIC_VERCEL_URL || 'https://educar-para-transformar-gamma.vercel.app';
 const LOCAL_DEV_URL = process.env.EXPO_PUBLIC_LOCAL_URL || 'http://127.0.0.1:3000';
-const LAN_DEV_URL = process.env.EXPO_PUBLIC_LAN_URL || 'http://192.168.1.4:3000';
+const LAN_DEV_URL = process.env.EXPO_PUBLIC_LAN_URL || 'http://10.13.19.38:3000';
 
 // URL inicial: variable de entorno EXPO_PUBLIC_WEB_URL, o local por defecto
 const DEFAULT_URL = process.env.EXPO_PUBLIC_WEB_URL || LOCAL_DEV_URL;
