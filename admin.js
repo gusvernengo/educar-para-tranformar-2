@@ -511,7 +511,8 @@ function cambiarAdminTab(nombreTab) {
         docentes: 'Plantel Docente, Idiomas y Especialidades',
         servicios: 'Servicios Institucionales: Transporte, Comedor y Salud',
         deportes: 'Deportes, Infraestructura e Instalaciones',
-        circulares: 'Comunicados Oficiales y Circulares'
+        circulares: 'Comunicados Oficiales y Circulares',
+        tesoreria: 'Tesorería Institucional: Aranceles, Pagos y Recordatorios'
     };
     const headerTitle = document.getElementById('adminCurrentSectionTitle');
     if (headerTitle && titulos[nombreTab]) {
@@ -523,6 +524,9 @@ function cambiarAdminTab(nombreTab) {
     }
     if (nombreTab === 'alumnos' || nombreTab === 'dashboard') {
         obtenerAlumnos();
+    }
+    if (nombreTab === 'tesoreria') {
+        renderizarModuloTesoreriaAdmin();
     }
 }
 
@@ -1999,3 +2003,302 @@ window.cargarAlumnosAdmin = obtenerAlumnos;
 window.limpiarBusquedaAlumnos = limpiarBusquedaAlumnos;
 window.limpiarBusquedaSolicitudes = limpiarBusquedaSolicitudes;
 window.pedirConfirmacionModal = pedirConfirmacionModal;
+
+// ========================================================
+// MÓDULO DE TESORERÍA, PAGOS Y RECORDATORIOS (RÚBRICA PARCIAL)
+// ========================================================
+
+let tipoReporteTesoreriaActivo = 'ingresos';
+
+async function enviarRecordatorioFinMes() {
+    const confirmar = await pedirConfirmacionModal({
+        titulo: '¿Despachar Facturación y Recordatorio de Fin de Mes?',
+        mensaje: 'Se emitirá por correo electrónico el recordatorio oficial del último día hábil a todas las familias activas (48 alumnos), detallando la composición arancelaria de la cuota: Arancel Base por nivel + Adicional Idioma + Adicional Deporte + Servicio Comedor/Transporte con vencimiento al día 10.',
+        textoConfirmar: 'Enviar Facturación',
+        textoCancelar: 'Cancelar',
+        peligroso: false
+    });
+
+    if (!confirmar) return;
+
+    mostrarToast('📧 Facturación y recordatorios de fin de mes enviados exitosamente a 48 familias con desglose y factura adjunta.', 'success');
+}
+
+async function enviarAvisoDia20() {
+    const confirmar = await pedirConfirmacionModal({
+        titulo: '¿Despachar Avisos del Día 20 a Familias en Mora?',
+        mensaje: 'Se intimará por correo y mensaje oficial a los 8 tutores que registran pagos incompletos o cuotas adeudadas tras el día 20, aplicando el recargo por mora del 5% establecido por reglamento.',
+        textoConfirmar: 'Enviar Avisos Día 20',
+        textoCancelar: 'Cancelar',
+        peligroso: true
+    });
+
+    if (!confirmar) return;
+
+    mostrarToast('⚠️ Avisos del día 20 despachados a 8 tutores con pagos incompletos o deuda arancelaria.', 'warning');
+}
+
+function cambiarReporteTesoreria(tipo) {
+    tipoReporteTesoreriaActivo = tipo;
+
+    const botones = {
+        ingresos: document.getElementById('btnReporteIngresos'),
+        completos: document.getElementById('btnReporteCompletos'),
+        incompletos: document.getElementById('btnReporteIncompletos'),
+        deportes: document.getElementById('btnReporteDeportes'),
+        transporte: document.getElementById('btnReporteTransporte')
+    };
+
+    const titulos = {
+        ingresos: 'Reporte 1: Ingresos por Período de Tiempo',
+        completos: 'Reporte 2: Pagos Completos por Año / Curso y Alumno',
+        incompletos: 'Reporte 3: Pagos Incompletos y Familias con Deuda',
+        deportes: 'Reporte 4: Pagos por Deporte, Nivel y Profesor a Cargo',
+        transporte: 'Reporte 5: Pagos por Recorrido del Servicio de Transporte'
+    };
+
+    const label = document.getElementById('labelReporteActivo');
+    if (label && titulos[tipo]) {
+        label.textContent = titulos[tipo];
+    }
+
+    Object.entries(botones).forEach(([k, btn]) => {
+        if (!btn) return;
+        const esActivo = k === tipo;
+        if (esActivo) {
+            btn.className = 'btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-blue-900 text-white shadow-sm flex items-center gap-1.5 active:scale-95';
+        } else {
+            btn.className = 'btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95';
+        }
+    });
+
+    renderizarReporteTesoreria(tipo);
+}
+
+function renderizarModuloTesoreriaAdmin() {
+    renderizarReporteTesoreria(tipoReporteTesoreriaActivo);
+}
+
+function renderizarReporteTesoreria(tipo) {
+    const contenedor = document.getElementById('contenedorReporteTesoreria');
+    if (!contenedor) return;
+
+    if (tipo === 'ingresos') {
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-slate-900 text-sm">Evolución de Ingresos y Cobranzas Ciclo 2026</h4>
+                        <p class="text-xs text-slate-500">Recaudación mensual por cuota arancelaria oficial (Marzo a Noviembre 2026).</p>
+                    </div>
+                    <span class="text-xs font-bold font-mono text-emerald-800 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
+                        Total Acumulado: $ 14.850.000
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                        <thead>
+                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
+                                <th class="p-3">Período / Mes</th>
+                                <th class="p-3">Cuotas Emitidas</th>
+                                <th class="p-3">Cobradas</th>
+                                <th class="p-3">Recaudación Total</th>
+                                <th class="p-3">Estado Cobranza</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr><td class="p-3 font-bold text-slate-800">Marzo 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.620.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-800">Abril 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.620.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-800">Mayo 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.620.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-800">Junio 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-800">Julio 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-800">Agosto 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-800">Septiembre 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
+                            <tr class="bg-amber-50/50"><td class="p-3 font-bold text-slate-900">Octubre 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-amber-700">40 (83%)</td><td class="p-3 font-mono font-bold text-amber-900">$ 1.380.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">8 En Mora</span></td></tr>
+                            <tr class="bg-blue-50/40"><td class="p-3 font-bold text-slate-900">Noviembre 2026</td><td class="p-3">48 alumnos</td><td class="p-3 text-slate-500">Próximo Venc. 10/11</td><td class="p-3 font-mono font-bold text-blue-900">$ 1.660.000 (est.)</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[10px]">En Término</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } else if (tipo === 'completos') {
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-slate-900 text-sm">Alumnos con Pago Completo Discriminados por Curso</h4>
+                        <p class="text-xs text-slate-500">Nómina de alumnos al día en el ciclo lectivo con desglose de servicios.</p>
+                    </div>
+                    <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                        40 Alumnos al Día
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                        <thead>
+                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
+                                <th class="p-3">Alumno / Legajo</th>
+                                <th class="p-3">Nivel y Curso</th>
+                                <th class="p-3">Servicios Asignados</th>
+                                <th class="p-3">Cuota Mensual</th>
+                                <th class="p-3">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr><td class="p-3 font-bold text-slate-900">Lucía Pérez<p class="text-[10px] font-mono text-slate-500">ET-2026-0042</p></td><td class="p-3">Primario • 5° B</td><td class="p-3">Inglés Británico + Natación</td><td class="p-3 font-mono font-bold">$ 126.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-900">Joaquín Acosta<p class="text-[10px] font-mono text-slate-500">ET-2026-0018</p></td><td class="p-3">Primario • 3° A</td><td class="p-3">Fútbol + Comedor</td><td class="p-3 font-mono font-bold">$ 117.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-900">Sofía Benítez<p class="text-[10px] font-mono text-slate-500">ET-2026-0005</p></td><td class="p-3">Inicial • Sala 5</td><td class="p-3">Comedor Escolar</td><td class="p-3 font-mono font-bold">$ 87.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-900">Lucas Romero<p class="text-[10px] font-mono text-slate-500">ET-2026-0063</p></td><td class="p-3">Secundario • 2° A</td><td class="p-3">Alemán + Natación + Transporte</td><td class="p-3 font-mono font-bold">$ 148.500</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
+                            <tr><td class="p-3 font-bold text-slate-900">Martina Silva<p class="text-[10px] font-mono text-slate-500">ET-2026-0034</p></td><td class="p-3">Primario • 6° C</td><td class="p-3">Francés + Atletismo</td><td class="p-3 font-mono font-bold">$ 124.200</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } else if (tipo === 'incompletos') {
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-rose-900 text-sm">Alumnos con Pago Incompleto y Deuda Arancelaria</h4>
+                        <p class="text-xs text-slate-500">Familias notificadas con intimación y recargo por mora del 5%.</p>
+                    </div>
+                    <span class="text-xs font-bold text-rose-800 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                        8 Casos Notificados
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                        <thead>
+                            <tr class="bg-rose-50/60 text-[11px] font-black uppercase text-rose-900 border-b border-rose-100">
+                                <th class="p-3">Alumno / Curso</th>
+                                <th class="p-3">Tutor / Contacto</th>
+                                <th class="p-3">Período Afectado</th>
+                                <th class="p-3">Saldo Adeudado</th>
+                                <th class="p-3">Acción Inmediata</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-3 font-bold text-slate-900">Bruno Valenzuela<p class="text-[10px] text-slate-500">Secundario • 2° Año</p></td>
+                                <td class="p-3">Carlos Valenzuela<p class="text-[10px] text-slate-500">carlos.v@mail.com</p></td>
+                                <td class="p-3 text-rose-700 font-semibold">Octubre 2026 (Impaga)</td>
+                                <td class="p-3 font-mono font-bold text-rose-700">$ 123.900 (+5% mora)</td>
+                                <td class="p-3"><button type="button" onclick="mostrarToast('Reenviando aviso de deuda a Carlos Valenzuela...', 'info')" class="px-2.5 py-1.5 bg-rose-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-rose-700 transition">Reenviar Aviso</button></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-slate-900">Valentina Morales<p class="text-[10px] text-slate-500">Primario • 4° Grado</p></td>
+                                <td class="p-3">Andrea Morales<p class="text-[10px] text-slate-500">andrea.m@mail.com</p></td>
+                                <td class="p-3 text-amber-700 font-semibold">Octubre (Pago Incompleto)</td>
+                                <td class="p-3 font-mono font-bold text-amber-700">$ 66.000 remanente</td>
+                                <td class="p-3"><button type="button" onclick="mostrarToast('Reenviando liquidación de saldo a Andrea Morales...', 'info')" class="px-2.5 py-1.5 bg-amber-500 text-slate-900 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-amber-600 transition">Reenviar Saldo</button></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-slate-900">Santiago Giménez<p class="text-[10px] text-slate-500">Inicial • Sala 5</p></td>
+                                <td class="p-3">Esteban Giménez<p class="text-[10px] text-slate-500">esteban.g@mail.com</p></td>
+                                <td class="p-3 text-rose-700 font-semibold">Sept y Oct (2 cuotas)</td>
+                                <td class="p-3 font-mono font-bold text-rose-700">$ 174.000 total</td>
+                                <td class="p-3"><button type="button" onclick="mostrarToast('Intimación enviada a Esteban Giménez...', 'warning')" class="px-2.5 py-1.5 bg-rose-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-rose-700 transition">Intimar Deuda</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } else if (tipo === 'deportes') {
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-slate-900 text-sm">Cobranzas por Disciplina Deportiva y Profesor a Cargo</h4>
+                        <p class="text-xs text-slate-500">Adicional arancelario de $ 15.000/mes por disciplina extracurricular.</p>
+                    </div>
+                    <span class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                        Recaudación: $ 1.760.000 / mes
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                        <thead>
+                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
+                                <th class="p-3">Disciplina</th>
+                                <th class="p-3">Profesor a Cargo</th>
+                                <th class="p-3">Niveles & Días</th>
+                                <th class="p-3">Inscriptos</th>
+                                <th class="p-3">Recaudación Mensual</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr><td class="p-3 font-bold text-blue-900">Natación</td><td class="p-3">Prof. Lucas Silva</td><td class="p-3">Primario/Secundario • Lu/Mi/Vi 15:30</td><td class="p-3 font-bold">32 alumnos</td><td class="p-3 font-mono font-bold text-slate-800">$ 480.000</td></tr>
+                            <tr><td class="p-3 font-bold text-blue-900">Fútbol</td><td class="p-3">Prof. Marcelo Gómez</td><td class="p-3">Primario • Ma/Ju 08:30</td><td class="p-3 font-bold">28 alumnos</td><td class="p-3 font-mono font-bold text-slate-800">$ 420.000</td></tr>
+                            <tr><td class="p-3 font-bold text-blue-900">Hockey</td><td class="p-3">Prof. Daniela Ríos</td><td class="p-3">Secundario • Lu/Mi 17:00</td><td class="p-3 font-bold">22 alumnas</td><td class="p-3 font-mono font-bold text-slate-800">$ 330.000</td></tr>
+                            <tr><td class="p-3 font-bold text-blue-900">Gimnasia Artística</td><td class="p-3">Prof. Elena Martínez</td><td class="p-3">Inicial/Primario • Ma/Ju 16:00</td><td class="p-3 font-bold">18 inscriptos</td><td class="p-3 font-mono font-bold text-slate-800">$ 270.000</td></tr>
+                            <tr><td class="p-3 font-bold text-blue-900">Ajedrez y Lógica</td><td class="p-3">Prof. Tomás Valdéz</td><td class="p-3">Primario/Secundario • Sáb 10:00</td><td class="p-3 font-bold">16 inscriptos</td><td class="p-3 font-mono font-bold text-slate-800">$ 240.000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } else if (tipo === 'transporte') {
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-slate-900 text-sm">Recaudación por Recorrido del Servicio de Transporte</h4>
+                        <p class="text-xs text-slate-500">Arancel mensual de $ 22.000 por alumno transportado con chofer asignado.</p>
+                    </div>
+                    <span class="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                        3 Líneas Habilitadas
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                        <thead>
+                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
+                                <th class="p-3">Línea de Micro</th>
+                                <th class="p-3">Recorrido Principal</th>
+                                <th class="p-3">Chofer y Patente</th>
+                                <th class="p-3">Capacidad / Ocupación</th>
+                                <th class="p-3">Recaudación Mensual</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-3 font-bold text-blue-900">Línea 1 - Norte</td>
+                                <td class="p-3">Villa San Martín • Los Troncos • Centro</td>
+                                <td class="p-3">Roberto Benítez<p class="text-[10px] text-slate-400">Patente AF 234 JK</p></td>
+                                <td class="p-3 font-bold">18 / 20 alumnos</td>
+                                <td class="p-3 font-mono font-bold text-slate-900">$ 396.000</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-blue-900">Línea 2 - Sur</td>
+                                <td class="p-3">Fontana • Tiro Federal • Hospital</td>
+                                <td class="p-3">Claudio Peralta<p class="text-[10px] text-slate-400">Patente AE 890 LM</p></td>
+                                <td class="p-3 font-bold">15 / 18 alumnos</td>
+                                <td class="p-3 font-mono font-bold text-slate-900">$ 330.000</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-blue-900">Línea 3 - Este</td>
+                                <td class="p-3">Barranqueras • Puerto Vilelas • Av. Castelli</td>
+                                <td class="p-3">Mario Soto<p class="text-[10px] text-slate-400">Patente AD 456 OP</p></td>
+                                <td class="p-3 font-bold">12 / 16 alumnos</td>
+                                <td class="p-3 font-mono font-bold text-slate-900">$ 264.000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+}
+
+window.enviarRecordatorioFinMes = enviarRecordatorioFinMes;
+window.enviarAvisoDia20 = enviarAvisoDia20;
+window.cambiarReporteTesoreria = cambiarReporteTesoreria;
+window.renderizarModuloTesoreriaAdmin = renderizarModuloTesoreriaAdmin;
+window.renderizarReporteTesoreria = renderizarReporteTesoreria;
