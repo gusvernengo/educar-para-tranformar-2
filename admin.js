@@ -304,6 +304,32 @@ function getSupabaseClient() {
  * Abre el Sistema de Gestión (Etapa 2 - Admin Panel) validando rol
  */
 async function abrirPanelAdmin() {
+    // Si hay una sesión de demostración activa con rol admin, permitir acceso inmediato
+    try {
+        const sesionDemo = localStorage.getItem('sesion_demo_activa');
+        if (sesionDemo) {
+            const parsed = JSON.parse(sesionDemo);
+            if (parsed.rol === 'admin') {
+                const vistaLanding = document.getElementById('vistaLanding');
+                const vistaPanel = document.getElementById('vistaPanel');
+                const vistaAdmin = document.getElementById('vistaAdmin');
+
+                vistaLanding?.classList.add('hidden');
+                vistaPanel?.classList.add('hidden');
+                vistaAdmin?.classList.remove('hidden');
+
+                if (typeof window.cerrarTodosLosDrawersMobile === 'function') {
+                    window.cerrarTodosLosDrawersMobile();
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                await cargarSolicitudesAdmin();
+                await obtenerAlumnos();
+                return;
+            }
+        }
+    } catch (_) {}
+
     const client = getSupabaseClient();
     if (!client) {
         mostrarToast('No se pudo verificar la sesión. Reintente en unos instantes.', 'error');

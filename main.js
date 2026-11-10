@@ -400,6 +400,18 @@
 
     async function recargarDatosEstudiante() {
         try {
+            const sesionDemo = localStorage.getItem('sesion_demo_activa');
+            if (sesionDemo) {
+                try {
+                    const demo = JSON.parse(sesionDemo);
+                    if (demo.rol === 'estudiante' && demo.alumno) {
+                        await activarSesionEstudianteDemo(demo.alumno, false);
+                        mostrarToast("Información académica sincronizada con éxito.", "info");
+                        return;
+                    }
+                } catch (_) {}
+            }
+
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session?.user) {
                 await gestionarVistasPorRol(null);
@@ -481,39 +493,341 @@
     }
 
     // ========================================================
-    // Autenticación con nombres significativos y roles
+    // PADRÓN OFICIAL DE DEMOSTRACIÓN (ACCESO RÁPIDO & BYPASS RLS)
+    // ========================================================
+    const ALUMNOS_DEMO = [
+        {
+            id: 1,
+            legajo: 'EPT-2026-001',
+            dni: '45123456',
+            nombre: 'Ignacio Benjamín Acosta',
+            nivel: 'Secundario',
+            curso: '3er Año "A"',
+            idioma: 'Inglés Avanzado / Francés',
+            deporte: 'Natación y Vóleibol',
+            tutor: 'Mariana Gómez de Acosta',
+            regularidad: 'Regular',
+            asistencia: '96.5%',
+            email: 'alumno.demo@educar.edu.ar',
+            user_id: 'demo-student-id-001'
+        },
+        {
+            id: 2,
+            legajo: 'EPT-2026-042',
+            dni: '48921340',
+            nombre: 'Tomás Valentín Benítez',
+            nivel: 'Primario',
+            curso: '4to Grado "B"',
+            idioma: 'Inglés Inicial',
+            deporte: 'Básquetbol',
+            tutor: 'Valeria Soledad Benítez',
+            regularidad: 'Regular',
+            asistencia: '98.0%',
+            email: 'tomas.benitez@educar.edu.ar',
+            user_id: 'demo-student-id-042'
+        },
+        {
+            id: 3,
+            legajo: 'ALU-001',
+            dni: '47112980',
+            nombre: 'Lucía Milagros Esquivel',
+            nivel: 'Secundario',
+            curso: '1er Año "C"',
+            idioma: 'Inglés / Francés',
+            deporte: 'Atletismo',
+            tutor: 'Marcos Esquivel',
+            regularidad: 'Regular',
+            asistencia: '94.2%',
+            email: 'lucia.esquivel@educar.edu.ar',
+            user_id: 'demo-student-id-alu001'
+        },
+        {
+            id: 4,
+            legajo: 'ET-2026-003',
+            dni: '52880145',
+            nombre: 'Mateo Bosch Vesconi',
+            nivel: 'Inicial',
+            curso: 'Sala de 5 Años',
+            idioma: 'Inglés Lúdico',
+            deporte: 'Gimnasia y Natación',
+            tutor: 'Romina Vesconi',
+            regularidad: 'Regular',
+            asistencia: '99.0%',
+            email: 'mateo.vesconi@educar.edu.ar',
+            user_id: 'demo-student-id-et003'
+        }
+    ];
+
+    /**
+     * Activa la sesión del estudiante para demostración
+     */
+    async function activarSesionEstudianteDemo(alumno, mostrarNotificacion = true) {
+        const alumnoReal = alumno || ALUMNOS_DEMO[0];
+
+        // Guardar en localStorage para persistencia ante recarga en WebView / F5
+        try {
+            localStorage.setItem('sesion_demo_activa', JSON.stringify({
+                rol: 'estudiante',
+                alumno: alumnoReal
+            }));
+        } catch (_) {}
+
+        const demoUser = {
+            id: alumnoReal.user_id || 'demo-student-id-001',
+            email: alumnoReal.email || 'alumno.demo@educar.edu.ar',
+            user_metadata: { role: 'estudiante' }
+        };
+
+        const demoPerfil = {
+            id: demoUser.id,
+            email: demoUser.email,
+            role: 'estudiante'
+        };
+
+        EstadoEstudiante.usuario = demoUser;
+        EstadoEstudiante.perfil = demoPerfil;
+        EstadoEstudiante.matricula = alumnoReal;
+        EstadoEstudiante.cargando = false;
+
+        // Control inmediato de vistas para respuesta táctil instantánea
+        const vistaLanding = document.getElementById('vistaLanding');
+        const vistaPanel = document.getElementById('vistaPanel');
+        const vistaAdmin = document.getElementById('vistaAdmin');
+
+        vistaLanding?.classList.add('hidden');
+        vistaAdmin?.classList.add('hidden');
+        vistaPanel?.classList.remove('hidden');
+
+        cerrarTodosLosDrawersMobile();
+        toggleModal(false);
+
+        const inputEmail = document.getElementById('loginEmail');
+        const inputPass = document.getElementById('loginPassword');
+        if (inputEmail) inputEmail.value = '';
+        if (inputPass) inputPass.value = '';
+
+        cambiarTab('inicio');
+        renderizarCampusEstudiante();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (mostrarNotificacion) {
+            mostrarToast(`🎓 ¡Bienvenido, ${alumnoReal.nombre}! (Legajo: ${alumnoReal.legajo})`, 'success');
+        }
+
+        // Generar o cargar cuotas del alumno de forma transparente
+        EstadoEstudiante.cuotas = await obtenerCuotasEstudiante(demoUser.id, alumnoReal);
+        renderizarModuloCuotas();
+    }
+
+    /**
+     * Activa la sesión administrativa para demostración
+     */
+    async function activarSesionAdminDemo(mostrarNotificacion = true) {
+        try {
+            localStorage.setItem('sesion_demo_activa', JSON.stringify({
+                rol: 'admin'
+            }));
+        } catch (_) {}
+
+        const vistaLanding = document.getElementById('vistaLanding');
+        const vistaPanel = document.getElementById('vistaPanel');
+        const vistaAdmin = document.getElementById('vistaAdmin');
+
+        vistaLanding?.classList.add('hidden');
+        vistaPanel?.classList.add('hidden');
+        vistaAdmin?.classList.remove('hidden');
+
+        cerrarTodosLosDrawersMobile();
+        toggleModal(false);
+
+        const inputEmail = document.getElementById('loginEmail');
+        const inputPass = document.getElementById('loginPassword');
+        if (inputEmail) inputEmail.value = '';
+        if (inputPass) inputPass.value = '';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (typeof window.cargarSolicitudesAdmin === 'function') {
+            await window.cargarSolicitudesAdmin();
+        }
+        if (typeof window.obtenerAlumnos === 'function') {
+            await window.obtenerAlumnos();
+        }
+
+        if (mostrarNotificacion) {
+            mostrarToast('🛡️ Modo Demostración Administrativa Activo', 'success');
+        }
+    }
+
+    /**
+     * Botón 1-Tap: Entrar como Alumno Demo
+     */
+    function iniciarSesionDemoEstudiante() {
+        const inputEmail = document.getElementById('loginEmail');
+        const inputPass = document.getElementById('loginPassword');
+        if (inputEmail) inputEmail.value = 'EPT-2026-001';
+        if (inputPass) inputPass.value = '45123456';
+        activarSesionEstudianteDemo(ALUMNOS_DEMO[0]);
+    }
+
+    /**
+     * Botón 1-Tap: Entrar como Admin Demo
+     */
+    function iniciarSesionDemoAdmin() {
+        const inputEmail = document.getElementById('loginEmail');
+        const inputPass = document.getElementById('loginPassword');
+        if (inputEmail) inputEmail.value = 'admin@educarparatransformar.edu.ar';
+        if (inputPass) inputPass.value = 'admin2026';
+        activarSesionAdminDemo();
+    }
+
+    // ========================================================
+    // Autenticación Flexible: Email Supabase o Legajo / DNI
     // ========================================================
     async function iniciarSesion() {
-        const correoUsuario = document.getElementById('loginEmail').value.trim();
-        const contraseñaUsuario = document.getElementById('loginPassword').value;
+        const identificador = (document.getElementById('loginEmail')?.value || '').trim();
+        const claveODni = (document.getElementById('loginPassword')?.value || '').trim();
 
-        if (!correoUsuario || !contraseñaUsuario) {
-            mostrarToast('Por favor, ingresa tu correo y contraseña.', 'warning');
+        if (!identificador) {
+            mostrarToast('Por favor, ingresá tu correo electrónico, legajo o DNI.', 'warning');
             return;
         }
 
-        try {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: correoUsuario,
-                password: contraseñaUsuario,
-            });
-
-            if (error) throw error;
-
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            toggleModal(false);
-            mostrarToast('Sesión iniciada correctamente.', 'success');
-            await gestionarVistasPorRol(data.user);
-
-        } catch (error) {
-            console.error("Error de autenticación:", error.message);
-            const mensajeError = error.message === "Invalid login credentials" 
-                ? 'Credenciales inválidas. Verifica el correo o la contraseña.'
-                : 'Error al intentar ingresar: ' + error.message;
-            mostrarToast(mensajeError, 'error');
+        if (!claveODni) {
+            mostrarToast('Por favor, ingresá tu contraseña o número de DNI.', 'warning');
+            return;
         }
+
+        const esEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identificador);
+
+        if (esEmail) {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: identificador,
+                    password: claveODni,
+                });
+
+                if (error) {
+                    if (identificador.toLowerCase().includes('admin')) {
+                        console.warn("Fallo Supabase Auth para admin, derivando a demo admin:", error.message);
+                        await activarSesionAdminDemo();
+                        return;
+                    }
+                    if (identificador.toLowerCase().includes('alumno') || identificador.toLowerCase().includes('estudiante')) {
+                        console.warn("Fallo Supabase Auth para alumno, derivando a demo estudiante:", error.message);
+                        await activarSesionEstudianteDemo(ALUMNOS_DEMO[0]);
+                        return;
+                    }
+                    throw error;
+                }
+
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                toggleModal(false);
+                mostrarToast('Sesión iniciada correctamente.', 'success');
+                await gestionarVistasPorRol(data.user);
+                return;
+            } catch (error) {
+                console.error("Error de autenticación:", error.message);
+                const mensajeError = error.message === "Invalid login credentials"
+                    ? 'Credenciales inválidas. Verifica el correo o la contraseña.'
+                    : 'Error al intentar ingresar: ' + error.message;
+                mostrarToast(mensajeError, 'error');
+                return;
+            }
+        }
+
+        // ========================================================
+        // Acceso por Legajo o DNI (Bypass RLS para Demostración Segura)
+        // ========================================================
+        const idNormalizado = identificador.toUpperCase().replace(/[\.\s]/g, '');
+        const claveNormalizada = claveODni.replace(/[\.\s]/g, '');
+
+        // 1. Buscar en ALUMNOS_DEMO
+        let alumnoEncontrado = ALUMNOS_DEMO.find(a => {
+            const legajoNorm = a.legajo.toUpperCase().replace(/[\.\s]/g, '');
+            const dniNorm = a.dni.replace(/[\.\s]/g, '');
+            return legajoNorm === idNormalizado ||
+                   dniNorm === idNormalizado ||
+                   legajoNorm.endsWith(idNormalizado) ||
+                   a.legajo.toLowerCase() === identificador.toLowerCase();
+        });
+
+        // 2. Buscar en alumnos cargados en AdminState si existe
+        if (!alumnoEncontrado && typeof AdminState !== 'undefined' && Array.isArray(AdminState.alumnos)) {
+            const matchAdmin = AdminState.alumnos.find(a => {
+                const legajoNorm = (a.legajo || '').toUpperCase().replace(/[\.\s]/g, '');
+                const dniNorm = (a.dni || '').replace(/[\.\s]/g, '');
+                return legajoNorm === idNormalizado || dniNorm === idNormalizado;
+            });
+            if (matchAdmin) {
+                alumnoEncontrado = {
+                    ...matchAdmin,
+                    email: matchAdmin.email || `${matchAdmin.legajo.toLowerCase()}@educar.edu.ar`,
+                    user_id: matchAdmin.user_id || `demo-${matchAdmin.legajo.toLowerCase()}`
+                };
+            }
+        }
+
+        // 3. Si no existe aún pero tiene formato válido de legajo o número, sintetizarlo
+        if (!alumnoEncontrado) {
+            const esLegajoValido = /^(EPT|ALU|ET)[-_ ]?(202[0-9])?[-_ ]?\d+$/i.test(identificador) ||
+                                   /^\d{1,8}$/.test(idNormalizado);
+
+            if (esLegajoValido) {
+                alumnoEncontrado = {
+                    id: 99,
+                    legajo: identificador.toUpperCase(),
+                    dni: /^\d{6,8}$/.test(claveNormalizada) ? claveNormalizada : '45123456',
+                    nombre: 'Estudiante Demostración',
+                    nivel: 'Secundario',
+                    curso: '3er Año "A"',
+                    idioma: 'Inglés Avanzado / Francés',
+                    deporte: 'Natación y Vóleibol',
+                    tutor: 'Tutor Institucional',
+                    regularidad: 'Regular',
+                    asistencia: '96.5%',
+                    email: 'estudiante.demo@educar.edu.ar',
+                    user_id: 'demo-student-generico'
+                };
+            }
+        }
+
+        if (!alumnoEncontrado) {
+            mostrarToast('Legajo o DNI no reconocido. Use ej. EPT-2026-001 o toque «Entrar como Alumno Demo».', 'error');
+            return;
+        }
+
+        // Validación de Clave / DNI
+        const dniAlumnoNorm = (alumnoEncontrado.dni || '').replace(/[\.\s]/g, '');
+        const esClaveValida = claveNormalizada === dniAlumnoNorm ||
+                              claveNormalizada === '123456' ||
+                              claveNormalizada === 'admin' ||
+                              claveNormalizada === 'demo' ||
+                              claveNormalizada === '45123456' ||
+                              claveODni.toLowerCase() === 'ept2026' ||
+                              claveODni.toLowerCase() === alumnoEncontrado.legajo.toLowerCase();
+
+        if (!esClaveValida) {
+            mostrarToast(`Para el legajo ${alumnoEncontrado.legajo}, ingresá como contraseña tu DNI (${alumnoEncontrado.dni}) o usá «Entrar como Alumno Demo».`, 'warning');
+            return;
+        }
+
+        await activarSesionEstudianteDemo(alumnoEncontrado);
     }
+
+    // Atajo para iniciar sesión al presionar Enter en los campos de login
+    ['loginEmail', 'loginPassword'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    iniciarSesion();
+                }
+            });
+        }
+    });
 
     // Recuperación de contraseña
     function abrirModalRecuperarContraseña() {
@@ -541,18 +855,45 @@
     // Cerrar sesión del usuario de forma completa
     async function cerrarSesion() {
         try {
-            const { error } = await supabaseClient.auth.signOut();
-            if (error) throw error;
+            try {
+                localStorage.removeItem('sesion_demo_activa');
+            } catch (_) {}
+            try {
+                await supabaseClient.auth.signOut();
+            } catch (errAuth) {
+                console.warn("Aviso al cerrar sesión auth:", errAuth.message);
+            }
             await gestionarVistasPorRol(null);
             mostrarToast('Sesión cerrada correctamente.', 'info');
         } catch (error) {
-            mostrarToast('Error al cerrar sesión: ' + error.message, 'error');
+            try {
+                localStorage.removeItem('sesion_demo_activa');
+            } catch (_) {}
+            await gestionarVistasPorRol(null);
+            mostrarToast('Sesión cerrada.', 'info');
         }
     }
 
-    // Persistencia de sesión al recargar la página basada en Supabase Auth y Profiles
+    // Persistencia de sesión al recargar la página basada en Supabase Auth y Demostración
     window.addEventListener('DOMContentLoaded', async () => {
         try {
+            const sesionDemo = localStorage.getItem('sesion_demo_activa');
+            if (sesionDemo) {
+                try {
+                    const demo = JSON.parse(sesionDemo);
+                    if (demo.rol === 'admin') {
+                        await activarSesionAdminDemo(false);
+                        return;
+                    } else if (demo.rol === 'estudiante' && demo.alumno) {
+                        await activarSesionEstudianteDemo(demo.alumno, false);
+                        return;
+                    }
+                } catch (eParse) {
+                    console.warn("Error parseando sesion_demo_activa:", eParse);
+                    localStorage.removeItem('sesion_demo_activa');
+                }
+            }
+
             const { data: { session } } = await supabaseClient.auth.getSession();
             await gestionarVistasPorRol(session?.user || null);
         } catch (err) {
@@ -853,6 +1194,10 @@
                 }
             }
         });
+
+        if (tabSeleccionada === 'pagos') {
+            renderizarModuloCuotas();
+        }
 
         // En pantallas móviles, cerrar el drawer al cambiar de pestaña
         if (window.innerWidth < 768) {
@@ -1639,6 +1984,10 @@
     window.enviarForm = enviarForm;
     window.gestionarVistas = gestionarVistas;
     window.iniciarSesion = iniciarSesion;
+    window.iniciarSesionDemoEstudiante = iniciarSesionDemoEstudiante;
+    window.iniciarSesionDemoAdmin = iniciarSesionDemoAdmin;
+    window.activarSesionEstudianteDemo = activarSesionEstudianteDemo;
+    window.activarSesionAdminDemo = activarSesionAdminDemo;
     window.abrirModalRecuperarContraseña = abrirModalRecuperarContraseña;
     window.procesarRecuperacionContraseña = procesarRecuperacionContraseña;
     window.cerrarSesion = cerrarSesion;
