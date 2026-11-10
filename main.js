@@ -84,9 +84,11 @@
         
         if (mostrar) {
             elemento.classList.remove('hidden');
+            elemento.classList.add('flex');
             document.body.style.overflow = 'hidden';
         } else {
             elemento.classList.add('hidden');
+            elemento.classList.remove('flex');
             document.body.style.overflow = 'auto';
         }
     }
@@ -1670,12 +1672,19 @@
                         ` : ''}
                     </div>
 
-                    <div class="pt-3 mt-2 border-t border-slate-100">
+                    <div class="pt-3 mt-2 border-t border-slate-100 flex gap-2">
                         <button type="button" onclick="verDetalleFacturaCuota('${c.id}')"
-                            class="w-full min-h-[44px] px-3.5 py-2.5 bg-slate-100 hover:bg-blue-900 hover:text-white text-blue-900 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 active:scale-95">
+                            class="flex-1 min-h-[44px] px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95">
                             <i class="fas fa-file-invoice text-xs" aria-hidden="true"></i>
-                            <span>Ver Detalle / Factura</span>
+                            <span>${esPagada ? 'Ver Recibo' : 'Ver Detalle'}</span>
                         </button>
+                        ${!esPagada ? `
+                            <button type="button" onclick="abrirModalPagarCuotaEstudiante('${c.id}')"
+                                class="flex-1 min-h-[44px] px-3 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95 shadow">
+                                <i class="fas fa-credit-card text-amber-300 text-xs" aria-hidden="true"></i>
+                                <span>Abonar Cuota</span>
+                            </button>
+                        ` : ''}
                     </div>
                 </article>
             `;
@@ -1862,6 +1871,65 @@
         EstadoEstudiante.cuotaSeleccionada = null;
     }
 
+    // ========================================================
+    // SIMULADOR DE PAGO DE CUOTAS EN VIVO (CAMPUS ESTUDIANTE)
+    // ========================================================
+    let cuotaAPagarSeleccionadaId = null;
+
+    function abrirModalPagarCuotaEstudiante(cuotaId) {
+        const cuota = (EstadoEstudiante.cuotas || []).find(c => String(c.id) === String(cuotaId));
+        if (!cuota) return;
+
+        cuotaAPagarSeleccionadaId = cuotaId;
+        const matricula = EstadoEstudiante.matricula;
+
+        asignarTextoSeguro('pagoCuotaPeriodo', `${cuota.periodo} (Ciclo 2026)`);
+        asignarTextoSeguro('pagoCuotaAlumno', `${matricula?.nombre || 'Alumno'} (${matricula?.legajo || 'EPT-2026-001'})`);
+        asignarTextoSeguro('pagoCuotaVencimiento', cuota.vencimiento ? new Date(cuota.vencimiento).toLocaleDateString('es-AR') : `10 de ${cuota.periodo}`);
+        asignarTextoSeguro('pagoCuotaMonto', formatearMonedaARS(cuota.monto_total));
+
+        alternarVisibilidadModal('modalPagarCuotaEstudiante', true);
+    }
+
+    function cerrarModalPagarCuotaEstudiante() {
+        alternarVisibilidadModal('modalPagarCuotaEstudiante', false);
+        cuotaAPagarSeleccionadaId = null;
+    }
+
+    function confirmarPagoCuotaEstudiante() {
+        if (!cuotaAPagarSeleccionadaId) return;
+
+        const cuota = (EstadoEstudiante.cuotas || []).find(c => String(c.id) === String(cuotaAPagarSeleccionadaId));
+        if (!cuota) return;
+
+        const medioSeleccionado = document.getElementById('selectMedioPagoEstudiante')?.value || 'Transferencia Bancaria CBU';
+
+        // Actualizar datos de la cuota en memoria
+        cuota.estado = 'Pagada';
+        cuota.estado_pago = 'Completo';
+        cuota.numero_comprobante = `REC-2026-11-${Math.floor(1000 + Math.random() * 9000)}`;
+        cuota.fecha_pago = new Date().toISOString();
+        cuota.medio_pago = medioSeleccionado;
+
+        // Persistir en sesión activa
+        try {
+            const sesionDemo = localStorage.getItem('sesion_demo_activa');
+            if (sesionDemo) {
+                const parsed = JSON.parse(sesionDemo);
+                if (parsed.alumno) {
+                    parsed.cuotas = EstadoEstudiante.cuotas;
+                    localStorage.setItem('sesion_demo_activa', JSON.stringify(parsed));
+                }
+            }
+        } catch (_) {}
+
+        cerrarModalPagarCuotaEstudiante();
+        renderizarCampusEstudiante();
+        renderizarModuloCuotas();
+
+        mostrarToast(`¡Pago de Cuota ${cuota.periodo} registrado con éxito! Recibo N.º ${cuota.numero_comprobante} emitido e incorporado a tu Historial.`, 'success');
+    }
+
     function descargarComprobanteCuota() {
         const cuota = EstadoEstudiante.cuotaSeleccionada;
         const nro = cuota?.numero_comprobante || (cuota ? `FAC-2026-${cuota.mes}` : 'RECIBO-OFICIAL');
@@ -2012,6 +2080,9 @@
     window.setFiltroCuotas = setFiltroCuotas;
     window.verDetalleFacturaCuota = verDetalleFacturaCuota;
     window.cerrarModalDetalleFactura = cerrarModalDetalleFactura;
+    window.abrirModalPagarCuotaEstudiante = abrirModalPagarCuotaEstudiante;
+    window.cerrarModalPagarCuotaEstudiante = cerrarModalPagarCuotaEstudiante;
+    window.confirmarPagoCuotaEstudiante = confirmarPagoCuotaEstudiante;
     window.descargarComprobanteCuota = descargarComprobanteCuota;
     window.abrirModalCambiarPassword = abrirModalCambiarPassword;
     window.cerrarModalCambiarPassword = cerrarModalCambiarPassword;

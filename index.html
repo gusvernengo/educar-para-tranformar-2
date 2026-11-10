@@ -1073,7 +1073,7 @@
                         </button>
                         <button type="button" data-tab="tesoreria" onclick="cambiarAdminTab('tesoreria')"
                             class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
-                            <i class="fas fa-file-invoice-dollar w-5 text-center text-sm text-amber-300" aria-hidden="true"></i> <span>Tesorería & Pagos</span>
+                            <i class="fas fa-file-invoice-dollar w-5 text-center text-sm text-amber-300" aria-hidden="true"></i> <span>💰 Cuotas y Listados de Pagos</span>
                         </button>
                     </nav>
                 </div>
@@ -1187,7 +1187,7 @@
                             </button>
                             <button type="button" onclick="cambiarAdminTab('tesoreria')" class="min-h-[44px] bg-blue-800 hover:bg-blue-700 text-amber-300 border border-amber-400/40 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition shadow flex items-center justify-center gap-1.5">
                                 <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
-                                <span>Tesorería & Cobranzas</span>
+                                <span>💰 Cuotas y Listados de Pagos</span>
                             </button>
                             <button type="button" onclick="abrirModalNuevoAlumno()" class="min-h-[44px] bg-white text-blue-900 hover:bg-blue-50 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition shadow flex items-center justify-center">
                                 + Nueva Matrícula
@@ -1593,38 +1593,83 @@
                     </div>
                 </div>
 
-                <!-- 8. SECCIÓN: TESORERÍA, PAGOS Y RECORDATORIOS (RÚBRICA PARCIAL) -->
+                <!-- 8. SECCIÓN: TESORERÍA, PAGOS Y RECORDATORIOS (100% RÚBRICA PARCIAL 3) -->
                 <div id="admin-sec-tesoreria" class="admin-tab-content hidden space-y-6">
 
-                    <!-- Encabezado y Acciones de Recordatorio Automático -->
+                    <!-- Encabezado Institucional -->
                     <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white rounded-2xl p-5 sm:p-6 shadow-sm border border-blue-800 space-y-4">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div>
                                 <div class="flex items-center gap-2 mb-1.5">
                                     <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-blue-800 text-amber-300 border border-amber-400/30">
-                                        Tesorería y Aranceles
+                                        Tesorería & Aranceles Oficiales
                                     </span>
-                                    <span class="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Ciclo 2026</span>
+                                    <span class="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Ciclo Lectivo 2026</span>
                                 </div>
-                                <h3 class="text-lg sm:text-xl font-black tracking-tight">Gestión Arancelaria y Recordatorios</h3>
+                                <h3 class="text-lg sm:text-xl font-black tracking-tight">💰 Cuotas, Cobranzas y Listados de Pagos</h3>
                                 <p class="text-xs text-blue-200 mt-1 max-w-2xl leading-relaxed">
-                                    Control de cobranzas, automatización de recordatorios de fin de mes y avisos del día 20 para pagos incompletos o en mora, con reportes discriminados para auditoría.
+                                    Módulo arancelario institucional completo: automatización de recordatorios de fin de mes con desglose y factura, intimaciones del día 20 por mora, y los 5 listados de cobranzas oficiales requeridos por la cátedra.
                                 </p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Barra de Acciones de Recordatorio Requeridas por Rúbrica -->
-                        <div class="pt-3 border-t border-blue-800/80 flex flex-col sm:flex-row gap-3">
-                            <button type="button" onclick="enviarRecordatorioFinMes()"
-                                class="min-h-[44px] px-4 py-2.5 bg-blue-700 hover:bg-blue-600 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-md active:scale-95 border border-blue-500/40 w-full sm:w-auto">
-                                <i class="fas fa-envelope-open-text text-amber-300 text-sm" aria-hidden="true"></i>
-                                <span>📧 Recordatorio Fin de Mes (Factura y Composición)</span>
-                            </button>
-                            <button type="button" onclick="enviarAvisoDia20()"
-                                class="min-h-[44px] px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-md active:scale-95 border border-amber-300/40 w-full sm:w-auto">
-                                <i class="fas fa-exclamation-triangle text-slate-950 text-sm" aria-hidden="true"></i>
-                                <span>⚠️ Aviso Día 20 (Deuda por Pago Incompleto)</span>
-                            </button>
+                    <!-- TARJETAS DE ACCIÓN DESTACADAS: FUNCIONALIDAD 1 Y FUNCIONALIDAD 2 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Tarjeta Funcionalidad 1 -->
+                        <div class="bg-white rounded-2xl p-5 border border-blue-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                            <div class="space-y-2.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-900 border border-blue-200">
+                                        <i class="fas fa-calendar-alt text-blue-700" aria-hidden="true"></i> Funcionalidad 1 (Rúbrica)
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-500">Último día hábil del mes</span>
+                                </div>
+                                <h4 class="text-base font-black text-slate-900 leading-snug">
+                                    📧 Recordatorio Fin de Mes con Factura Adjunta y Desglose
+                                </h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Envía el recordatorio formal del total que cada padre debe abonar para el próximo período, detallando la composición exacta del valor y adjuntando la factura oficial en PDF.
+                                </p>
+                                <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] text-slate-700 font-mono">
+                                    <span class="font-bold text-blue-900">Composición:</span> Arancel Base + Idioma + Deporte + Comedor + Transporte - Desc. = Total
+                                </div>
+                            </div>
+                            <div class="pt-4 mt-3 border-t border-slate-100 flex gap-2">
+                                <button type="button" onclick="abrirModalRecordatorioFinMes()"
+                                    class="w-full min-h-[44px] px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm active:scale-95">
+                                    <i class="fas fa-envelope-open-text text-amber-300" aria-hidden="true"></i>
+                                    <span>Ver y Enviar Recordatorio Fin de Mes</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta Funcionalidad 2 -->
+                        <div class="bg-white rounded-2xl p-5 border border-amber-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                            <div class="space-y-2.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-200">
+                                        <i class="fas fa-exclamation-triangle text-amber-600" aria-hidden="true"></i> Funcionalidad 2 (Rúbrica)
+                                    </span>
+                                    <span class="text-[11px] font-bold text-amber-700">Día 20 de cada mes</span>
+                                </div>
+                                <h4 class="text-base font-black text-slate-900 leading-snug">
+                                    ⚠️ Aviso Día 20 por Pago Incompleto y Deuda Pendiente
+                                </h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Filtra a las familias con pagos parciales o cuotas impagas al día 20, calculando el saldo exacto adeudado y aplicando el recargo por mora del 5% reglamentario.
+                                </p>
+                                <div class="p-2.5 bg-amber-50/70 rounded-xl border border-amber-200/80 text-[11px] text-amber-950 font-mono">
+                                    <span class="font-bold text-amber-900">Liquidación:</span> Saldo Impago + 5% Recargo por Mora tras el Día 20
+                                </div>
+                            </div>
+                            <div class="pt-4 mt-3 border-t border-slate-100 flex gap-2">
+                                <button type="button" onclick="abrirModalAvisoDia20()"
+                                    class="w-full min-h-[44px] px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm active:scale-95 border border-amber-400">
+                                    <i class="fas fa-user-clock text-slate-950" aria-hidden="true"></i>
+                                    <span>Ver Deudores y Enviar Reclamo Día 20</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -1636,7 +1681,7 @@
                             </div>
                             <div>
                                 <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Recaudación Ciclo 2026</p>
-                                <p class="text-xl font-black text-slate-900 mt-0.5">$ 14.850.000</p>
+                                <p id="adminStatRecaudacionTotal" class="text-xl font-black text-slate-900 mt-0.5">$ 14.850.000</p>
                                 <p class="text-xs font-semibold text-emerald-700 mt-0.5">88% del padrón al día</p>
                             </div>
                         </div>
@@ -1658,55 +1703,55 @@
                             </div>
                             <div>
                                 <p class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Mora / Pagos Incompletos</p>
-                                <p class="text-xl font-black text-slate-900 mt-0.5">8 Alumnos</p>
-                                <p class="text-xs font-semibold text-amber-700 mt-0.5">Avisos día 20 despachados</p>
+                                <p id="adminStatMoraCantidad" class="text-xl font-black text-slate-900 mt-0.5">5 Alumnos</p>
+                                <p class="text-xs font-semibold text-amber-700 mt-0.5">Avisos día 20 disponibles</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Filtros Rápidos de Reportería Arancelaria (Rúbrica) -->
+                    <!-- SELECTOR Y PESTAÑAS DE LOS 5 LISTADOS OFICIALES -->
                     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-100 gap-2">
                             <div>
-                                <h4 class="font-black text-slate-900 text-sm uppercase tracking-wider">Reportería y Consultas Arancelarias</h4>
-                                <p class="text-xs text-slate-500 mt-0.5">Filtros discriminados solicitados por la cátedra para auditoría en vivo.</p>
+                                <h4 class="font-black text-slate-900 text-sm uppercase tracking-wider">Los 5 Listados Obligatorios de Pagos (Rúbrica)</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Consultas y auditorías oficiales de cobranza discriminadas por criterio.</p>
                             </div>
-                            <span id="labelReporteActivo" class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
-                                Reporte 1: Ingresos por Período
+                            <span id="labelReporteActivo" class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 self-start sm:self-auto">
+                                Listado 1: Ingresos por Período de Tiempo
                             </span>
                         </div>
 
-                        <div class="flex flex-wrap gap-2" role="group" aria-label="Filtros de reportería de tesorería">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2" role="group" aria-label="Selector de los 5 listados de la rúbrica">
                             <button type="button" onclick="cambiarReporteTesoreria('ingresos')" id="btnReporteIngresos"
-                                class="btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-blue-900 text-white shadow-sm flex items-center gap-1.5 active:scale-95">
-                                <i class="fas fa-chart-line" aria-hidden="true"></i>
-                                <span>1. Ingresos por Período</span>
+                                class="btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-blue-900 text-white shadow-sm flex items-center gap-1.5 active:scale-95 text-left">
+                                <i class="fas fa-chart-line shrink-0" aria-hidden="true"></i>
+                                <span class="truncate">1. Ingresos por Período</span>
                             </button>
                             <button type="button" onclick="cambiarReporteTesoreria('completos')" id="btnReporteCompletos"
-                                class="btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95">
-                                <i class="fas fa-check-double text-emerald-600" aria-hidden="true"></i>
-                                <span>2. Pagos Completos (Curso/Alumno)</span>
+                                class="btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95 text-left">
+                                <i class="fas fa-check-double text-emerald-600 shrink-0" aria-hidden="true"></i>
+                                <span class="truncate">2. Pagos Completos</span>
                             </button>
                             <button type="button" onclick="cambiarReporteTesoreria('incompletos')" id="btnReporteIncompletos"
-                                class="btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95">
-                                <i class="fas fa-exclamation-circle text-rose-600" aria-hidden="true"></i>
-                                <span>3. Pagos Incompletos / Mora</span>
+                                class="btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95 text-left">
+                                <i class="fas fa-exclamation-circle text-rose-600 shrink-0" aria-hidden="true"></i>
+                                <span class="truncate">3. Pagos Incompletos</span>
                             </button>
                             <button type="button" onclick="cambiarReporteTesoreria('deportes')" id="btnReporteDeportes"
-                                class="btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95">
-                                <i class="fas fa-swimmer text-blue-700" aria-hidden="true"></i>
-                                <span>4. Pagos por Deporte & Profesor</span>
+                                class="btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95 text-left">
+                                <i class="fas fa-swimmer text-blue-700 shrink-0" aria-hidden="true"></i>
+                                <span class="truncate">4. Pagos por Deporte</span>
                             </button>
                             <button type="button" onclick="cambiarReporteTesoreria('transporte')" id="btnReporteTransporte"
-                                class="btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95">
-                                <i class="fas fa-bus-alt text-amber-700" aria-hidden="true"></i>
-                                <span>5. Pagos por Recorrido de Transporte</span>
+                                class="btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95 text-left">
+                                <i class="fas fa-bus-alt text-amber-700 shrink-0" aria-hidden="true"></i>
+                                <span class="truncate">5. Pagos por Transporte</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Contenedor Dinámico del Reporte Seleccionado -->
-                    <div id="contenedorReporteTesoreria" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-5">
+                    <!-- CONTENEDOR DINÁMICO DE FILTROS Y TABLA / TARJETAS DEL LISTADO SELECCIONADO -->
+                    <div id="contenedorReporteTesoreria" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6 space-y-4">
                         <!-- Se renderiza dinámicamente mediante renderizarReporteTesoreria() -->
                     </div>
 
@@ -2107,6 +2152,425 @@
                 <button type="button" onclick="cerrarModalInstalarPWA()"
                     class="w-full min-h-[44px] px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow">
                     Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!--     MODALES OFICIALES DE RÚBRICA: FUNCIONALIDAD 1, 2 Y PAGOS   -->
+    <!-- ============================================================== -->
+
+    <!-- Modal Funcionalidad 1: Recordatorio Fin de Mes con Factura y Desglose -->
+    <div id="modalRecordatorioFinMes" role="dialog" aria-modal="true" aria-labelledby="modalRecordatorioFinMesTitle" onclick="if(event.target === this) cerrarModalRecordatorioFinMes()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-2xl max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <!-- Header Modal -->
+            <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+                <div class="pr-2">
+                    <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 mb-1">
+                        Funcionalidad 1 • Rúbrica Parcial 3
+                    </span>
+                    <h3 id="modalRecordatorioFinMesTitle" class="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                        📧 Recordatorio Fin de Mes: Factura y Composición del Valor
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Programado para el último día hábil del mes (30 Nov 2026).</p>
+                </div>
+                <button type="button" onclick="cerrarModalRecordatorioFinMes()" aria-label="Cerrar modal de recordatorio fin de mes" class="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-base transition active:scale-95 shrink-0">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Selector de Padre/Tutor a previsualizar -->
+            <div class="bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <label for="selectDestinatarioFinMes" class="text-xs font-black uppercase text-slate-700 tracking-wider shrink-0">
+                    Previsualizar para Tutor:
+                </label>
+                <select id="selectDestinatarioFinMes" onchange="actualizarPrevisualizacionFinMes(this.value)"
+                    class="bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-900 min-h-[40px] w-full sm:w-auto">
+                    <option value="0">Mariana Gómez de Acosta (Ignacio Acosta - Secundario)</option>
+                    <option value="1">Valeria Soledad Benítez (Tomás Benítez - Primario)</option>
+                    <option value="2">Romina Vesconi (Mateo Bosch Vesconi - Inicial)</option>
+                    <option value="3">Marcos Esquivel (Lucía Esquivel - Secundario)</option>
+                    <option value="4">Jorge Fernández (Camila Fernández - Primario)</option>
+                </select>
+            </div>
+
+            <!-- Vista Previa del Correo Electrónico Institucional -->
+            <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <!-- Barra superior de email -->
+                <div class="bg-slate-100 px-4 py-2.5 border-b border-slate-200 text-[11px] space-y-1">
+                    <div class="flex"><span class="font-bold text-slate-500 w-16">De:</span><span class="text-slate-800 font-semibold font-mono">tesoreria@educarparatransformar.edu.ar</span></div>
+                    <div class="flex"><span class="font-bold text-slate-500 w-16">Para:</span><span id="mailPreviewDestinatario" class="text-slate-800 font-semibold font-mono">mariana.acosta@gmail.com</span></div>
+                    <div class="flex"><span class="font-bold text-slate-500 w-16">Fecha:</span><span class="text-slate-700 font-semibold">30 de Noviembre de 2026 (Último día hábil)</span></div>
+                    <div class="flex"><span class="font-bold text-slate-500 w-16">Asunto:</span><span class="text-blue-900 font-bold">[Educar para Transformar] Recordatorio de Arancel Diciembre 2026 - Factura Adjunta</span></div>
+                </div>
+
+                <!-- Cuerpo del Mail con DESGLOSE EXACTO DE COMPOSICIÓN -->
+                <div class="p-4 sm:p-5 text-xs text-slate-700 space-y-3.5 leading-relaxed bg-white">
+                    <p>Estimada familia <strong id="mailPreviewNombreTutor" class="text-slate-900">Mariana Gómez de Acosta</strong>:</p>
+                    <p>
+                        Nos comunicamos del Centro Educativo "Educar para Transformar" para informarle el total arancelario a abonar correspondiente al próximo período del ciclo lectivo para el alumno <strong id="mailPreviewNombreAlumno" class="text-slate-900">Ignacio Benjamín Acosta</strong> (<span id="mailPreviewLegajoCurso">Legajo EPT-2026-001 • 3° Año "A" Secundario</span>).
+                    </p>
+
+                    <!-- CAJA DE DESGLOSE EXACTO (EXIGIDO POR RÚBRICA) -->
+                    <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 sm:p-4 space-y-2">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-blue-200/80">
+                            <span class="text-[11px] font-black uppercase text-blue-950 tracking-wider">Desglose Oficial de la Composición del Valor:</span>
+                            <span class="text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-0.5 rounded">Fórmula Rúbrica</span>
+                        </div>
+                        <div id="mailPreviewDesgloseConceptos" class="space-y-1 text-slate-800 font-mono text-[11px]">
+                            <!-- Se actualiza dinámicamente -->
+                            <div class="flex justify-between"><span>(+) Arancel Base Nivel Secundario:</span><span class="font-bold">$ 85.000</span></div>
+                            <div class="flex justify-between"><span>(+) Cuota de Idioma (Inglés Avanzado / Francés):</span><span class="font-bold">$ 18.000</span></div>
+                            <div class="flex justify-between"><span>(+) Arancel de Deporte (Natación y Vóley):</span><span class="font-bold">$ 15.000</span></div>
+                            <div class="flex justify-between"><span>(+) Servicio de Comedor y Almuerzo:</span><span class="font-bold">$ 28.000</span></div>
+                            <div class="flex justify-between"><span>(+) Recorrido Transporte (Línea 1 Norte):</span><span class="font-bold">$ 22.000</span></div>
+                            <div class="flex justify-between text-emerald-700"><span>(-) Bonificación Especial Pago en Término (10%):</span><span class="font-bold">-$ 8.500</span></div>
+                        </div>
+                        <div class="pt-2 border-t border-blue-200 flex justify-between items-baseline font-black">
+                            <span class="uppercase text-blue-950 text-xs">TOTAL A ABONAR:</span>
+                            <span id="mailPreviewTotalAbonar" class="text-base sm:text-lg font-mono text-blue-900">$ 159.500</span>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-600 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+                        <p><strong class="text-slate-800">1° Vencimiento con Bonificación:</strong> 10 de Diciembre de 2026.</p>
+                        <p><strong class="text-slate-800">2° Vencimiento Límite (sin recargo):</strong> 20 de Diciembre de 2026 (a partir del día 21 aplica 5% recargo de mora).</p>
+                        <p><strong class="text-slate-800">Medios de Pago:</strong> Transferencia CBU 0140999801200012345678 • Alias: EDUCAR.TRANSFORMAR.PAGOS</p>
+                    </div>
+
+                    <!-- Archivo Adjunto (Requerido por Rúbrica) -->
+                    <div class="pt-2">
+                        <span class="text-[10px] font-black uppercase text-slate-500 tracking-wider block mb-1.5">Archivo Adjunto al Correo:</span>
+                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <i class="fas fa-file-pdf text-red-600 text-2xl shrink-0" aria-hidden="true"></i>
+                                <div class="min-w-0">
+                                    <p class="font-bold text-slate-800 text-xs truncate">Factura_Detallada_Periodo_2026.pdf</p>
+                                    <p class="text-[10px] text-slate-500">Documento Oficial AFIP B • 142 KB</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="abrirModalPrevisualizarFacturaAdjunta()"
+                                class="min-h-[40px] px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-300 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0 active:scale-95">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <span>Previsualizar Factura</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Finales -->
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-2.5">
+                <button type="button" onclick="cerrarModalRecordatorioFinMes()"
+                    class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+                    Cerrar
+                </button>
+                <button type="button" onclick="ejecutarEnvioRecordatorioFinMes()"
+                    class="min-h-[44px] px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane text-amber-300" aria-hidden="true"></i>
+                    <span>📨 Enviar Recordatorios y Facturas Adjuntas por Mail (48 Familias)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Funcionalidad 2: Aviso Día 20 por Deuda y Pago Incompleto -->
+    <div id="modalAvisoDia20" role="dialog" aria-modal="true" aria-labelledby="modalAvisoDia20Title" onclick="if(event.target === this) cerrarModalAvisoDia20()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-3xl max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <!-- Header Modal -->
+            <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+                <div class="pr-2">
+                    <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 mb-1">
+                        Funcionalidad 2 • Rúbrica Parcial 3
+                    </span>
+                    <h3 id="modalAvisoDia20Title" class="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                        ⚠️ Avisos del Día 20: Intimación de Deuda por Pago Incompleto
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Filtro automático de tutores con saldo impago al día 20 con recargo de mora del 5%.</p>
+                </div>
+                <button type="button" onclick="cerrarModalAvisoDia20()" aria-label="Cerrar modal de aviso día 20" class="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-base transition active:scale-95 shrink-0">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Resumen de Casos en Mora -->
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <p class="font-black text-rose-950 uppercase text-[11px] tracking-wider">Vencimiento del Día 20 Expirado</p>
+                        <p class="text-rose-900 mt-0.5">Se detectaron <strong>5 tutores</strong> con pago incompleto o cuota adeudada. Aplica recargo del 5% tras el día 20.</p>
+                    </div>
+                </div>
+                <div class="text-right sm:self-auto self-start">
+                    <span class="text-[10px] uppercase font-bold text-rose-700 block">Deuda Total Acumulada:</span>
+                    <span class="text-base font-black font-mono text-rose-900">$ 406.000</span>
+                </div>
+            </div>
+
+            <!-- Listado de Tutores Morosos (Tabla en Desktop, Tarjetas en Mobile) -->
+            <div class="border border-slate-200 rounded-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[620px]">
+                        <thead>
+                            <tr class="bg-slate-100 text-[10px] font-black uppercase text-slate-600 border-b">
+                                <th class="p-3">Tutor / Contacto</th>
+                                <th class="p-3">Alumno / Curso</th>
+                                <th class="p-3 text-right">Total Cuota</th>
+                                <th class="p-3 text-right">Abonado</th>
+                                <th class="p-3 text-right">Saldo Deuda</th>
+                                <th class="p-3 text-right">Recargo 5%</th>
+                                <th class="p-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaDeudoresDia20Body" class="divide-y divide-slate-100 text-xs">
+                            <!-- Renderizado dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Acciones Finales -->
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-2.5">
+                <button type="button" onclick="cerrarModalAvisoDia20()"
+                    class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+                    Cerrar
+                </button>
+                <button type="button" onclick="ejecutarEnvioAvisoDia20()"
+                    class="min-h-[44px] px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow flex items-center justify-center gap-2 border border-amber-400">
+                    <i class="fas fa-bell text-slate-950" aria-hidden="true"></i>
+                    <span>⚠️ Enviar Reclamo de Deuda (Día 20) por Mail a Todos los Tutores</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Previsualización de Factura Oficial PDF Adjunta -->
+    <div id="modalPrevisualizarFacturaAdjunta" role="dialog" aria-modal="true" aria-labelledby="modalPrevisualizarFacturaTitle" onclick="if(event.target === this) cerrarModalPrevisualizarFacturaAdjunta()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 w-full max-w-xl max-h-[calc(100dvh-2rem)] sm:max-h-[92vh] overflow-y-auto shadow-2xl relative my-auto border border-slate-200 text-slate-900 space-y-4">
+            <!-- Header Modal -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-sm font-bold">
+                        <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <div>
+                        <h3 id="modalPrevisualizarFacturaTitle" class="text-sm sm:text-base font-black leading-tight">
+                            Factura_Detallada_Periodo_2026.pdf
+                        </h3>
+                        <p class="text-[11px] text-slate-500">Documento Oficial Electrónico • Tipo B</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalPrevisualizarFacturaAdjunta()" aria-label="Cerrar previsualización de factura" class="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-base transition active:scale-95">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Documento Factura Oficial Estilo Hoja A4 -->
+            <div class="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-sm space-y-4 text-xs font-sans">
+                <!-- Membrete -->
+                <div class="flex justify-between items-start border-b-2 border-blue-900 pb-3">
+                    <div>
+                        <h2 class="font-black text-blue-900 uppercase text-sm sm:text-base tracking-tight">Centro Educativo Educar para Transformar</h2>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Av. Las Heras 1200 • Resistencia, Chaco • CUIT: 30-71234567-8</p>
+                        <p class="text-[10px] text-slate-500">Enseñanza Oficial Incorporada • Ciclo Lectivo 2026</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2.5 py-1 bg-blue-900 text-white font-black text-sm rounded">FACTURA B</span>
+                        <p class="font-mono text-[10px] text-slate-600 font-bold mt-1">N.º 0004-00012894</p>
+                        <p class="text-[10px] text-slate-500">Emisión: 30/11/2026</p>
+                    </div>
+                </div>
+
+                <!-- Datos Tutor y Alumno -->
+                <div class="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px]">
+                    <div>
+                        <p class="text-slate-500 uppercase text-[9px] font-bold">Tutor / Responsable:</p>
+                        <p class="font-bold text-slate-900" id="facturaTutorNombre">Mariana Gómez de Acosta</p>
+                        <p class="text-slate-600">DNI: 32.114.560 • IVA Exento</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 uppercase text-[9px] font-bold">Alumno / Matrícula:</p>
+                        <p class="font-bold text-slate-900" id="facturaAlumnoNombre">Ignacio Benjamín Acosta</p>
+                        <p class="text-slate-600" id="facturaLegajoCurso">Legajo: EPT-2026-001 • 3° Año "A"</p>
+                    </div>
+                </div>
+
+                <!-- Tabla de Conceptos Detallada -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <table class="w-full text-left text-[11px]">
+                        <thead>
+                            <tr class="bg-slate-100 text-[10px] font-black uppercase text-slate-600 border-b">
+                                <th class="p-2.5">Concepto Arancelario</th>
+                                <th class="p-2.5 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-mono">
+                            <tr><td class="p-2.5 font-sans">Arancel Base - Nivel Secundario Jornada Extendida</td><td class="p-2.5 text-right font-bold">$ 85.000</td></tr>
+                            <tr><td class="p-2.5 font-sans">Adicional Idioma Bilingüe (Inglés Avanzado / Francés)</td><td class="p-2.5 text-right font-bold">$ 18.000</td></tr>
+                            <tr><td class="p-2.5 font-sans">Adicional Extracurricular Deportes (Natación y Vóley)</td><td class="p-2.5 text-right font-bold">$ 15.000</td></tr>
+                            <tr><td class="p-2.5 font-sans">Servicio de Comedor Escolar y Nutrición</td><td class="p-2.5 text-right font-bold">$ 28.000</td></tr>
+                            <tr><td class="p-2.5 font-sans">Servicio de Transporte Institucional Puerta a Puerta (Línea 1)</td><td class="p-2.5 text-right font-bold">$ 22.000</td></tr>
+                            <tr class="text-emerald-700 bg-emerald-50/50"><td class="p-2.5 font-sans font-bold">Bonificación Especial por Pago en Término (10%)</td><td class="p-2.5 text-right font-bold">-$ 8.500</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-blue-900 text-white font-sans font-bold">
+                                <td class="p-3 text-xs uppercase tracking-wider">Total Oficial a Abonar:</td>
+                                <td class="p-3 text-right text-sm font-mono font-black">$ 159.500</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Pie de Factura con Sellos y Vencimientos -->
+                <div class="flex items-center justify-between pt-2 text-[10px] text-slate-500">
+                    <div>
+                        <p><i class="fas fa-check-shield text-emerald-600 mr-1"></i> Comprobante Autorizado por AFIP / DGR Chaco</p>
+                        <p class="font-mono mt-0.5">CAE N.º 71492048123904 • Vto CAE: 10/12/2026</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-qrcode text-3xl text-slate-700"></i>
+                        <span class="block text-[8px] font-mono mt-0.5">QR AFIP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 flex justify-end gap-2">
+                <button type="button" onclick="mostrarToast('Factura descargada en formato PDF institucional.', 'success')"
+                    class="min-h-[44px] px-4 py-2 bg-blue-900 text-white rounded-xl text-xs font-bold transition hover:bg-blue-800 flex items-center gap-1.5 active:scale-95 shadow">
+                    <i class="fas fa-download"></i> <span>Descargar PDF</span>
+                </button>
+                <button type="button" onclick="cerrarModalPrevisualizarFacturaAdjunta()"
+                    class="min-h-[44px] px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition hover:bg-slate-200 active:scale-95">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cobrar Saldo Incompleto (Listado 3) -->
+    <div id="modalCobrarSaldoIncompleto" role="dialog" aria-modal="true" aria-labelledby="modalCobrarSaldoTitle" onclick="if(event.target === this) cerrarModalCobrarSaldo()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalCobrarSaldoTitle" class="text-base font-black text-slate-900 leading-tight">
+                            Completar Pago / Cobrar Saldo
+                        </h3>
+                        <p class="text-xs text-slate-500">Módulo Tesorería • Registro en Vivo</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalCobrarSaldo()" aria-label="Cerrar modal de cobro" class="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-base transition active:scale-95">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Ficha de Datos del Cobro -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-slate-500">Alumno:</span><span id="cobroAlumnoNombre" class="font-bold text-slate-900">—</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Curso:</span><span id="cobroAlumnoCurso" class="font-semibold text-slate-800">—</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Tutor Responsable:</span><span id="cobroTutorNombre" class="font-semibold text-slate-800">—</span></div>
+                <div class="flex justify-between border-t border-slate-200 pt-2"><span class="text-slate-500">Importe Total Cuota:</span><span id="cobroImporteTotal" class="font-mono font-bold">$ 0</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Monto Abonado Previamente:</span><span id="cobroMontoAbonado" class="font-mono font-bold text-emerald-700">$ 0</span></div>
+                <div class="flex justify-between border-t-2 border-slate-300 pt-2 text-sm font-black text-rose-900">
+                    <span>Saldo Restante a Cobrar:</span>
+                    <span id="cobroSaldoPendiente" class="font-mono text-base text-rose-700">$ 0</span>
+                </div>
+            </div>
+
+            <!-- Selector de Medio de Pago -->
+            <div>
+                <label for="selectMedioCobroSaldo" class="block text-[11px] font-black uppercase text-slate-600 mb-1">
+                    Medio de Cobranza Utilizado:
+                </label>
+                <select id="selectMedioCobroSaldo" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-900 min-h-[46px]">
+                    <option value="Transferencia Bancaria CBU">Transferencia Bancaria Directa (CBU)</option>
+                    <option value="Efectivo en Caja Tesorería">Efectivo en Caja Tesorería</option>
+                    <option value="Tarjeta de Débito (Posnet)">Tarjeta de Débito (Posnet)</option>
+                    <option value="Mercado Pago / Billetera Virtual">Mercado Pago / Billetera Virtual</option>
+                </select>
+            </div>
+
+            <!-- Acciones -->
+            <div class="pt-2 flex justify-end gap-2.5">
+                <button type="button" onclick="cerrarModalCobrarSaldo()"
+                    class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+                    Cancelar
+                </button>
+                <button type="button" onclick="confirmarCobroSaldoIncompleto()"
+                    class="min-h-[44px] px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                    <span>Confirmar y Mover a Pagos Completos</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Abonar Cuota (Campus del Estudiante #tabPagos) -->
+    <div id="modalPagarCuotaEstudiante" role="dialog" aria-modal="true" aria-labelledby="modalPagarCuotaTitle" onclick="if(event.target === this) cerrarModalPagarCuotaEstudiante()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] items-center justify-center p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalPagarCuotaTitle" class="text-base font-black text-slate-900 leading-tight">
+                            Abonar Cuota en Línea
+                        </h3>
+                        <p class="text-xs text-slate-500">Pasarela de Pagos Institucional</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalPagarCuotaEstudiante()" aria-label="Cerrar modal de pago" class="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-base transition active:scale-95">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Ficha Cuota a Pagar -->
+            <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-200/80 space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-slate-600">Período:</span><span id="pagoCuotaPeriodo" class="font-bold text-blue-950">—</span></div>
+                <div class="flex justify-between"><span class="text-slate-600">Alumno:</span><span id="pagoCuotaAlumno" class="font-semibold text-slate-800">Ignacio Benjamín Acosta</span></div>
+                <div class="flex justify-between"><span class="text-slate-600">Vencimiento:</span><span id="pagoCuotaVencimiento" class="font-semibold text-slate-800">10 Noviembre 2026</span></div>
+                <div class="flex justify-between border-t border-blue-200 pt-2 text-sm font-black text-blue-950">
+                    <span>Monto a Abonar:</span>
+                    <span id="pagoCuotaMonto" class="font-mono text-base text-blue-900">$ 0</span>
+                </div>
+            </div>
+
+            <!-- Selector de Medio de Pago -->
+            <div>
+                <label for="selectMedioPagoEstudiante" class="block text-[11px] font-black uppercase text-slate-600 mb-1">
+                    Seleccioná tu Medio de Pago:
+                </label>
+                <select id="selectMedioPagoEstudiante" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-900 min-h-[46px]">
+                    <option value="Transferencia Bancaria CBU Directa">Transferencia Bancaria Inmediata (CBU)</option>
+                    <option value="Mercado Pago / Billetera Virtual">Mercado Pago / QR Billetera</option>
+                    <option value="Tarjeta de Débito Visa/Mastercard">Tarjeta de Débito (Visa / Mastercard)</option>
+                    <option value="Pago Presencial en Tesorería">Informar Pago Efectivo en Tesorería</option>
+                </select>
+            </div>
+
+            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-950 flex items-start gap-2">
+                <i class="fas fa-shield-alt text-emerald-700 mt-0.5 shrink-0" aria-hidden="true"></i>
+                <p>El comprobante oficial se emitirá al instante y se añadirá a tu Historial de Pagos con número de recibo registrado.</p>
+            </div>
+
+            <!-- Acciones -->
+            <div class="pt-2 flex justify-end gap-2.5">
+                <button type="button" onclick="cerrarModalPagarCuotaEstudiante()"
+                    class="min-h-[44px] px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+                    Cancelar
+                </button>
+                <button type="button" onclick="confirmarPagoCuotaEstudiante()"
+                    class="min-h-[44px] px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow flex items-center justify-center gap-2">
+                    <i class="fas fa-check-double text-amber-300" aria-hidden="true"></i>
+                    <span>Confirmar Pago de Cuota</span>
                 </button>
             </div>
         </div>

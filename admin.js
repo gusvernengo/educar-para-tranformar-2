@@ -2033,39 +2033,563 @@ window.pedirConfirmacionModal = pedirConfirmacionModal;
 // ========================================================
 // MÓDULO DE TESORERÍA, PAGOS Y RECORDATORIOS (RÚBRICA PARCIAL)
 // ========================================================
+// ====================================================================
+// MÓDULO OFICIAL DE TESORERÍA, COBRANZAS Y LOS 5 LISTADOS DE RÚBRICA
+// ====================================================================
 
-let tipoReporteTesoreriaActivo = 'ingresos';
+const AdminTesoreria = {
+    reporteActivo: 'ingresos',
+    filtroPeriodo: 'todos',
+    filtroCurso: 'todos',
+    filtroDeporte: 'todos',
+    filtroNivel: 'todos',
+    filtroProfesor: 'todos',
+    filtroRecorrido: 'todos',
+    busqueda: '',
+    cobroSeleccionadoId: null,
 
-async function enviarRecordatorioFinMes() {
-    const confirmar = await pedirConfirmacionModal({
-        titulo: '¿Despachar Facturación y Recordatorio de Fin de Mes?',
-        mensaje: 'Se emitirá por correo electrónico el recordatorio oficial del último día hábil a todas las familias activas (48 alumnos), detallando la composición arancelaria de la cuota: Arancel Base por nivel + Adicional Idioma + Adicional Deporte + Servicio Comedor/Transporte con vencimiento al día 10.',
-        textoConfirmar: 'Enviar Facturación',
-        textoCancelar: 'Cancelar',
-        peligroso: false
-    });
+    // Destinatarios para Funcionalidad 1 (Recordatorio Fin de Mes con Desglose y Factura)
+    destinatariosFinMes: [
+        {
+            tutor: 'Mariana Gómez de Acosta',
+            email: 'mariana.acosta@gmail.com',
+            alumno: 'Ignacio Benjamín Acosta',
+            legajo: 'EPT-2026-001',
+            curso: '3° Año "A" Secundario',
+            base: 85000,
+            idioma: 18000,
+            idiomaDesc: 'Inglés Avanzado / Francés',
+            deporte: 15000,
+            deporteDesc: 'Natación y Vóley',
+            comedor: 28000,
+            transporte: 22000,
+            transporteDesc: 'Línea 1 Norte',
+            bonificacion: 8500,
+            total: 159500
+        },
+        {
+            tutor: 'Valeria Soledad Benítez',
+            email: 'valeria.benitez@gmail.com',
+            alumno: 'Tomás Valentín Benítez',
+            legajo: 'EPT-2026-042',
+            curso: '4to Grado "B" Primario',
+            base: 75000,
+            idioma: 14000,
+            idiomaDesc: 'Inglés Inicial',
+            deporte: 15000,
+            deporteDesc: 'Básquetbol',
+            comedor: 28000,
+            transporte: 0,
+            transporteDesc: 'Sin transporte',
+            bonificacion: 7500,
+            total: 124500
+        },
+        {
+            tutor: 'Romina Vesconi',
+            email: 'romi.vesconi@outlook.com',
+            alumno: 'Mateo Bosch Vesconi',
+            legajo: 'ET-2026-003',
+            curso: 'Sala de 5 Años Inicial',
+            base: 65000,
+            idioma: 12000,
+            idiomaDesc: 'Inglés Lúdico',
+            deporte: 15000,
+            deporteDesc: 'Gimnasia y Natación',
+            comedor: 28000,
+            transporte: 22000,
+            transporteDesc: 'Línea 1 Norte',
+            bonificacion: 6500,
+            total: 135500
+        },
+        {
+            tutor: 'Marcos Esquivel',
+            email: 'marcos.esquivel@chaco.edu.ar',
+            alumno: 'Lucía Milagros Esquivel',
+            legajo: 'ALU-001',
+            curso: '1er Año "C" Secundario',
+            base: 85000,
+            idioma: 18000,
+            idiomaDesc: 'Inglés / Francés',
+            deporte: 15000,
+            deporteDesc: 'Atletismo',
+            comedor: 0,
+            transporte: 22000,
+            transporteDesc: 'Línea 3 Este',
+            bonificacion: 8500,
+            total: 131500
+        },
+        {
+            tutor: 'Jorge Fernández',
+            email: 'jorge.fernandez@gmail.com',
+            alumno: 'Camila Da Silva Fernández',
+            legajo: 'EPT-2026-0119',
+            curso: 'Sala de 4 Años Inicial',
+            base: 65000,
+            idioma: 12000,
+            idiomaDesc: 'Inglés Lúdico',
+            deporte: 15000,
+            deporteDesc: 'Natación Inicial',
+            comedor: 28000,
+            transporte: 0,
+            transporteDesc: 'Sin transporte',
+            bonificacion: 6500,
+            total: 113500
+        }
+    ],
 
-    if (!confirmar) return;
+    // Listado 1: Ingresos por Período de Tiempo (Marzo a Noviembre 2026)
+    listadoIngresos: [
+        { periodo: 'Marzo 2026', cuotasEmitidas: 48, completas: 48, incompletas: 0, ingresos: 1620000, deuda: 0, porcentaje: '100%', estado: 'Cerrado' },
+        { periodo: 'Abril 2026', cuotasEmitidas: 48, completas: 48, incompletas: 0, ingresos: 1620000, deuda: 0, porcentaje: '100%', estado: 'Cerrado' },
+        { periodo: 'Mayo 2026', cuotasEmitidas: 48, completas: 48, incompletas: 0, ingresos: 1620000, deuda: 0, porcentaje: '100%', estado: 'Cerrado' },
+        { periodo: 'Junio 2026', cuotasEmitidas: 48, completas: 48, incompletas: 0, ingresos: 1650000, deuda: 0, porcentaje: '100%', estado: 'Cerrado' },
+        { periodo: 'Julio 2026', cuotasEmitidas: 48, completas: 48, incompletas: 0, ingresos: 1650000, deuda: 0, porcentaje: '100%', estado: 'Cerrado' },
+        { periodo: 'Agosto 2026', cuotasEmitidas: 48, completas: 48, incompletas: 0, ingresos: 1650000, deuda: 0, porcentaje: '100%', estado: 'Cerrado' },
+        { periodo: 'Septiembre 2026', cuotasEmitidas: 48, completas: 47, incompletas: 1, ingresos: 1615000, deuda: 35000, porcentaje: '97.9%', estado: 'Cerrado' },
+        { periodo: 'Octubre 2026', cuotasEmitidas: 48, completas: 40, incompletas: 5, ingresos: 1380000, deuda: 270000, porcentaje: '83.3%', estado: 'Mora Día 20' },
+        { periodo: 'Noviembre 2026', cuotasEmitidas: 48, completas: 14, incompletas: 34, ingresos: 445000, deuda: 1215000, porcentaje: '26.8%', estado: 'En Término (10% Desc.)' }
+    ],
 
-    mostrarToast('📧 Facturación y recordatorios de fin de mes enviados exitosamente a 48 familias con desglose y factura adjunta.', 'success');
+    // Listado 2: Pagos Completos Realizados por Período de Tiempo y Alumno
+    listadoCompletos: [
+        {
+            id: 'COMP-001',
+            periodo: 'Octubre 2026',
+            anioCurso: '3° Año "A" Secundario',
+            alumnoNombre: 'Ignacio Benjamín Acosta',
+            legajo: 'EPT-2026-001',
+            dni: '45.123.456',
+            fechaPago: '08/10/2026',
+            numeroRecibo: 'REC-2026-10-0012',
+            composicion: 'Arancel ($85k) + Idioma ($18k) + Deporte ($15k) + Comedor ($28k) + Transp. ($22k) - Desc. ($8.5k)',
+            montoTotal: 159500,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-002',
+            periodo: 'Octubre 2026',
+            anioCurso: '4° Grado "B" Primario',
+            alumnoNombre: 'Tomás Valentín Benítez',
+            legajo: 'EPT-2026-042',
+            dni: '48.921.340',
+            fechaPago: '09/10/2026',
+            numeroRecibo: 'REC-2026-10-0042',
+            composicion: 'Arancel ($75k) + Idioma ($14k) + Deporte ($15k) + Comedor ($28k) - Desc. ($7.5k)',
+            montoTotal: 124500,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-003',
+            periodo: 'Octubre 2026',
+            anioCurso: '1° Año "C" Secundario',
+            alumnoNombre: 'Lucía Milagros Esquivel',
+            legajo: 'ALU-001',
+            dni: '47.112.980',
+            fechaPago: '07/10/2026',
+            numeroRecibo: 'REC-2026-10-0019',
+            composicion: 'Arancel ($85k) + Idioma ($18k) + Deporte ($15k) + Transp. ($22k) - Desc. ($8.5k)',
+            montoTotal: 131500,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-004',
+            periodo: 'Octubre 2026',
+            anioCurso: 'Sala de 5 Años Inicial',
+            alumnoNombre: 'Mateo Bosch Vesconi',
+            legajo: 'ET-2026-003',
+            dni: '52.880.145',
+            fechaPago: '06/10/2026',
+            numeroRecibo: 'REC-2026-10-0005',
+            composicion: 'Arancel ($65k) + Idioma ($12k) + Deporte ($15k) + Comedor ($28k) + Transp. ($22k) - Desc. ($6.5k)',
+            montoTotal: 135500,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-005',
+            periodo: 'Octubre 2026',
+            anioCurso: '5° Grado "B" Primario',
+            alumnoNombre: 'Lucía Pérez',
+            legajo: 'EPT-2026-0042',
+            dni: '49.120.440',
+            fechaPago: '09/10/2026',
+            numeroRecibo: 'REC-2026-10-0078',
+            composicion: 'Arancel ($75k) + Natación ($15k) + Idioma ($14k) + Transp. ($22k)',
+            montoTotal: 126000,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-006',
+            periodo: 'Octubre 2026',
+            anioCurso: '2° Año "B" Secundario',
+            alumnoNombre: 'Lucas Romero',
+            legajo: 'EPT-2026-0063',
+            dni: '46.780.120',
+            fechaPago: '08/10/2026',
+            numeroRecibo: 'REC-2026-10-0091',
+            composicion: 'Arancel ($85k) + Alemán ($18k) + Natación ($15k) + Transp. ($22k)',
+            montoTotal: 140000,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-007',
+            periodo: 'Octubre 2026',
+            anioCurso: '6° Grado "C" Primario',
+            alumnoNombre: 'Martina Silva',
+            legajo: 'EPT-2026-0034',
+            dni: '48.330.900',
+            fechaPago: '10/10/2026',
+            numeroRecibo: 'REC-2026-10-0104',
+            composicion: 'Arancel ($75k) + Francés ($14k) + Atletismo ($15k) + Comedor ($28k)',
+            montoTotal: 132000,
+            estado: 'PAGO COMPLETO'
+        },
+        {
+            id: 'COMP-008',
+            periodo: 'Octubre 2026',
+            anioCurso: '3° Grado "A" Primario',
+            alumnoNombre: 'Joaquín Ignacio Gómez',
+            legajo: 'EPT-2026-0018',
+            dni: '50.114.776',
+            fechaPago: '05/10/2026',
+            numeroRecibo: 'REC-2026-10-0023',
+            composicion: 'Arancel ($75k) + Fútbol ($15k) + Transp. ($22k) - Desc. ($7.5k)',
+            montoTotal: 104500,
+            estado: 'PAGO COMPLETO'
+        }
+    ],
+
+    // Listado 3: Pagos Incompletos Realizados por Período y Familias con Deuda
+    listadoIncompletos: [
+        {
+            id: 'INC-001',
+            periodo: 'Octubre 2026',
+            anioCurso: '2° Año "A" Secundario',
+            alumnoNombre: 'Bruno Valenzuela',
+            legajo: 'EPT-2026-0088',
+            dni: '46.220.890',
+            tutorNombre: 'Carlos Valenzuela',
+            tutorEmail: 'carlos.valenzuela@gmail.com',
+            montoTotal: 118000,
+            montoAbonado: 0,
+            saldoPendiente: 118000,
+            recargoMora: 5900,
+            estado: 'PAGO INCOMPLETO'
+        },
+        {
+            id: 'INC-002',
+            periodo: 'Octubre 2026',
+            anioCurso: '4° Grado "B" Primario',
+            alumnoNombre: 'Valentina Morales',
+            legajo: 'EPT-2026-0054',
+            dni: '49.880.112',
+            tutorNombre: 'Andrea Morales',
+            tutorEmail: 'andrea.morales@gmail.com',
+            montoTotal: 116000,
+            montoAbonado: 50000,
+            saldoPendiente: 66000,
+            recargoMora: 3300,
+            estado: 'PAGO INCOMPLETO'
+        },
+        {
+            id: 'INC-003',
+            periodo: 'Octubre 2026',
+            anioCurso: 'Sala de 5 Años Inicial',
+            alumnoNombre: 'Santiago Giménez',
+            legajo: 'EPT-2026-0022',
+            dni: '52.110.340',
+            tutorNombre: 'Esteban Giménez',
+            tutorEmail: 'esteban.gimenez@gmail.com',
+            montoTotal: 87000,
+            montoAbonado: 0,
+            saldoPendiente: 87000,
+            recargoMora: 4350,
+            estado: 'PAGO INCOMPLETO'
+        },
+        {
+            id: 'INC-004',
+            periodo: 'Octubre 2026',
+            anioCurso: '3° Año "B" Secundario',
+            alumnoNombre: 'Joaquín Ramos',
+            legajo: 'EPT-2026-0071',
+            dni: '45.890.334',
+            tutorNombre: 'Patricia Ramos',
+            tutorEmail: 'patricia.ramos@gmail.com',
+            montoTotal: 125000,
+            montoAbonado: 60000,
+            saldoPendiente: 65000,
+            recargoMora: 3250,
+            estado: 'PAGO INCOMPLETO'
+        },
+        {
+            id: 'INC-005',
+            periodo: 'Octubre 2026',
+            anioCurso: '6° Grado "A" Primario',
+            alumnoNombre: 'Camila Benítez',
+            legajo: 'EPT-2026-0033',
+            dni: '48.900.215',
+            tutorNombre: 'Martín Benítez',
+            tutorEmail: 'martin.benitez@gmail.com',
+            montoTotal: 110000,
+            montoAbonado: 40000,
+            saldoPendiente: 70000,
+            recargoMora: 3500,
+            estado: 'PAGO INCOMPLETO'
+        }
+    ],
+
+    // Listado 4: Pagos por Alumnos por Deporte, Nivel, Horario y Profesor
+    listadoDeportes: [
+        { id: 'DEP-001', alumnoNombre: 'Ignacio Benjamín Acosta', legajo: 'EPT-2026-001', nivel: 'Secundario', curso: '3° Año "A"', deporte: 'Natación', horario: 'Lun y Mié 16:00 a 17:30 hs', profesor: 'Prof. Lucas Silva', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-002', alumnoNombre: 'Sofía Agustina Romero', legajo: 'EPT-2026-0004', nivel: 'Secundario', curso: '3° Año "A"', deporte: 'Vóley', horario: 'Mar y Jue 16:30 a 18:00 hs', profesor: 'Prof. Lucas Silva', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-003', alumnoNombre: 'Tomás Valentín Benítez', legajo: 'EPT-2026-042', nivel: 'Primario', curso: '4° Grado "B"', deporte: 'Básquet', horario: 'Mar y Jue 15:00 a 16:30 hs', profesor: 'Prof. Marcelo Gómez', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-004', alumnoNombre: 'Lucía Milagros Esquivel', legajo: 'ALU-001', nivel: 'Secundario', curso: '1° Año "C"', deporte: 'Natación', horario: 'Lun y Mié 16:00 a 17:30 hs', profesor: 'Prof. Lucas Silva', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-005', alumnoNombre: 'Joaquín Ignacio Gómez', legajo: 'EPT-2026-0018', nivel: 'Primario', curso: '3° Grado "A"', deporte: 'Fútbol', horario: 'Mar y Jue 08:30 a 10:00 hs', profesor: 'Prof. Marcelo Gómez', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-006', alumnoNombre: 'Mateo Bosch Vesconi', legajo: 'ET-2026-003', nivel: 'Inicial', curso: 'Sala de 5 Años', deporte: 'Gimnasia Artística', horario: 'Mar y Jue 10:00 a 11:30 hs', profesor: 'Prof. Elena Martínez', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-007', alumnoNombre: 'Bruno Valenzuela', legajo: 'EPT-2026-0088', nivel: 'Secundario', curso: '2° Año "A"', deporte: 'Fútbol', horario: 'Lun y Mié 17:30 a 19:00 hs', profesor: 'Prof. Marcelo Gómez', monto: 15000, estadoPago: 'Pago Incompleto' },
+        { id: 'DEP-008', alumnoNombre: 'Valentina Morales', legajo: 'EPT-2026-0054', nivel: 'Primario', curso: '4° Grado "B"', deporte: 'Hockey', horario: 'Lun y Mié 15:00 a 16:30 hs', profesor: 'Prof. Daniela Ríos', monto: 15000, estadoPago: 'Pago Incompleto' },
+        { id: 'DEP-009', alumnoNombre: 'Lucas Romero', legajo: 'EPT-2026-0063', nivel: 'Secundario', curso: '2° Año "B"', deporte: 'Natación', horario: 'Lun y Mié 16:00 a 17:30 hs', profesor: 'Prof. Lucas Silva', monto: 15000, estadoPago: 'Pagado' },
+        { id: 'DEP-010', alumnoNombre: 'Martina Silva', legajo: 'EPT-2026-0034', nivel: 'Primario', curso: '6° Grado "C"', deporte: 'Ajedrez', horario: 'Sáb 10:00 a 12:00 hs', profesor: 'Prof. Alejandro Rossi', monto: 15000, estadoPago: 'Pagado' }
+    ],
+
+    // Listado 5: Pagos por Alumnos por Recorrido del Servicio de Transporte
+    listadoTransporte: [
+        { id: 'TRA-001', alumnoNombre: 'Ignacio Benjamín Acosta', legajo: 'EPT-2026-001', curso: '3° Año "A" Secundario', recorrido: 'Línea 1 - Zona Norte', parada: 'Av. Sarmiento y Av. Laprida', horario: '07:15 hs / 17:30 hs', movilChofer: 'Móvil 03 - Chofer: Roberto Benítez (AF 234 JK)', monto: 22000, estadoPago: 'Pagado' },
+        { id: 'TRA-002', alumnoNombre: 'Lucía Milagros Esquivel', legajo: 'ALU-001', curso: '1° Año "C" Secundario', recorrido: 'Línea 3 - Zona Centro', parada: 'Av. 25 de Mayo 850', horario: '07:25 hs / 17:20 hs', movilChofer: 'Móvil 08 - Chofer: Mario Soto (AD 456 OP)', monto: 22000, estadoPago: 'Pagado' },
+        { id: 'TRA-003', alumnoNombre: 'Mateo Bosch Vesconi', legajo: 'ET-2026-003', curso: 'Sala de 5 Años Inicial', recorrido: 'Línea 1 - Zona Norte', parada: 'Los Troncos • Calle 4 N° 320', horario: '08:00 hs / 16:45 hs', movilChofer: 'Móvil 03 - Chofer: Roberto Benítez (AF 234 JK)', monto: 22000, estadoPago: 'Pagado' },
+        { id: 'TRA-004', alumnoNombre: 'Lucas Romero', legajo: 'EPT-2026-0063', curso: '2° Año "B" Secundario', recorrido: 'Línea 2 - Zona Sur', parada: 'Av. Castelli 1250', horario: '07:10 hs / 17:35 hs', movilChofer: 'Móvil 05 - Chofer: Claudio Peralta (AE 890 LM)', monto: 22000, estadoPago: 'Pagado' },
+        { id: 'TRA-005', alumnoNombre: 'Joaquín Ignacio Gómez', legajo: 'EPT-2026-0018', curso: '3° Grado "A" Primario', recorrido: 'Línea 4 - Zona Este / Fontana', parada: 'Av. Alvear y Santa María de Oro', horario: '07:20 hs / 17:25 hs', movilChofer: 'Móvil 02 - Chofer: Aníbal Silva (AG 112 RS)', monto: 22000, estadoPago: 'Pagado' },
+        { id: 'TRA-006', alumnoNombre: 'Bruno Valenzuela', legajo: 'EPT-2026-0088', curso: '2° Año "A" Secundario', recorrido: 'Línea 2 - Zona Sur', parada: 'Hospital Perrando • Entrada Este', horario: '07:30 hs / 17:15 hs', movilChofer: 'Móvil 05 - Chofer: Claudio Peralta (AE 890 LM)', monto: 22000, estadoPago: 'Pago Incompleto' },
+        { id: 'TRA-007', alumnoNombre: 'Valentina Morales', legajo: 'EPT-2026-0054', curso: '4° Grado "B" Primario', recorrido: 'Línea 3 - Zona Centro', parada: 'Plaza 25 de Mayo • Esquina Güemes', horario: '07:35 hs / 17:10 hs', movilChofer: 'Móvil 08 - Chofer: Mario Soto (AD 456 OP)', monto: 22000, estadoPago: 'Pago Incompleto' }
+    ]
+};
+
+// ====================================================================
+// FUNCIONALIDAD 1: RECORDATORIO FIN DE MES (MODAL, DESGLOSE Y PDF)
+// ====================================================================
+
+function abrirModalRecordatorioFinMes() {
+    actualizarPrevisualizacionFinMes(0);
+    const modal = document.getElementById('modalRecordatorioFinMes');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
 }
 
-async function enviarAvisoDia20() {
-    const confirmar = await pedirConfirmacionModal({
-        titulo: '¿Despachar Avisos del Día 20 a Familias en Mora?',
-        mensaje: 'Se intimará por correo y mensaje oficial a los 8 tutores que registran pagos incompletos o cuotas adeudadas tras el día 20, aplicando el recargo por mora del 5% establecido por reglamento.',
-        textoConfirmar: 'Enviar Avisos Día 20',
-        textoCancelar: 'Cancelar',
-        peligroso: true
-    });
-
-    if (!confirmar) return;
-
-    mostrarToast('⚠️ Avisos del día 20 despachados a 8 tutores con pagos incompletos o deuda arancelaria.', 'warning');
+function cerrarModalRecordatorioFinMes() {
+    const modal = document.getElementById('modalRecordatorioFinMes');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
 }
+
+function actualizarPrevisualizacionFinMes(indice) {
+    const d = AdminTesoreria.destinatariosFinMes[Number(indice)] || AdminTesoreria.destinatariosFinMes[0];
+    if (!d) return;
+
+    const emailEl = document.getElementById('mailPreviewDestinatario');
+    const tutorEl = document.getElementById('mailPreviewNombreTutor');
+    const alumnoEl = document.getElementById('mailPreviewNombreAlumno');
+    const legajoCursoEl = document.getElementById('mailPreviewLegajoCurso');
+    const totalEl = document.getElementById('mailPreviewTotalAbonar');
+    const conceptosEl = document.getElementById('mailPreviewDesgloseConceptos');
+
+    if (emailEl) emailEl.textContent = d.email;
+    if (tutorEl) tutorEl.textContent = d.tutor;
+    if (alumnoEl) alumnoEl.textContent = d.alumno;
+    if (legajoCursoEl) legajoCursoEl.textContent = `Legajo: ${d.legajo} • ${d.curso}`;
+    if (totalEl) totalEl.textContent = `$ ${d.total.toLocaleString('es-AR')}`;
+
+    if (conceptosEl) {
+        conceptosEl.innerHTML = `
+            <div class="flex justify-between"><span>(+) Arancel Base (${escaparHTML(d.curso.split(' ')[0])}):</span><span class="font-bold">$ ${d.base.toLocaleString('es-AR')}</span></div>
+            <div class="flex justify-between"><span>(+) Cuota de Idioma (${escaparHTML(d.idiomaDesc)}):</span><span class="font-bold">$ ${d.idioma.toLocaleString('es-AR')}</span></div>
+            <div class="flex justify-between"><span>(+) Arancel de Deporte (${escaparHTML(d.deporteDesc)}):</span><span class="font-bold">$ ${d.deporte.toLocaleString('es-AR')}</span></div>
+            ${d.comedor > 0 ? `<div class="flex justify-between"><span>(+) Servicio de Comedor y Nutrición:</span><span class="font-bold">$ ${d.comedor.toLocaleString('es-AR')}</span></div>` : ''}
+            ${d.transporte > 0 ? `<div class="flex justify-between"><span>(+) Recorrido Transporte (${escaparHTML(d.transporteDesc)}):</span><span class="font-bold">$ ${d.transporte.toLocaleString('es-AR')}</span></div>` : ''}
+            <div class="flex justify-between text-emerald-700"><span>(-) Bonificación Especial Pago en Término (10%):</span><span class="font-bold">-$ ${d.bonificacion.toLocaleString('es-AR')}</span></div>
+        `;
+    }
+
+    // Actualizar datos de previsualización de factura oficial
+    const facTutor = document.getElementById('facturaTutorNombre');
+    const facAlumno = document.getElementById('facturaAlumnoNombre');
+    const facLegajo = document.getElementById('facturaLegajoCurso');
+    if (facTutor) facTutor.textContent = d.tutor;
+    if (facAlumno) facAlumno.textContent = d.alumno;
+    if (facLegajo) facLegajo.textContent = `Legajo: ${d.legajo} • ${d.curso}`;
+}
+
+function abrirModalPrevisualizarFacturaAdjunta() {
+    const modal = document.getElementById('modalPrevisualizarFacturaAdjunta');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function cerrarModalPrevisualizarFacturaAdjunta() {
+    const modal = document.getElementById('modalPrevisualizarFacturaAdjunta');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function ejecutarEnvioRecordatorioFinMes() {
+    cerrarModalRecordatorioFinMes();
+    mostrarToast('📧 ¡Recordatorio de Fin de Mes despachado exitosamente a 48 familias con desglose y factura adjunta!', 'success');
+}
+
+// ====================================================================
+// FUNCIONALIDAD 2: AVISO DÍA 20 POR DEUDA Y PAGO INCOMPLETO
+// ====================================================================
+
+function abrirModalAvisoDia20() {
+    renderizarTablaDeudoresDia20();
+    const modal = document.getElementById('modalAvisoDia20');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function cerrarModalAvisoDia20() {
+    const modal = document.getElementById('modalAvisoDia20');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function renderizarTablaDeudoresDia20() {
+    const tbody = document.getElementById('tablaDeudoresDia20Body');
+    if (!tbody) return;
+
+    tbody.innerHTML = AdminTesoreria.listadoIncompletos.map(inc => {
+        const saldoFinal = inc.saldoPendiente + inc.recargoMora;
+        return `
+            <tr class="hover:bg-slate-50 transition">
+                <td class="p-3">
+                    <p class="font-bold text-slate-900">${escaparHTML(inc.tutorNombre)}</p>
+                    <p class="text-[10px] text-slate-500 font-mono">${escaparHTML(inc.tutorEmail)}</p>
+                </td>
+                <td class="p-3">
+                    <p class="font-bold text-slate-800">${escaparHTML(inc.alumnoNombre)}</p>
+                    <p class="text-[10px] text-slate-500">${escaparHTML(inc.anioCurso)}</p>
+                </td>
+                <td class="p-3 text-right font-mono font-bold text-slate-700">$ ${inc.montoTotal.toLocaleString('es-AR')}</td>
+                <td class="p-3 text-right font-mono font-bold text-emerald-700">$ ${inc.montoAbonado.toLocaleString('es-AR')}</td>
+                <td class="p-3 text-right font-mono font-bold text-rose-700">$ ${inc.saldoPendiente.toLocaleString('es-AR')}</td>
+                <td class="p-3 text-right font-mono font-bold text-amber-700">+$ ${inc.recargoMora.toLocaleString('es-AR')}</td>
+                <td class="p-3 text-center">
+                    <button type="button" onclick="enviarAvisoIndividualDia20('${escaparHTML(inc.tutorEmail)}', '${escaparHTML(inc.tutorNombre)}')"
+                        class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition active:scale-95 shadow-sm">
+                        Reclamar Mail
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function enviarAvisoIndividualDia20(email, nombre) {
+    mostrarToast(`⚠️ Intimación de deuda y recargo del 5% enviada a ${nombre} (${email})`, 'warning');
+}
+
+function ejecutarEnvioAvisoDia20() {
+    cerrarModalAvisoDia20();
+    mostrarToast('⚠️ Intimaciones del Día 20 enviadas a todos los tutores con saldo impago (recargo 5% aplicado).', 'warning');
+}
+
+// ====================================================================
+// COMPLETAR PAGO / COBRAR SALDO EN LISTADO 3 (EN VIVO ANTE LA DOCENTE)
+// ====================================================================
+
+function abrirModalCobrarSaldo(incompletoId) {
+    const inc = AdminTesoreria.listadoIncompletos.find(i => String(i.id) === String(incompletoId));
+    if (!inc) return;
+
+    AdminTesoreria.cobroSeleccionadoId = incompletoId;
+
+    const alEl = document.getElementById('cobroAlumnoNombre');
+    const curEl = document.getElementById('cobroAlumnoCurso');
+    const tutEl = document.getElementById('cobroTutorNombre');
+    const totEl = document.getElementById('cobroImporteTotal');
+    const aboEl = document.getElementById('cobroMontoAbonado');
+    const salEl = document.getElementById('cobroSaldoPendiente');
+
+    if (alEl) alEl.textContent = `${inc.alumnoNombre} (${inc.legajo})`;
+    if (curEl) curEl.textContent = inc.anioCurso;
+    if (tutEl) tutEl.textContent = inc.tutorNombre;
+    if (totEl) totEl.textContent = `$ ${inc.montoTotal.toLocaleString('es-AR')}`;
+    if (aboEl) aboEl.textContent = `$ ${inc.montoAbonado.toLocaleString('es-AR')}`;
+    if (salEl) salEl.textContent = `$ ${inc.saldoPendiente.toLocaleString('es-AR')}`;
+
+    const modal = document.getElementById('modalCobrarSaldoIncompleto');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function cerrarModalCobrarSaldo() {
+    const modal = document.getElementById('modalCobrarSaldoIncompleto');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    AdminTesoreria.cobroSeleccionadoId = null;
+}
+
+function confirmarCobroSaldoIncompleto() {
+    const incId = AdminTesoreria.cobroSeleccionadoId;
+    if (!incId) return;
+
+    const idx = AdminTesoreria.listadoIncompletos.findIndex(i => String(i.id) === String(incId));
+    if (idx === -1) return;
+
+    const inc = AdminTesoreria.listadoIncompletos[idx];
+    const medioCobro = document.getElementById('selectMedioCobroSaldo')?.value || 'Efectivo en Caja Tesorería';
+
+    // Crear registro en Pagos Completos
+    const nuevoCompleto = {
+        id: `COMP-${Date.now()}`,
+        periodo: inc.periodo,
+        anioCurso: inc.anioCurso,
+        alumnoNombre: inc.alumnoNombre,
+        legajo: inc.legajo,
+        dni: inc.dni || '45.000.000',
+        fechaPago: new Date().toLocaleDateString('es-AR'),
+        numeroRecibo: `REC-2026-10-${Math.floor(1000 + Math.random() * 9000)}`,
+        composicion: `Cobro de Saldo Restante (${medioCobro})`,
+        montoTotal: inc.montoTotal,
+        estado: 'PAGO COMPLETO'
+    };
+
+    // Agregar a Completos y quitar de Incompletos
+    AdminTesoreria.listadoCompletos.unshift(nuevoCompleto);
+    AdminTesoreria.listadoIncompletos.splice(idx, 1);
+
+    // Actualizar contador en tarjeta KPI
+    const statMora = document.getElementById('adminStatMoraCantidad');
+    if (statMora) {
+        statMora.textContent = `${AdminTesoreria.listadoIncompletos.length} Alumnos`;
+    }
+
+    cerrarModalCobrarSaldo();
+    renderizarReporteTesoreria(AdminTesoreria.reporteActivo);
+
+    mostrarToast(`¡Cobro de saldo completado! ${inc.alumnoNombre} regularizó su situación y fue transferido a Pagos Completos.`, 'success');
+}
+
+// ====================================================================
+// RENDERIZADO DINÁMICO DE LOS 5 LISTADOS DE RÚBRICA
+// ====================================================================
 
 function cambiarReporteTesoreria(tipo) {
-    tipoReporteTesoreriaActivo = tipo;
+    AdminTesoreria.reporteActivo = tipo;
 
     const botones = {
         ingresos: document.getElementById('btnReporteIngresos'),
@@ -2076,11 +2600,11 @@ function cambiarReporteTesoreria(tipo) {
     };
 
     const titulos = {
-        ingresos: 'Reporte 1: Ingresos por Período de Tiempo',
-        completos: 'Reporte 2: Pagos Completos por Año / Curso y Alumno',
-        incompletos: 'Reporte 3: Pagos Incompletos y Familias con Deuda',
-        deportes: 'Reporte 4: Pagos por Deporte, Nivel y Profesor a Cargo',
-        transporte: 'Reporte 5: Pagos por Recorrido del Servicio de Transporte'
+        ingresos: 'Listado 1: Ingresos por Período de Tiempo',
+        completos: 'Listado 2: Pagos Completos por Año / Curso y Alumno',
+        incompletos: 'Listado 3: Pagos Incompletos y Cobro de Saldos',
+        deportes: 'Listado 4: Pagos por Deporte, Nivel, Horario y Profesor',
+        transporte: 'Listado 5: Pagos por Recorrido del Servicio de Transporte'
     };
 
     const label = document.getElementById('labelReporteActivo');
@@ -2092,239 +2616,620 @@ function cambiarReporteTesoreria(tipo) {
         if (!btn) return;
         const esActivo = k === tipo;
         if (esActivo) {
-            btn.className = 'btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-blue-900 text-white shadow-sm flex items-center gap-1.5 active:scale-95';
+            btn.className = 'btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-blue-900 text-white shadow-sm flex items-center gap-1.5 active:scale-95 text-left';
         } else {
-            btn.className = 'btn-reporte-tesoreria min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95';
+            btn.className = 'btn-reporte-tesoreria min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 active:scale-95 text-left';
         }
     });
 
     renderizarReporteTesoreria(tipo);
 }
 
+function filtrarReporteTesoreria(campo, valor) {
+    AdminTesoreria[campo] = valor;
+    renderizarReporteTesoreria(AdminTesoreria.reporteActivo);
+}
+
 function renderizarModuloTesoreriaAdmin() {
-    renderizarReporteTesoreria(tipoReporteTesoreriaActivo);
+    renderizarReporteTesoreria(AdminTesoreria.reporteActivo);
 }
 
 function renderizarReporteTesoreria(tipo) {
     const contenedor = document.getElementById('contenedorReporteTesoreria');
     if (!contenedor) return;
 
+    // ========================================================
+    // LISTADO 1: INGRESOS POR PERÍODO DE TIEMPO
+    // ========================================================
     if (tipo === 'ingresos') {
+        const ingresos = AdminTesoreria.listadoIngresos;
+        const totalIngresos = ingresos.reduce((a, b) => a + b.ingresos, 0);
+        const totalDeuda = ingresos.reduce((a, b) => a + b.deuda, 0);
+
         contenedor.innerHTML = `
             <div class="space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div>
-                        <h4 class="font-black text-slate-900 text-sm">Evolución de Ingresos y Cobranzas Ciclo 2026</h4>
-                        <p class="text-xs text-slate-500">Recaudación mensual por cuota arancelaria oficial (Marzo a Noviembre 2026).</p>
+                        <h4 class="font-black text-slate-900 text-sm sm:text-base">Listado 1: Ingresos por Período de Tiempo</h4>
+                        <p class="text-xs text-slate-500">Evolución mensual de facturación oficial, cobranzas y porcentajes de cumplimiento.</p>
                     </div>
-                    <span class="text-xs font-bold font-mono text-emerald-800 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
-                        Total Acumulado: $ 14.850.000
+                    <span class="text-xs font-bold font-mono text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 self-start sm:self-auto">
+                        Total Percibido: $ ${totalIngresos.toLocaleString('es-AR')}
                     </span>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                <!-- Barra de Filtros del Listado 1 -->
+                <div class="flex flex-wrap gap-2.5 items-center p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs">
+                    <span class="font-bold text-slate-700 uppercase text-[10px]">Filtros de Período:</span>
+                    <select onchange="filtrarReporteTesoreria('filtroPeriodo', this.value)" class="p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-900">
+                        <option value="todos">Ciclo Lectivo Completo (Marzo - Noviembre 2026)</option>
+                        <option value="1sem">1° Semestre (Marzo a Julio)</option>
+                        <option value="2sem">2° Semestre (Agosto a Noviembre)</option>
+                    </select>
+                </div>
+
+                <!-- Tabla Desktop -->
+                <div class="hidden md:block overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
                         <thead>
-                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
+                            <tr class="bg-slate-100 text-[11px] font-black uppercase text-slate-600 border-b">
                                 <th class="p-3">Período / Mes</th>
-                                <th class="p-3">Cuotas Emitidas</th>
-                                <th class="p-3">Cobradas</th>
-                                <th class="p-3">Recaudación Total</th>
-                                <th class="p-3">Estado Cobranza</th>
+                                <th class="p-3 text-center">Cuotas Emitidas</th>
+                                <th class="p-3 text-center">Pagos Completos</th>
+                                <th class="p-3 text-center">Incompletos / Parciales</th>
+                                <th class="p-3 text-right">Ingresos Percibidos ($ ARS)</th>
+                                <th class="p-3 text-right">Deuda Pendiente ($ ARS)</th>
+                                <th class="p-3 text-center">% Cobranza</th>
+                                <th class="p-3 text-center">Estado</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr><td class="p-3 font-bold text-slate-800">Marzo 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.620.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-800">Abril 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.620.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-800">Mayo 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.620.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-800">Junio 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-800">Julio 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-800">Agosto 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-800">Septiembre 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-emerald-700">48 (100%)</td><td class="p-3 font-mono font-bold">$ 1.650.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Cerrado</span></td></tr>
-                            <tr class="bg-amber-50/50"><td class="p-3 font-bold text-slate-900">Octubre 2026</td><td class="p-3">48 alumnos</td><td class="p-3 font-bold text-amber-700">40 (83%)</td><td class="p-3 font-mono font-bold text-amber-900">$ 1.380.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">8 En Mora</span></td></tr>
-                            <tr class="bg-blue-50/40"><td class="p-3 font-bold text-slate-900">Noviembre 2026</td><td class="p-3">48 alumnos</td><td class="p-3 text-slate-500">Próximo Venc. 10/11</td><td class="p-3 font-mono font-bold text-blue-900">$ 1.660.000 (est.)</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[10px]">En Término</span></td></tr>
+                        <tbody class="divide-y divide-slate-100 font-sans">
+                            ${ingresos.map(r => `
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="p-3 font-bold text-slate-900">${escaparHTML(r.periodo)}</td>
+                                    <td class="p-3 text-center font-mono">${r.cuotasEmitidas} cuotas</td>
+                                    <td class="p-3 text-center font-bold text-emerald-700 font-mono">${r.completas}</td>
+                                    <td class="p-3 text-center font-bold text-amber-700 font-mono">${r.incompletas}</td>
+                                    <td class="p-3 text-right font-mono font-bold text-slate-900">$ ${r.ingresos.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-right font-mono font-bold text-rose-700">$ ${r.deuda.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-center font-mono font-bold text-blue-900">${r.porcentaje}</td>
+                                    <td class="p-3 text-center">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${r.deuda === 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                            ${escaparHTML(r.estado)}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
                         </tbody>
+                        <tfoot>
+                            <tr class="bg-slate-100 font-bold border-t-2 border-slate-300">
+                                <td class="p-3 uppercase text-slate-800">Totales Acumulados:</td>
+                                <td class="p-3 text-center font-mono">432 cuotas</td>
+                                <td class="p-3 text-center font-mono text-emerald-700">388 completas</td>
+                                <td class="p-3 text-center font-mono text-amber-700">44 parciales</td>
+                                <td class="p-3 text-right font-mono text-emerald-900 text-sm">$ ${totalIngresos.toLocaleString('es-AR')}</td>
+                                <td class="p-3 text-right font-mono text-rose-900 text-sm">$ ${totalDeuda.toLocaleString('es-AR')}</td>
+                                <td class="p-3 text-center font-mono text-blue-900">89.8%</td>
+                                <td class="p-3 text-center">—</td>
+                            </tr>
+                        </tfoot>
                     </table>
+                </div>
+
+                <!-- Tarjetas Mobile (< 768px) -->
+                <div class="grid grid-cols-1 gap-3 md:hidden">
+                    ${ingresos.map(r => `
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-xs">
+                            <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+                                <span class="font-black text-slate-900 text-sm">${escaparHTML(r.periodo)}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.deuda === 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${escaparHTML(r.estado)}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-[11px]">
+                                <div><span class="text-slate-500">Cobradas:</span> <strong class="text-emerald-700">${r.completas}</strong> / ${r.cuotasEmitidas}</div>
+                                <div><span class="text-slate-500">Incompletas:</span> <strong class="text-amber-700">${r.incompletas}</strong></div>
+                                <div><span class="text-slate-500">Percibido:</span> <strong class="font-mono text-slate-900">$ ${r.ingresos.toLocaleString('es-AR')}</strong></div>
+                                <div><span class="text-slate-500">Deuda:</span> <strong class="font-mono text-rose-700">$ ${r.deuda.toLocaleString('es-AR')}</strong></div>
+                            </div>
+                            <div class="pt-1 border-t border-slate-200 flex justify-between font-bold text-blue-900">
+                                <span>Porcentaje de Cobranza:</span>
+                                <span>${r.porcentaje}</span>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         `;
-    } else if (tipo === 'completos') {
+        return;
+    }
+
+    // ========================================================
+    // LISTADO 2: PAGOS COMPLETOS POR AÑO Y ALUMNO
+    // ========================================================
+    if (tipo === 'completos') {
+        const busq = (AdminTesoreria.busqueda || '').toLowerCase();
+        const cursoFiltro = AdminTesoreria.filtroCurso || 'todos';
+
+        const filtrados = AdminTesoreria.listadoCompletos.filter(item => {
+            const coincideBusq = !busq ||
+                item.alumnoNombre.toLowerCase().includes(busq) ||
+                item.legajo.toLowerCase().includes(busq) ||
+                item.dni.includes(busq);
+            const coincideCurso = cursoFiltro === 'todos' || item.anioCurso.toLowerCase().includes(cursoFiltro.toLowerCase());
+            return coincideBusq && coincideCurso;
+        });
+
         contenedor.innerHTML = `
             <div class="space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div>
-                        <h4 class="font-black text-slate-900 text-sm">Alumnos con Pago Completo Discriminados por Curso</h4>
-                        <p class="text-xs text-slate-500">Nómina de alumnos al día en el ciclo lectivo con desglose de servicios.</p>
+                        <h4 class="font-black text-slate-900 text-sm sm:text-base">Listado 2: Pagos Completos Realizados por Período y Alumno</h4>
+                        <p class="text-xs text-slate-500">Alumnos con cuota cancelada en conformidad, discriminados por año, curso y comprobante.</p>
                     </div>
-                    <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                        40 Alumnos al Día
+                    <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 self-start sm:self-auto">
+                        ${filtrados.length} Pagos Completos Registrados
                     </span>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                <!-- Barra de Filtros y Búsqueda -->
+                <div class="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs">
+                    <div class="relative flex-1">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-400" aria-hidden="true"></i>
+                        <input type="text" placeholder="Buscar por alumno, legajo o DNI..." value="${escaparHTML(AdminTesoreria.busqueda)}"
+                            oninput="filtrarReporteTesoreria('busqueda', this.value)"
+                            class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-900 min-h-[38px]">
+                    </div>
+                    <select onchange="filtrarReporteTesoreria('filtroCurso', this.value)" class="p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-900 min-h-[38px]">
+                        <option value="todos" ${cursoFiltro === 'todos' ? 'selected' : ''}>Todos los Años / Cursos</option>
+                        <option value="Secundario" ${cursoFiltro === 'Secundario' ? 'selected' : ''}>Nivel Secundario</option>
+                        <option value="Primario" ${cursoFiltro === 'Primario' ? 'selected' : ''}>Nivel Primario</option>
+                        <option value="Inicial" ${cursoFiltro === 'Inicial' ? 'selected' : ''}>Nivel Inicial</option>
+                    </select>
+                </div>
+
+                <!-- Tabla Desktop -->
+                <div class="hidden md:block overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
                         <thead>
-                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
-                                <th class="p-3">Alumno / Legajo</th>
+                            <tr class="bg-slate-100 text-[11px] font-black uppercase text-slate-600 border-b">
+                                <th class="p-3">Período</th>
+                                <th class="p-3">Año / Curso</th>
+                                <th class="p-3">Alumno (Nombre y Legajo)</th>
+                                <th class="p-3">DNI</th>
+                                <th class="p-3">Fecha de Pago</th>
+                                <th class="p-3">N.º Recibo</th>
+                                <th class="p-3 text-right">Importe Abonado</th>
+                                <th class="p-3 text-center">Estado</th>
+                                <th class="p-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            ${filtrados.map(item => `
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3 font-semibold text-slate-800">${escaparHTML(item.periodo)}</td>
+                                    <td class="p-3 font-bold text-blue-950">${escaparHTML(item.anioCurso)}</td>
+                                    <td class="p-3">
+                                        <p class="font-bold text-slate-900">${escaparHTML(item.alumnoNombre)}</p>
+                                        <p class="text-[10px] text-slate-500 font-mono">${escaparHTML(item.legajo)}</p>
+                                    </td>
+                                    <td class="p-3 font-mono text-slate-600">${escaparHTML(item.dni)}</td>
+                                    <td class="p-3 text-slate-600">${escaparHTML(item.fechaPago)}</td>
+                                    <td class="p-3 font-mono font-bold text-blue-900">${escaparHTML(item.numeroRecibo)}</td>
+                                    <td class="p-3 text-right font-mono font-bold text-slate-900">$ ${item.montoTotal.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-center">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                            PAGO COMPLETO
+                                        </span>
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        <button type="button" onclick="mostrarToast('Visualizando recibo oficial ${escaparHTML(item.numeroRecibo)} para ${escaparHTML(item.alumnoNombre)}', 'info')"
+                                            class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold uppercase tracking-wider transition active:scale-95">
+                                            Ver Recibo
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tarjetas Mobile (< 768px) -->
+                <div class="grid grid-cols-1 gap-3 md:hidden">
+                    ${filtrados.map(item => `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                            <div class="flex justify-between items-start pb-2 border-b border-slate-100">
+                                <div>
+                                    <p class="font-black text-slate-900 text-sm">${escaparHTML(item.alumnoNombre)}</p>
+                                    <p class="text-[10px] font-mono text-slate-500">${escaparHTML(item.legajo)} • DNI: ${escaparHTML(item.dni)}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">PAGO COMPLETO</span>
+                            </div>
+                            <div class="space-y-1 text-[11px] text-slate-600">
+                                <div><span class="text-slate-500">Curso:</span> <strong>${escaparHTML(item.anioCurso)}</strong></div>
+                                <div><span class="text-slate-500">Período:</span> ${escaparHTML(item.periodo)} • Pagado el ${escaparHTML(item.fechaPago)}</div>
+                                <div><span class="text-slate-500">Recibo:</span> <code class="font-mono font-bold text-blue-900">${escaparHTML(item.numeroRecibo)}</code></div>
+                                <div class="pt-1 flex justify-between font-bold text-slate-900 text-xs">
+                                    <span>Total Abonado:</span>
+                                    <span class="font-mono text-sm">$ ${item.montoTotal.toLocaleString('es-AR')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    // ========================================================
+    // LISTADO 3: PAGOS INCOMPLETOS Y COBRO DE SALDOS
+    // ========================================================
+    if (tipo === 'incompletos') {
+        const busq = (AdminTesoreria.busqueda || '').toLowerCase();
+        const filtrados = AdminTesoreria.listadoIncompletos.filter(item => {
+            return !busq ||
+                item.alumnoNombre.toLowerCase().includes(busq) ||
+                item.legajo.toLowerCase().includes(busq) ||
+                item.tutorNombre.toLowerCase().includes(busq);
+        });
+
+        const deudaTotal = filtrados.reduce((a, b) => a + b.saldoPendiente, 0);
+
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-rose-900 text-sm sm:text-base">Listado 3: Pagos Incompletos Realizados por Período y Alumno</h4>
+                        <p class="text-xs text-slate-500">Familias con cuota impaga o pago parcial. Permite completar el cobro en vivo y transferir el alumno a Pagos Completos.</p>
+                    </div>
+                    <span class="text-xs font-bold font-mono text-rose-800 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 self-start sm:self-auto">
+                        Deuda Total: $ ${deudaTotal.toLocaleString('es-AR')}
+                    </span>
+                </div>
+
+                <!-- Buscador -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-400" aria-hidden="true"></i>
+                        <input type="text" placeholder="Buscar por alumno, legajo o tutor..." value="${escaparHTML(AdminTesoreria.busqueda)}"
+                            oninput="filtrarReporteTesoreria('busqueda', this.value)"
+                            class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-rose-500 min-h-[38px]">
+                    </div>
+                </div>
+
+                <!-- Tabla Desktop -->
+                <div class="hidden md:block overflow-x-auto border border-rose-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead>
+                            <tr class="bg-rose-50/80 text-[11px] font-black uppercase text-rose-950 border-b border-rose-200">
+                                <th class="p-3">Período</th>
+                                <th class="p-3">Año / Curso</th>
+                                <th class="p-3">Alumno (Nombre y Legajo)</th>
+                                <th class="p-3">Tutor Responsable</th>
+                                <th class="p-3 text-right">Importe Cuota</th>
+                                <th class="p-3 text-right">Monto Abonado</th>
+                                <th class="p-3 text-right">Saldo Pendiente</th>
+                                <th class="p-3 text-center">Estado</th>
+                                <th class="p-3 text-center">Acción Interactiva</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            ${filtrados.map(item => `
+                                <tr class="hover:bg-rose-50/40 transition">
+                                    <td class="p-3 font-semibold text-slate-800">${escaparHTML(item.periodo)}</td>
+                                    <td class="p-3 font-bold text-slate-900">${escaparHTML(item.anioCurso)}</td>
+                                    <td class="p-3">
+                                        <p class="font-bold text-slate-900">${escaparHTML(item.alumnoNombre)}</p>
+                                        <p class="text-[10px] text-slate-500 font-mono">${escaparHTML(item.legajo)}</p>
+                                    </td>
+                                    <td class="p-3">
+                                        <p class="font-semibold text-slate-800">${escaparHTML(item.tutorNombre)}</p>
+                                        <p class="text-[10px] text-slate-500 font-mono">${escaparHTML(item.tutorEmail)}</p>
+                                    </td>
+                                    <td class="p-3 text-right font-mono font-bold text-slate-700">$ ${item.montoTotal.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-right font-mono font-bold text-emerald-700">$ ${item.montoAbonado.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-right font-mono font-black text-rose-700 text-sm">$ ${item.saldoPendiente.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-center">
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-900 border border-rose-200">
+                                            PAGO INCOMPLETO
+                                        </span>
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        <button type="button" onclick="abrirModalCobrarSaldo('${item.id}')"
+                                            class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition active:scale-95 shadow flex items-center gap-1 mx-auto">
+                                            <i class="fas fa-hand-holding-usd text-amber-300"></i>
+                                            <span>Cobrar Saldo</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tarjetas Mobile (< 768px) -->
+                <div class="grid grid-cols-1 gap-3 md:hidden">
+                    ${filtrados.map(item => `
+                        <div class="bg-white p-4 rounded-xl border border-rose-200 shadow-sm space-y-2.5 text-xs">
+                            <div class="flex justify-between items-start pb-2 border-b border-rose-100">
+                                <div>
+                                    <p class="font-black text-slate-900 text-sm">${escaparHTML(item.alumnoNombre)}</p>
+                                    <p class="text-[10px] font-mono text-slate-500">${escaparHTML(item.legajo)} • ${escaparHTML(item.anioCurso)}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-100 text-rose-900 border border-rose-200">PAGO INCOMPLETO</span>
+                            </div>
+                            <div class="space-y-1 text-[11px] text-slate-700">
+                                <div><span class="text-slate-500">Tutor:</span> <strong>${escaparHTML(item.tutorNombre)}</strong> (${escaparHTML(item.tutorEmail)})</div>
+                                <div class="flex justify-between"><span>Total Cuota:</span> <span class="font-mono font-bold">$ ${item.montoTotal.toLocaleString('es-AR')}</span></div>
+                                <div class="flex justify-between"><span>Abonado Parcial:</span> <span class="font-mono font-bold text-emerald-700">$ ${item.montoAbonado.toLocaleString('es-AR')}</span></div>
+                                <div class="flex justify-between border-t border-rose-100 pt-1 font-bold text-rose-900 text-xs">
+                                    <span>Saldo Restante Adeudado:</span>
+                                    <span class="font-mono text-sm">$ ${item.saldoPendiente.toLocaleString('es-AR')}</span>
+                                </div>
+                            </div>
+                            <button type="button" onclick="abrirModalCobrarSaldo('${item.id}')"
+                                class="w-full min-h-[44px] bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition active:scale-95 shadow flex items-center justify-center gap-1.5 mt-2">
+                                <i class="fas fa-cash-register text-amber-300"></i>
+                                <span>💳 Completar Pago / Cobrar Saldo</span>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    // ========================================================
+    // LISTADO 4: PAGOS POR DEPORTE, NIVEL, HORARIO Y PROFESOR
+    // ========================================================
+    if (tipo === 'deportes') {
+        const deporteFiltro = AdminTesoreria.filtroDeporte || 'todos';
+        const nivelFiltro = AdminTesoreria.filtroNivel || 'todos';
+        const profFiltro = AdminTesoreria.filtroProfesor || 'todos';
+
+        const filtrados = AdminTesoreria.listadoDeportes.filter(item => {
+            const matchDep = deporteFiltro === 'todos' || item.deporte === deporteFiltro;
+            const matchNiv = nivelFiltro === 'todos' || item.nivel === nivelFiltro;
+            const matchProf = profFiltro === 'todos' || item.profesor === profFiltro;
+            return matchDep && matchNiv && matchProf;
+        });
+
+        contenedor.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                    <div>
+                        <h4 class="font-black text-slate-900 text-sm sm:text-base">Listado 4: Pagos de Alumnos por Deporte, Nivel, Horario y Profesor a Cargo</h4>
+                        <p class="text-xs text-slate-500">Arancel deportivo adicional de $ 15.000/mes por disciplina extracurricular.</p>
+                    </div>
+                    <span class="text-xs font-bold text-blue-900 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 self-start sm:self-auto">
+                        ${filtrados.length} Registros Deportivos
+                    </span>
+                </div>
+
+                <!-- Filtros Combinables del Listado 4 -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Deporte:</label>
+                        <select onchange="filtrarReporteTesoreria('filtroDeporte', this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-900 min-h-[38px]">
+                            <option value="todos">Todos los Deportes</option>
+                            <option value="Natación" ${deporteFiltro === 'Natación' ? 'selected' : ''}>Natación</option>
+                            <option value="Fútbol" ${deporteFiltro === 'Fútbol' ? 'selected' : ''}>Fútbol</option>
+                            <option value="Vóley" ${deporteFiltro === 'Vóley' ? 'selected' : ''}>Vóley</option>
+                            <option value="Básquet" ${deporteFiltro === 'Básquet' ? 'selected' : ''}>Básquet</option>
+                            <option value="Hockey" ${deporteFiltro === 'Hockey' ? 'selected' : ''}>Hockey</option>
+                            <option value="Gimnasia Artística" ${deporteFiltro === 'Gimnasia Artística' ? 'selected' : ''}>Gimnasia Artística</option>
+                            <option value="Ajedrez" ${deporteFiltro === 'Ajedrez' ? 'selected' : ''}>Ajedrez</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Nivel Educativo:</label>
+                        <select onchange="filtrarReporteTesoreria('filtroNivel', this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-900 min-h-[38px]">
+                            <option value="todos">Todos los Niveles</option>
+                            <option value="Secundario" ${nivelFiltro === 'Secundario' ? 'selected' : ''}>Nivel Secundario</option>
+                            <option value="Primario" ${nivelFiltro === 'Primario' ? 'selected' : ''}>Nivel Primario</option>
+                            <option value="Inicial" ${nivelFiltro === 'Inicial' ? 'selected' : ''}>Nivel Inicial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Profesor a Cargo:</label>
+                        <select onchange="filtrarReporteTesoreria('filtroProfesor', this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-900 min-h-[38px]">
+                            <option value="todos">Todos los Profesores</option>
+                            <option value="Prof. Lucas Silva" ${profFiltro === 'Prof. Lucas Silva' ? 'selected' : ''}>Prof. Lucas Silva</option>
+                            <option value="Prof. Marcelo Gómez" ${profFiltro === 'Prof. Marcelo Gómez' ? 'selected' : ''}>Prof. Marcelo Gómez</option>
+                            <option value="Prof. Daniela Ríos" ${profFiltro === 'Prof. Daniela Ríos' ? 'selected' : ''}>Prof. Daniela Ríos</option>
+                            <option value="Prof. Elena Martínez" ${profFiltro === 'Prof. Elena Martínez' ? 'selected' : ''}>Prof. Elena Martínez</option>
+                            <option value="Prof. Alejandro Rossi" ${profFiltro === 'Prof. Alejandro Rossi' ? 'selected' : ''}>Prof. Alejandro Rossi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tabla Desktop -->
+                <div class="hidden md:block overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead>
+                            <tr class="bg-slate-100 text-[11px] font-black uppercase text-slate-600 border-b">
+                                <th class="p-3">Alumno (Nombre y Legajo)</th>
                                 <th class="p-3">Nivel y Curso</th>
-                                <th class="p-3">Servicios Asignados</th>
-                                <th class="p-3">Cuota Mensual</th>
-                                <th class="p-3">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr><td class="p-3 font-bold text-slate-900">Lucía Pérez<p class="text-[10px] font-mono text-slate-500">ET-2026-0042</p></td><td class="p-3">Primario • 5° B</td><td class="p-3">Inglés Británico + Natación</td><td class="p-3 font-mono font-bold">$ 126.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-900">Joaquín Acosta<p class="text-[10px] font-mono text-slate-500">ET-2026-0018</p></td><td class="p-3">Primario • 3° A</td><td class="p-3">Fútbol + Comedor</td><td class="p-3 font-mono font-bold">$ 117.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-900">Sofía Benítez<p class="text-[10px] font-mono text-slate-500">ET-2026-0005</p></td><td class="p-3">Inicial • Sala 5</td><td class="p-3">Comedor Escolar</td><td class="p-3 font-mono font-bold">$ 87.000</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-900">Lucas Romero<p class="text-[10px] font-mono text-slate-500">ET-2026-0063</p></td><td class="p-3">Secundario • 2° A</td><td class="p-3">Alemán + Natación + Transporte</td><td class="p-3 font-mono font-bold">$ 148.500</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
-                            <tr><td class="p-3 font-bold text-slate-900">Martina Silva<p class="text-[10px] font-mono text-slate-500">ET-2026-0034</p></td><td class="p-3">Primario • 6° C</td><td class="p-3">Francés + Atletismo</td><td class="p-3 font-mono font-bold">$ 124.200</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Pago Completo</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    } else if (tipo === 'incompletos') {
-        contenedor.innerHTML = `
-            <div class="space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div>
-                        <h4 class="font-black text-rose-900 text-sm">Alumnos con Pago Incompleto y Deuda Arancelaria</h4>
-                        <p class="text-xs text-slate-500">Familias notificadas con intimación y recargo por mora del 5%.</p>
-                    </div>
-                    <span class="text-xs font-bold text-rose-800 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
-                        8 Casos Notificados
-                    </span>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
-                        <thead>
-                            <tr class="bg-rose-50/60 text-[11px] font-black uppercase text-rose-900 border-b border-rose-100">
-                                <th class="p-3">Alumno / Curso</th>
-                                <th class="p-3">Tutor / Contacto</th>
-                                <th class="p-3">Período Afectado</th>
-                                <th class="p-3">Saldo Adeudado</th>
-                                <th class="p-3">Acción Inmediata</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr>
-                                <td class="p-3 font-bold text-slate-900">Bruno Valenzuela<p class="text-[10px] text-slate-500">Secundario • 2° Año</p></td>
-                                <td class="p-3">Carlos Valenzuela<p class="text-[10px] text-slate-500">carlos.v@mail.com</p></td>
-                                <td class="p-3 text-rose-700 font-semibold">Octubre 2026 (Impaga)</td>
-                                <td class="p-3 font-mono font-bold text-rose-700">$ 123.900 (+5% mora)</td>
-                                <td class="p-3"><button type="button" onclick="mostrarToast('Reenviando aviso de deuda a Carlos Valenzuela...', 'info')" class="px-2.5 py-1.5 bg-rose-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-rose-700 transition">Reenviar Aviso</button></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-slate-900">Valentina Morales<p class="text-[10px] text-slate-500">Primario • 4° Grado</p></td>
-                                <td class="p-3">Andrea Morales<p class="text-[10px] text-slate-500">andrea.m@mail.com</p></td>
-                                <td class="p-3 text-amber-700 font-semibold">Octubre (Pago Incompleto)</td>
-                                <td class="p-3 font-mono font-bold text-amber-700">$ 66.000 remanente</td>
-                                <td class="p-3"><button type="button" onclick="mostrarToast('Reenviando liquidación de saldo a Andrea Morales...', 'info')" class="px-2.5 py-1.5 bg-amber-500 text-slate-900 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-amber-600 transition">Reenviar Saldo</button></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-slate-900">Santiago Giménez<p class="text-[10px] text-slate-500">Inicial • Sala 5</p></td>
-                                <td class="p-3">Esteban Giménez<p class="text-[10px] text-slate-500">esteban.g@mail.com</p></td>
-                                <td class="p-3 text-rose-700 font-semibold">Sept y Oct (2 cuotas)</td>
-                                <td class="p-3 font-mono font-bold text-rose-700">$ 174.000 total</td>
-                                <td class="p-3"><button type="button" onclick="mostrarToast('Intimación enviada a Esteban Giménez...', 'warning')" class="px-2.5 py-1.5 bg-rose-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-rose-700 transition">Intimar Deuda</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    } else if (tipo === 'deportes') {
-        contenedor.innerHTML = `
-            <div class="space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div>
-                        <h4 class="font-black text-slate-900 text-sm">Cobranzas por Disciplina Deportiva y Profesor a Cargo</h4>
-                        <p class="text-xs text-slate-500">Adicional arancelario de $ 15.000/mes por disciplina extracurricular.</p>
-                    </div>
-                    <span class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
-                        Recaudación: $ 1.760.000 / mes
-                    </span>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
-                        <thead>
-                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
-                                <th class="p-3">Disciplina</th>
+                                <th class="p-3">Deporte</th>
+                                <th class="p-3">Horario de Práctica</th>
                                 <th class="p-3">Profesor a Cargo</th>
-                                <th class="p-3">Niveles & Días</th>
-                                <th class="p-3">Inscriptos</th>
-                                <th class="p-3">Recaudación Mensual</th>
+                                <th class="p-3 text-right">Arancel Deportivo</th>
+                                <th class="p-3 text-center">Estado de Pago</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <tr><td class="p-3 font-bold text-blue-900">Natación</td><td class="p-3">Prof. Lucas Silva</td><td class="p-3">Primario/Secundario • Lu/Mi/Vi 15:30</td><td class="p-3 font-bold">32 alumnos</td><td class="p-3 font-mono font-bold text-slate-800">$ 480.000</td></tr>
-                            <tr><td class="p-3 font-bold text-blue-900">Fútbol</td><td class="p-3">Prof. Marcelo Gómez</td><td class="p-3">Primario • Ma/Ju 08:30</td><td class="p-3 font-bold">28 alumnos</td><td class="p-3 font-mono font-bold text-slate-800">$ 420.000</td></tr>
-                            <tr><td class="p-3 font-bold text-blue-900">Hockey</td><td class="p-3">Prof. Daniela Ríos</td><td class="p-3">Secundario • Lu/Mi 17:00</td><td class="p-3 font-bold">22 alumnas</td><td class="p-3 font-mono font-bold text-slate-800">$ 330.000</td></tr>
-                            <tr><td class="p-3 font-bold text-blue-900">Gimnasia Artística</td><td class="p-3">Prof. Elena Martínez</td><td class="p-3">Inicial/Primario • Ma/Ju 16:00</td><td class="p-3 font-bold">18 inscriptos</td><td class="p-3 font-mono font-bold text-slate-800">$ 270.000</td></tr>
-                            <tr><td class="p-3 font-bold text-blue-900">Ajedrez y Lógica</td><td class="p-3">Prof. Tomás Valdéz</td><td class="p-3">Primario/Secundario • Sáb 10:00</td><td class="p-3 font-bold">16 inscriptos</td><td class="p-3 font-mono font-bold text-slate-800">$ 240.000</td></tr>
+                            ${filtrados.map(item => `
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3">
+                                        <p class="font-bold text-slate-900">${escaparHTML(item.alumnoNombre)}</p>
+                                        <p class="text-[10px] text-slate-500 font-mono">${escaparHTML(item.legajo)}</p>
+                                    </td>
+                                    <td class="p-3 font-semibold text-slate-800">${escaparHTML(item.nivel)} • ${escaparHTML(item.curso)}</td>
+                                    <td class="p-3 font-bold text-blue-900">${escaparHTML(item.deporte)}</td>
+                                    <td class="p-3 text-slate-600">${escaparHTML(item.horario)}</td>
+                                    <td class="p-3 font-semibold text-slate-800">${escaparHTML(item.profesor)}</td>
+                                    <td class="p-3 text-right font-mono font-bold text-slate-900">$ ${item.monto.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-center">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.estadoPago === 'Pagado' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                            ${escaparHTML(item.estadoPago)}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Tarjetas Mobile (< 768px) -->
+                <div class="grid grid-cols-1 gap-3 md:hidden">
+                    ${filtrados.map(item => `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                            <div class="flex justify-between items-start pb-2 border-b border-slate-100">
+                                <div>
+                                    <p class="font-black text-slate-900 text-sm">${escaparHTML(item.alumnoNombre)}</p>
+                                    <p class="text-[10px] font-mono text-slate-500">${escaparHTML(item.legajo)} • ${escaparHTML(item.curso)}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.estadoPago === 'Pagado' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${escaparHTML(item.estadoPago)}</span>
+                            </div>
+                            <div class="space-y-1 text-[11px] text-slate-600">
+                                <div><span class="text-slate-500">Deporte:</span> <strong class="text-blue-900">${escaparHTML(item.deporte)}</strong> (${escaparHTML(item.nivel)})</div>
+                                <div><span class="text-slate-500">Profesor:</span> <strong>${escaparHTML(item.profesor)}</strong></div>
+                                <div><span class="text-slate-500">Horario:</span> ${escaparHTML(item.horario)}</div>
+                                <div class="pt-1 flex justify-between font-bold text-slate-900 text-xs">
+                                    <span>Arancel Mensual:</span>
+                                    <span class="font-mono text-sm">$ ${item.monto.toLocaleString('es-AR')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `;
-    } else if (tipo === 'transporte') {
+        return;
+    }
+
+    // ========================================================
+    // LISTADO 5: PAGOS POR RECORRIDO DEL SERVICIO DE TRANSPORTE
+    // ========================================================
+    if (tipo === 'transporte') {
+        const recorridoFiltro = AdminTesoreria.filtroRecorrido || 'todos';
+
+        const filtrados = AdminTesoreria.listadoTransporte.filter(item => {
+            return recorridoFiltro === 'todos' || item.recorrido === recorridoFiltro;
+        });
+
         contenedor.innerHTML = `
             <div class="space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div>
-                        <h4 class="font-black text-slate-900 text-sm">Recaudación por Recorrido del Servicio de Transporte</h4>
-                        <p class="text-xs text-slate-500">Arancel mensual de $ 22.000 por alumno transportado con chofer asignado.</p>
+                        <h4 class="font-black text-slate-900 text-sm sm:text-base">Listado 5: Pagos de Alumnos por Recorrido del Servicio de Transporte</h4>
+                        <p class="text-xs text-slate-500">Arancel institucional de micro escolar puerta a puerta ($ 22.000/mes).</p>
                     </div>
-                    <span class="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                        3 Líneas Habilitadas
+                    <span class="text-xs font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 self-start sm:self-auto">
+                        ${filtrados.length} Alumnos en Transporte
                     </span>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[550px]">
+                <!-- Filtro por Recorrido -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex flex-col sm:flex-row sm:items-center gap-2.5 text-xs">
+                    <label class="font-black text-slate-700 uppercase text-[10px] shrink-0">Filtrar por Recorrido:</label>
+                    <select onchange="filtrarReporteTesoreria('filtroRecorrido', this.value)" class="p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-900 min-h-[38px] w-full sm:w-auto">
+                        <option value="todos">Todas las Líneas y Recorridos</option>
+                        <option value="Línea 1 - Zona Norte" ${recorridoFiltro === 'Línea 1 - Zona Norte' ? 'selected' : ''}>Línea 1 - Zona Norte</option>
+                        <option value="Línea 2 - Zona Sur" ${recorridoFiltro === 'Línea 2 - Zona Sur' ? 'selected' : ''}>Línea 2 - Zona Sur</option>
+                        <option value="Línea 3 - Zona Centro" ${recorridoFiltro === 'Línea 3 - Zona Centro' ? 'selected' : ''}>Línea 3 - Zona Centro</option>
+                        <option value="Línea 4 - Zona Este / Fontana" ${recorridoFiltro === 'Línea 4 - Zona Este / Fontana' ? 'selected' : ''}>Línea 4 - Zona Este / Fontana</option>
+                    </select>
+                </div>
+
+                <!-- Tabla Desktop -->
+                <div class="hidden md:block overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
                         <thead>
-                            <tr class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
-                                <th class="p-3">Línea de Micro</th>
-                                <th class="p-3">Recorrido Principal</th>
-                                <th class="p-3">Chofer y Patente</th>
-                                <th class="p-3">Capacidad / Ocupación</th>
-                                <th class="p-3">Recaudación Mensual</th>
+                            <tr class="bg-slate-100 text-[11px] font-black uppercase text-slate-600 border-b">
+                                <th class="p-3">Alumno (Nombre y Legajo)</th>
+                                <th class="p-3">Año / Curso</th>
+                                <th class="p-3">Recorrido del Transporte</th>
+                                <th class="p-3">Parada / Dirección</th>
+                                <th class="p-3">Horario Retiro / Regreso</th>
+                                <th class="p-3">Móvil y Chofer Asignado</th>
+                                <th class="p-3 text-right">Importe Mensual</th>
+                                <th class="p-3 text-center">Estado</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <tr>
-                                <td class="p-3 font-bold text-blue-900">Línea 1 - Norte</td>
-                                <td class="p-3">Villa San Martín • Los Troncos • Centro</td>
-                                <td class="p-3">Roberto Benítez<p class="text-[10px] text-slate-400">Patente AF 234 JK</p></td>
-                                <td class="p-3 font-bold">18 / 20 alumnos</td>
-                                <td class="p-3 font-mono font-bold text-slate-900">$ 396.000</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-blue-900">Línea 2 - Sur</td>
-                                <td class="p-3">Fontana • Tiro Federal • Hospital</td>
-                                <td class="p-3">Claudio Peralta<p class="text-[10px] text-slate-400">Patente AE 890 LM</p></td>
-                                <td class="p-3 font-bold">15 / 18 alumnos</td>
-                                <td class="p-3 font-mono font-bold text-slate-900">$ 330.000</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-blue-900">Línea 3 - Este</td>
-                                <td class="p-3">Barranqueras • Puerto Vilelas • Av. Castelli</td>
-                                <td class="p-3">Mario Soto<p class="text-[10px] text-slate-400">Patente AD 456 OP</p></td>
-                                <td class="p-3 font-bold">12 / 16 alumnos</td>
-                                <td class="p-3 font-mono font-bold text-slate-900">$ 264.000</td>
-                            </tr>
+                            ${filtrados.map(item => `
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3">
+                                        <p class="font-bold text-slate-900">${escaparHTML(item.alumnoNombre)}</p>
+                                        <p class="text-[10px] text-slate-500 font-mono">${escaparHTML(item.legajo)}</p>
+                                    </td>
+                                    <td class="p-3 font-semibold text-slate-800">${escaparHTML(item.curso)}</td>
+                                    <td class="p-3 font-bold text-blue-900">${escaparHTML(item.recorrido)}</td>
+                                    <td class="p-3 text-slate-600">${escaparHTML(item.parada)}</td>
+                                    <td class="p-3 text-slate-600">${escaparHTML(item.horario)}</td>
+                                    <td class="p-3 font-semibold text-slate-800">${escaparHTML(item.movilChofer)}</td>
+                                    <td class="p-3 text-right font-mono font-bold text-slate-900">$ ${item.monto.toLocaleString('es-AR')}</td>
+                                    <td class="p-3 text-center">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.estadoPago === 'Pagado' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                            ${escaparHTML(item.estadoPago)}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Tarjetas Mobile (< 768px) -->
+                <div class="grid grid-cols-1 gap-3 md:hidden">
+                    ${filtrados.map(item => `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                            <div class="flex justify-between items-start pb-2 border-b border-slate-100">
+                                <div>
+                                    <p class="font-black text-slate-900 text-sm">${escaparHTML(item.alumnoNombre)}</p>
+                                    <p class="text-[10px] font-mono text-slate-500">${escaparHTML(item.legajo)} • ${escaparHTML(item.curso)}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.estadoPago === 'Pagado' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${escaparHTML(item.estadoPago)}</span>
+                            </div>
+                            <div class="space-y-1 text-[11px] text-slate-600">
+                                <div><span class="text-slate-500">Recorrido:</span> <strong class="text-blue-900">${escaparHTML(item.recorrido)}</strong></div>
+                                <div><span class="text-slate-500">Parada:</span> ${escaparHTML(item.parada)}</div>
+                                <div><span class="text-slate-500">Móvil/Chofer:</span> <strong>${escaparHTML(item.movilChofer)}</strong></div>
+                                <div><span class="text-slate-500">Horario:</span> ${escaparHTML(item.horario)}</div>
+                                <div class="pt-1 flex justify-between font-bold text-slate-900 text-xs">
+                                    <span>Cuota Mensual:</span>
+                                    <span class="font-mono text-sm">$ ${item.monto.toLocaleString('es-AR')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `;
+        return;
     }
 }
 
-window.enviarRecordatorioFinMes = enviarRecordatorioFinMes;
-window.enviarAvisoDia20 = enviarAvisoDia20;
+// Exportar al objeto global window para uso interactivo y pruebas
+window.AdminTesoreria = AdminTesoreria;
+window.enviarRecordatorioFinMes = abrirModalRecordatorioFinMes;
+window.enviarAvisoDia20 = abrirModalAvisoDia20;
+window.abrirModalRecordatorioFinMes = abrirModalRecordatorioFinMes;
+window.cerrarModalRecordatorioFinMes = cerrarModalRecordatorioFinMes;
+window.actualizarPrevisualizacionFinMes = actualizarPrevisualizacionFinMes;
+window.abrirModalPrevisualizarFacturaAdjunta = abrirModalPrevisualizarFacturaAdjunta;
+window.cerrarModalPrevisualizarFacturaAdjunta = cerrarModalPrevisualizarFacturaAdjunta;
+window.ejecutarEnvioRecordatorioFinMes = ejecutarEnvioRecordatorioFinMes;
+window.abrirModalAvisoDia20 = abrirModalAvisoDia20;
+window.cerrarModalAvisoDia20 = cerrarModalAvisoDia20;
+window.renderizarTablaDeudoresDia20 = renderizarTablaDeudoresDia20;
+window.enviarAvisoIndividualDia20 = enviarAvisoIndividualDia20;
+window.ejecutarEnvioAvisoDia20 = ejecutarEnvioAvisoDia20;
+window.abrirModalCobrarSaldo = abrirModalCobrarSaldo;
+window.cerrarModalCobrarSaldo = cerrarModalCobrarSaldo;
+window.confirmarCobroSaldoIncompleto = confirmarCobroSaldoIncompleto;
 window.cambiarReporteTesoreria = cambiarReporteTesoreria;
+window.filtrarReporteTesoreria = filtrarReporteTesoreria;
 window.renderizarModuloTesoreriaAdmin = renderizarModuloTesoreriaAdmin;
 window.renderizarReporteTesoreria = renderizarReporteTesoreria;
