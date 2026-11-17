@@ -342,7 +342,7 @@
             asignarTextoSeguro('estPerfilCuentaRol', rol === 'admin' ? 'Administrador (Vista Previa)' : 'Estudiante', 'Estudiante');
         }
 
-        // 4. Pestaña Mis Cursos (#tabCursos) — Estado vacío honesto con referencia opcional de matrícula
+        // 4. Pestaña Mis Cursos (#tabCursos) — Materias del Cursado (RF-20), Horarios (RF-19) y Deportes (RF-10/RF-23)
         const refCursosBox = document.getElementById('cursosReferenciaMatricula');
         if (refCursosBox) {
             if (matricula) {
@@ -357,6 +357,9 @@
             } else {
                 refCursosBox.classList.add('hidden');
             }
+        }
+        if (typeof window.renderizarMateriasCursadoEstudiante === 'function') {
+            window.renderizarMateriasCursadoEstudiante(matricula);
         }
 
         // 5. Pestaña Mis Pagos (#tabPagos) — Módulo 2: Gestión de Cuotas
@@ -1613,15 +1616,29 @@
         if (estadoVacio) estadoVacio.classList.add('hidden');
         if (!listaCards) return;
 
+        // Renderizar banner de comprobantes en revisión (Regla M-04) si existen
+        if (typeof window.renderizarBannerComprobantesEstudianteM04 === 'function') {
+            window.renderizarBannerComprobantesEstudianteM04();
+        }
+
+        const comprobantesPendientes = (window.AdminTesoreria?.comprobantesPendientes || []).filter(
+            cp => cp.estado === 'Pendiente de Revisión' &&
+                  (!EstadoEstudiante.matricula?.legajo || cp.legajo === EstadoEstudiante.matricula.legajo)
+        );
+
         listaCards.innerHTML = cuotasFiltradas.map(c => {
             const esPagada = c.estado === 'Pagada';
             const esVencida = c.estado === 'Vencida';
+            const esIncompleta = c.estado === 'Pago Incompleto' || (c.monto_abonado > 0 && !esPagada);
 
             let badgeClase = 'bg-blue-50 text-blue-900 border-blue-200';
             let badgeIcon = 'fa-clock';
             if (esPagada) {
                 badgeClase = 'bg-emerald-50 text-emerald-800 border-emerald-200';
                 badgeIcon = 'fa-check-circle';
+            } else if (esIncompleta) {
+                badgeClase = 'bg-amber-100 text-amber-900 border-amber-300';
+                badgeIcon = 'fa-adjust';
             } else if (esVencida) {
                 badgeClase = 'bg-rose-50 text-rose-800 border-rose-200';
                 badgeIcon = 'fa-exclamation-triangle';
@@ -1629,7 +1646,11 @@
 
             const comp = c.detalle_composicion || {};
             const baseTxt = formatearMonedaARS(comp.arancel_base || c.monto_base);
-            const totalTxt = formatearMonedaARS(c.monto_total);
+            const abonadoParcial = Number(c.monto_abonado || 0);
+            const saldoRestante = Math.max(0, Number(c.monto_total || 0) - abonadoParcial);
+            const totalTxt = formatearMonedaARS(abonadoParcial > 0 && !esPagada ? saldoRestante : c.monto_total);
+
+            const compEnRevision = comprobantesPendientes.find(cp => String(cp.cuotaId) === String(c.id) || cp.periodo === c.periodo);
 
             const detallesItems = [];
             if (comp.adicional_idioma > 0) detallesItems.push(`Idioma (+${formatearMonedaARS(comp.adicional_idioma)})`);
@@ -1668,13 +1689,25 @@
                                     <span>-${formatearMonedaARS(c.descuento)}</span>
                                 </div>
                             ` : ''}
+                            ${abonadoParcial > 0 && !esPagada ? `
+                                <div class="flex justify-between text-emerald-700 font-bold text-[11px] pt-1 border-t border-slate-100">
+                                    <span>Abonado Aprobado (Parcial):</span>
+                                    <span>-${formatearMonedaARS(abonadoParcial)}</span>
+                                </div>
+                            ` : ''}
+                            ${compEnRevision ? `
+                                <div class="p-2 bg-amber-50 border border-amber-300 rounded-lg text-[11px] text-amber-950 font-bold flex items-start gap-1.5 mt-1">
+                                    <i class="fas fa-hourglass-half text-amber-700 mt-0.5 shrink-0" aria-hidden="true"></i>
+                                    <span>⏳ Comprobante en Revisión (${formatearMonedaARS(compEnRevision.importe)}) • El saldo NO disminuye hasta aprobación Admin (M-04/M-05).</span>
+                                </div>
+                            ` : ''}
                             ${esVencida ? `
                                 <div class="p-2 bg-rose-50 border border-rose-200 rounded-lg text-[11px] text-rose-800 font-semibold flex items-start gap-1.5 mt-1">
                                     <i class="fas fa-bell text-rose-600 mt-0.5 shrink-0" aria-hidden="true"></i>
                                     <span>Aviso: Tras el día 20 aplica recargo por mora. Regularizar en Tesorería.</span>
                                 </div>
                             ` : ''}
-                            ${!esPagada && !esVencida ? `
+                            ${!esPagada && !esVencida && !compEnRevision ? `
                                 <div class="p-2 bg-blue-50 border border-blue-200 rounded-lg text-[11px] text-blue-900 font-semibold flex items-start gap-1.5 mt-1">
                                     <i class="fas fa-info-circle text-blue-700 mt-0.5 shrink-0" aria-hidden="true"></i>
                                     <span>10% de bonificación abonando antes del día 10.</span>
@@ -1683,7 +1716,7 @@
                         </div>
 
                         <div class="pt-3 pb-1 flex items-baseline justify-between">
-                            <span class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Importe Total:</span>
+                            <span class="text-[11px] font-black uppercase text-slate-500 tracking-wider">${abonadoParcial > 0 && !esPagada ? 'Saldo Pendiente:' : 'Importe Total:'}</span>
                             <span class="text-base sm:text-lg font-black text-blue-900 font-mono">${totalTxt}</span>
                         </div>
                         ${esPagada ? `
@@ -1694,17 +1727,26 @@
                         ` : ''}
                     </div>
 
-                    <div class="pt-3 mt-2 border-t border-slate-100 flex gap-2">
-                        <button type="button" onclick="verDetalleFacturaCuota('${c.id}')"
-                            class="flex-1 min-h-[44px] px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95">
-                            <i class="fas fa-file-invoice text-xs" aria-hidden="true"></i>
-                            <span>${esPagada ? 'Ver Recibo' : 'Ver Detalle'}</span>
-                        </button>
+                    <div class="pt-3 mt-2 border-t border-slate-100 space-y-2">
+                        <div class="flex gap-2">
+                            <button type="button" onclick="verDetalleFacturaCuota('${c.id}')"
+                                class="flex-1 min-h-[42px] px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95">
+                                <i class="fas fa-file-invoice text-xs" aria-hidden="true"></i>
+                                <span>${esPagada ? 'Ver Recibo' : 'Ver Detalle'}</span>
+                            </button>
+                            ${!esPagada ? `
+                                <button type="button" onclick="abrirModalPagarCuotaEstudiante('${c.id}')"
+                                    class="flex-1 min-h-[42px] px-3 py-2 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95 shadow">
+                                    <i class="fas fa-credit-card text-amber-300 text-xs" aria-hidden="true"></i>
+                                    <span>Abonar Cuota</span>
+                                </button>
+                            ` : ''}
+                        </div>
                         ${!esPagada ? `
-                            <button type="button" onclick="abrirModalPagarCuotaEstudiante('${c.id}')"
-                                class="flex-1 min-h-[44px] px-3 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95 shadow">
-                                <i class="fas fa-credit-card text-amber-300 text-xs" aria-hidden="true"></i>
-                                <span>Abonar Cuota</span>
+                            <button type="button" onclick="abrirModalInformarTransferencia('${c.id}')"
+                                class="w-full min-h-[40px] px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 font-bold rounded-xl text-[11px] uppercase tracking-wider transition flex items-center justify-center gap-1.5 active:scale-95">
+                                <i class="fas fa-paperclip text-amber-700" aria-hidden="true"></i>
+                                <span>📎 Informar Transferencia / Adjuntar Comprobante (M-04)</span>
                             </button>
                         ` : ''}
                     </div>

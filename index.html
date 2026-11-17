@@ -478,6 +478,10 @@
                 </div>
 
                 <div id="navEstudianteFooter" class="hidden md:block pt-4 md:pt-6 mt-4 md:mt-6 border-t border-blue-800/80 space-y-2 shrink-0">
+                    <button type="button" onclick="toggleNavEstudiante(false); abrirModalChatbotDeportivo()"
+                        class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 px-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px] shadow-sm active:scale-95">
+                        <i class="fas fa-robot" aria-hidden="true"></i> <span>🤖 Asistente Deportivo (RF-23)</span>
+                    </button>
                     <button type="button" onclick="toggleNavEstudiante(false); iniciarInstalacionPWA()"
                         class="w-full bg-emerald-700/80 hover:bg-emerald-600 text-white py-2.5 px-3 rounded-xl font-bold uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px] border border-emerald-500/40 active:scale-95 shadow-sm">
                         <i class="fas fa-mobile-alt" aria-hidden="true"></i> <span>📲 Instalar App en el Celular</span>
@@ -744,22 +748,42 @@
                 <!-- 3. CONTENEDOR DE LA PESTAÑA MIS CURSOS     -->
                 <!-- ========================================== -->
                 <div id="tabCursos" class="hidden space-y-4 sm:space-y-6">
-                    <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200/80 text-center max-w-xl mx-auto my-4">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-4">
-                            <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                    <!-- Banner Chatbot Deportivo RF-23 -->
+                    <div class="bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 text-white p-5 sm:p-6 rounded-2xl shadow-sm border border-indigo-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1.5">
+                            <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950">
+                                Funcionalidad Agregada • RF-23
+                            </span>
+                            <h2 class="text-base sm:text-lg font-black">🤖 Asistente Inteligente de Recomendación Deportiva</h2>
+                            <p class="text-xs text-blue-100 max-w-xl leading-relaxed">
+                                Analiza automáticamente tu Nivel Educativo, tus horarios de cursada obligatoria y tu cupo de deportes (máximo 2 disciplinas simultáneas según RF-10) para recomendarte grupos sin superposición horaria.
+                            </p>
                         </div>
-                        <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mb-2">
-                            Sin Comisiones Asociadas
-                        </span>
-                        <h2 class="text-base sm:text-lg font-black text-slate-800 mb-2">
-                            No hay cursos ni materias asociados a esta cuenta
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
-                            El módulo de cursada, asignaturas y calificaciones no registra comisiones vinculadas en la base de datos para tu perfil en esta etapa.
-                        </p>
-                        <div id="cursosReferenciaMatricula" class="hidden mt-5 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-left text-xs text-slate-700">
-                            <p class="font-black text-slate-800 uppercase text-[10px] tracking-wider mb-1">Referencia de tu Matrícula Activa:</p>
-                            <p id="cursosReferenciaTexto" class="font-semibold text-slate-600">—</p>
+                        <button type="button" onclick="abrirModalChatbotDeportivo()"
+                            class="min-h-[44px] px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shrink-0 shadow active:scale-95">
+                            <i class="fas fa-robot text-sm" aria-hidden="true"></i>
+                            <span>Abrir Chatbot Deportivo</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                            <div>
+                                <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-900 border border-blue-200 mb-1">
+                                    Cursado Oficial • RF-18 / RF-19 / RF-20
+                                </span>
+                                <h3 class="text-base sm:text-lg font-black text-slate-800">
+                                    Materias del Cursado, Horarios y Actividades
+                                </h3>
+                            </div>
+                            <div id="cursosReferenciaMatricula" class="hidden p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700">
+                                <span class="font-black text-slate-800 uppercase text-[10px] tracking-wider block">Matrícula Activa:</span>
+                                <span id="cursosReferenciaTexto" class="font-semibold text-blue-900">—</span>
+                            </div>
+                        </div>
+
+                        <div id="contenedorMateriasCursadoEstudiante" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs">
+                            <!-- Se hidrata dinámicamente según el nivel y curso del alumno -->
                         </div>
                     </div>
                 </div>
@@ -770,21 +794,31 @@
                 <div id="tabPagos" class="hidden space-y-4 sm:space-y-6">
 
                     <!-- Encabezado Institucional del Módulo -->
-                    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white rounded-2xl p-5 sm:p-6 shadow-sm border border-blue-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white rounded-2xl p-5 sm:p-6 shadow-sm border border-blue-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div>
                             <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-blue-800/80 text-amber-300 border border-amber-400/30 mb-2">
-                                Módulo 2 • Gestión de Cuotas
+                                Módulo 2 • Gestión de Cuotas y Comprobantes (M-04)
                             </span>
                             <h2 class="text-lg sm:text-xl font-black tracking-tight">Estado Arancelario y Cuotas</h2>
                             <p class="text-xs text-blue-200 mt-1 leading-relaxed max-w-xl">
-                                Ciclo Lectivo 2026 • Consultá tus cuotas mensuales, vencimientos con bonificación en término, historial de recibos oficiales y desglose de aranceles.
+                                Ciclo Lectivo 2026 • Consultá tus cuotas mensuales, aboná en línea o informá transferencias parciales/totales adjuntando el comprobante para revisión de Tesorería (Regla M-04/M-05).
                             </p>
                         </div>
-                        <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                            <span id="badgeEstadoArancelarioEstudiante" class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                        <div class="flex flex-wrap items-center gap-2.5 self-start lg:self-auto shrink-0">
+                            <button type="button" onclick="abrirModalInformarTransferencia()"
+                                class="min-h-[44px] px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow active:scale-95">
+                                <i class="fas fa-paperclip text-xs" aria-hidden="true"></i>
+                                <span>📎 Informar Transferencia / Comprobante</span>
+                            </button>
+                            <span id="badgeEstadoArancelarioEstudiante" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 min-h-[44px]">
                                 <i class="fas fa-check-circle mr-1.5" aria-hidden="true"></i> Al Día
                             </span>
                         </div>
+                    </div>
+
+                    <!-- Aviso de Comprobantes en Revisión (Regla M-04) -->
+                    <div id="bannerComprobantesPendientesEstudiante" class="hidden bg-amber-50 border border-amber-300 rounded-2xl p-4 text-xs text-amber-950 space-y-2 shadow-sm">
+                        <!-- Renderizado dinámico cuando el alumno informa una transferencia pendiente de aprobación -->
                     </div>
 
                     <!-- a. Resumen Superior (KPIs Arancelarios) -->
@@ -1075,11 +1109,19 @@
                             class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
                             <i class="fas fa-file-invoice-dollar w-5 text-center text-sm text-amber-300" aria-hidden="true"></i> <span>💰 Cuotas y Listados de Pagos</span>
                         </button>
+                        <button type="button" data-tab="reportes" onclick="cambiarAdminTab('reportes')"
+                            class="admin-nav-item w-full flex items-center space-x-3 p-3 text-slate-300 hover:bg-blue-900/60 hover:text-white rounded-xl transition text-left min-h-[44px]">
+                            <i class="fas fa-clipboard-list w-5 text-center text-sm text-emerald-300" aria-hidden="true"></i> <span>📊 9 Reportes Dirección (RF-22)</span>
+                        </button>
                     </nav>
                 </div>
 
                 <!-- Accesos de Salida y Cambio de Rol -->
                 <div id="navAdminFooter" class="hidden md:block pt-4 md:pt-6 border-t border-blue-800/80 space-y-2 mt-4 md:mt-6 shrink-0">
+                    <button type="button" onclick="toggleNavAdmin(false); abrirModalChatbotDeportivo()"
+                        class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 px-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px] shadow-sm active:scale-95">
+                        <i class="fas fa-robot" aria-hidden="true"></i> <span>🤖 Chatbot Deportivo (RF-23)</span>
+                    </button>
                     <button type="button" onclick="toggleNavAdmin(false); abrirPanelEstudianteDesdeAdmin()"
                         class="w-full bg-blue-800/50 hover:bg-blue-800 text-blue-200 hover:text-white py-2.5 px-3 rounded-xl font-bold uppercase text-[10px] tracking-widest transition flex items-center justify-center space-x-2 min-h-[44px]">
                         <i class="fas fa-user-circle" aria-hidden="true"></i> <span>Vista Estudiante</span>
@@ -1347,25 +1389,34 @@
                 <div id="admin-sec-alumnos" class="admin-tab-content hidden space-y-4 sm:space-y-5">
                     <!-- Cabecera y Controles -->
                     <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 sm:gap-4">
+                        <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-3 sm:gap-4">
                             <div>
-                                <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Nómina de Alumnos Matriculados</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Control de regularidad, idiomas obligatorios y actividades deportivas.</p>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-900 border border-blue-200">RF-01 a RF-04 • RF-14 • RF-20</span>
+                                </div>
+                                <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Nómina de Alumnos, Familia/Tutor y Materias del Cursado</h3>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Control de regularidad, asociación de Padre/Tutor y hermanos (RF-14), inscripción a materias sin duplicados (RF-20) y deportes (RF-10).</p>
                             </div>
-                            <button type="button" onclick="abrirModalNuevoAlumno()" class="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white px-5 py-3 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition shadow-md active:scale-95 flex items-center justify-center gap-2 shrink-0 min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 focus-visible:ring-offset-2">
-                                <i class="fas fa-plus text-xs" aria-hidden="true"></i>
-                                <span>Matricular Alumno</span>
-                            </button>
+                            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                <button type="button" onclick="abrirModalFichaIntegralAlumno()" class="w-full sm:w-auto bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-2 min-h-[44px]">
+                                    <i class="fas fa-users text-indigo-700 text-xs" aria-hidden="true"></i>
+                                    <span>👨‍👩‍👧‍👦 Familia/Tutor y Materias (RF-14 / RF-20)</span>
+                                </button>
+                                <button type="button" onclick="abrirModalNuevoAlumno()" class="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition shadow-md active:scale-95 flex items-center justify-center gap-2 min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 focus-visible:ring-offset-2">
+                                    <i class="fas fa-plus text-xs" aria-hidden="true"></i>
+                                    <span>+ Matricular Alumno (RF-01)</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Barra de Búsqueda Mejorada + Contador de Resultados -->
+                        <!-- Barra de Búsqueda Mejorada + Filtro de Nivel + Contador de Resultados -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
                             <div class="relative flex-1 max-w-md">
                                 <label for="searchAlumnos" class="sr-only">Buscar alumno por nombre, DNI, legajo o curso</label>
                                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                     <i class="fas fa-search text-sm" aria-hidden="true"></i>
                                 </span>
-                                <input type="text" id="searchAlumnos" placeholder="Buscar alumno, DNI o legajo..." autocomplete="off"
+                                <input type="text" id="searchAlumnos" placeholder="Buscar alumno, DNI, legajo o tutor..." autocomplete="off"
                                     class="w-full pl-10 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-xs text-slate-800 placeholder:text-slate-500 outline-none focus:bg-white focus:border-blue-900 focus:ring-2 focus:ring-blue-900/20 min-h-[44px] transition">
                                 <button type="button" id="btnLimpiarBusquedaAlumnos" onclick="limpiarBusquedaAlumnos()" aria-label="Limpiar búsqueda de alumnos"
                                     class="hidden absolute inset-y-0 right-0 w-11 min-w-[44px] min-h-[44px] items-center justify-center text-slate-400 hover:text-slate-700 rounded-r-xl transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900">
@@ -1373,8 +1424,12 @@
                                 </button>
                             </div>
 
-                            <div class="flex items-center justify-between sm:justify-end gap-2">
-                                <span id="contadorAlumnosResultados" aria-live="polite" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/60">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <button type="button" onclick="setFiltroAlumnoNivel('todos', this)" class="btn-filtro-al-nivel bg-blue-900 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase transition min-h-[36px]">Todos</button>
+                                <button type="button" onclick="setFiltroAlumnoNivel('Inicial', this)" class="btn-filtro-al-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase hover:bg-slate-50 transition min-h-[36px]">Inicial</button>
+                                <button type="button" onclick="setFiltroAlumnoNivel('Primario', this)" class="btn-filtro-al-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase hover:bg-slate-50 transition min-h-[36px]">Primario</button>
+                                <button type="button" onclick="setFiltroAlumnoNivel('Secundario', this)" class="btn-filtro-al-nivel bg-white text-slate-600 border px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase hover:bg-slate-50 transition min-h-[36px]">Secundario</button>
+                                <span id="contadorAlumnosResultados" aria-live="polite" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/60 ml-1">
                                     0 alumnos matriculados
                                 </span>
                             </div>
@@ -1388,16 +1443,16 @@
 
                     <!-- Vista Desktop: Tabla de Alumnos (>= 768px) -->
                     <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto touch-scroll">
-                        <table class="w-full min-w-[680px] text-left border-collapse">
+                        <table class="w-full min-w-[780px] text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-wider">
                                     <th class="p-4">Legajo</th>
-                                    <th class="p-4">Alumno</th>
+                                    <th class="p-4">Alumno / DNI</th>
                                     <th class="p-4">Curso / Nivel</th>
-                                    <th class="p-4">Idioma & Deporte</th>
+                                    <th class="p-4">Padre/Tutor & Hermanos (RF-14)</th>
+                                    <th class="p-4">Idioma, Deportes (Máx 2) & Servicios</th>
                                     <th class="p-4 text-center">Condición</th>
-                                    <th class="p-4 text-center">Asistencia</th>
-                                    <th class="p-4 text-right">Acciones</th>
+                                    <th class="p-4 text-right">Acciones (RF-02/14/20)</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaAlumnosBody">
@@ -1407,32 +1462,85 @@
                     </div>
                 </div>
 
-                <!-- 4. SECCIÓN: DOCENTES Y PERSONAL -->
+                <!-- 4. SECCIÓN: DOCENTES, CURSOS Y ASIGNACIÓN DE MATERIAS (RF-05, RF-06, RF-07, RF-16 a RF-21) -->
                 <div id="admin-sec-docentes" class="admin-tab-content hidden space-y-5">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
-                        <div>
-                            <h3 class="text-base font-black text-slate-800">Cuerpo Docente y Especialistas</h3>
-                            <p class="text-xs text-slate-500">Coordinación de idiomas (Inglés, Francés, Portugués), deportes y gabinete psicopedagógico.</p>
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-900 border border-indigo-200">RF-05 • RF-06 • RF-07 • RF-16 a RF-21</span>
+                                    <span id="badgeTotalDocentesActivos" class="bg-emerald-50 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-emerald-200">8 Especialistas Activos</span>
+                                </div>
+                                <h3 class="text-base sm:text-lg font-black text-slate-900">Plantel Docente, Cursos, Materias y Asignación Horaria</h3>
+                                <p class="text-xs text-slate-600 mt-0.5">ABM integral de profesores (alta, modificación, cambio de estado Activo/Licencia/Inactivo), gestión de cursos por nivel educativo y asignación de cátedras (RF-21).</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                <button type="button" onclick="abrirModalGestionCursosMaterias()"
+                                    class="min-h-[44px] px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-1.5 active:scale-95">
+                                    <i class="fas fa-calendar-alt text-blue-900" aria-hidden="true"></i>
+                                    <span>📅 Cursos, Materias y Horarios (RF-17/18/19)</span>
+                                </button>
+                                <button type="button" onclick="abrirModalAsignarMateriaProfesor()"
+                                    class="min-h-[44px] px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs uppercase tracking-wider transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                                    <i class="fas fa-book-reader text-amber-300" aria-hidden="true"></i>
+                                    <span>📚 Asignar Materia a Profesor (RF-21)</span>
+                                </button>
+                                <button type="button" onclick="abrirModalGestionDocente()"
+                                    class="min-h-[44px] px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl font-black text-xs uppercase tracking-wider transition flex items-center gap-1.5 shadow-md active:scale-95">
+                                    <i class="fas fa-user-plus text-xs" aria-hidden="true"></i>
+                                    <span>+ Registrar Profesor (RF-05)</span>
+                                </button>
+                            </div>
                         </div>
-                        <span class="bg-blue-50 text-blue-900 text-xs font-black px-3 py-1 rounded-lg">8 Especialistas Activos</span>
+
+                        <!-- Filtros de Docentes por Nivel Educativo (RF-06 / RF-22.3) -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="text-[10px] font-black uppercase text-slate-500 mr-1">Filtrar Nivel:</span>
+                                <button type="button" onclick="filtrarDocentesPorNivel('todos')" id="btnFiltroDocTodos" class="btn-filtro-doc-nivel px-3 py-1.5 rounded-lg font-bold text-[11px] bg-blue-900 text-white transition min-h-[36px]">Todos los Niveles</button>
+                                <button type="button" onclick="filtrarDocentesPorNivel('Inicial')" class="btn-filtro-doc-nivel px-3 py-1.5 rounded-lg font-bold text-[11px] bg-slate-100 text-slate-700 hover:bg-slate-200 transition min-h-[36px]">Inicial</button>
+                                <button type="button" onclick="filtrarDocentesPorNivel('Primario')" class="btn-filtro-doc-nivel px-3 py-1.5 rounded-lg font-bold text-[11px] bg-slate-100 text-slate-700 hover:bg-slate-200 transition min-h-[36px]">Primario</button>
+                                <button type="button" onclick="filtrarDocentesPorNivel('Secundario')" class="btn-filtro-doc-nivel px-3 py-1.5 rounded-lg font-bold text-[11px] bg-slate-100 text-slate-700 hover:bg-slate-200 transition min-h-[36px]">Secundario</button>
+                            </div>
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" id="inputBuscarDocente" oninput="renderizarTablaDocentes()" placeholder="Buscar docente, legajo o materia..."
+                                    class="w-full pl-3.5 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-900 min-h-[38px]">
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="gridDocentes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        <!-- Renderizado dinámico -->
+                    <div id="gridDocentes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Renderizado dinámico de tarjetas de docentes con ABM y cambio de estado -->
+                    </div>
+
+                    <!-- Matriz de Asignación de Materias, Cursos y Horarios por Docente (RF-17, RF-18, RF-19, RF-21) -->
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                            <div>
+                                <h4 class="font-black text-slate-900 text-sm uppercase tracking-wider">Asignaciones Académicas Vigentes: Profesor → Materia → Curso y Horario (RF-21)</h4>
+                                <p class="text-xs text-slate-500">Cada curso pertenece estrictamente a un único Nivel Educativo (RF-17) y cuenta con materias y horarios definidos (RF-18/RF-19).</p>
+                            </div>
+                            <button type="button" onclick="abrirModalAsignarMateriaProfesor()" class="self-start sm:self-auto px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold rounded-lg text-xs border border-blue-200 transition">
+                                + Nueva Asignación
+                            </button>
+                        </div>
+                        <div id="contenedorAsignacionesDocentes" class="overflow-x-auto touch-scroll">
+                            <!-- Renderizado dinámico por admin.js -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- 5. SECCIÓN: SERVICIOS Y BIENESTAR INSTITUCIONAL -->
+                <!-- 5. SECCIÓN: SERVICIOS Y BIENESTAR INSTITUCIONAL (RF-11 y RF-12) -->
                 <div id="admin-sec-servicios" class="admin-tab-content hidden space-y-5">
                     <!-- Selector de Subpestañas -->
                     <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
                         <button type="button" id="btn-sub-micros" onclick="cambiarSubpestañaServicios('micros')"
                             class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-900 text-white transition flex items-center gap-2">
-                            <i class="fas fa-bus" aria-hidden="true"></i> Micros de Traslado
+                            <i class="fas fa-bus" aria-hidden="true"></i> Micros de Traslado (RF-11)
                         </button>
                         <button type="button" id="btn-sub-comedor" onclick="cambiarSubpestañaServicios('comedor')"
                             class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
-                            <i class="fas fa-utensils" aria-hidden="true"></i> Comedor Institucional
+                            <i class="fas fa-utensils" aria-hidden="true"></i> Comedor Institucional (RF-12)
                         </button>
                         <button type="button" id="btn-sub-enfermeria" onclick="cambiarSubpestañaServicios('enfermeria')"
                             class="min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center gap-2">
@@ -1444,42 +1552,73 @@
                         </button>
                     </div>
 
-                    <!-- Subpestaña Micros -->
+                    <!-- Subpestaña Micros (RF-11) -->
                     <div id="subservicios-micros" class="space-y-4">
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                            <h4 class="font-bold text-slate-800 text-sm mb-1">Flota de Transporte Escolar - Gran Resistencia</h4>
-                            <p class="text-xs text-slate-500 mb-4">Servicio de traslados con monitoreo y paradas designadas para el campus.</p>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-900 border border-blue-200">RF-11 • 4 Recorridos Oficiales</span>
+                                    <h4 class="font-black text-slate-900 text-sm sm:text-base mt-1">Flota de Transporte Escolar e Inscripción por Recorrido</h4>
+                                    <p class="text-xs text-slate-500">Asigná alumnos a cualquiera de los 4 recorridos oficiales. Impacta automáticamente en su cuota mensual y en el Listado 5 de Tesorería.</p>
+                                </div>
+                                <button type="button" onclick="abrirModalInscribirTransporte()"
+                                    class="min-h-[44px] px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm active:scale-95 shrink-0">
+                                    <i class="fas fa-bus-alt text-amber-300" aria-hidden="true"></i>
+                                    <span>🚌 Inscribir Alumno a Transporte (RF-11)</span>
+                                </button>
+                            </div>
                             <div class="overflow-x-auto touch-scroll">
-                                <p class="text-[10px] text-slate-400 pb-2 md:hidden flex items-center gap-1">
-                                    <i class="fas fa-arrows-alt-h text-blue-500"></i> Deslizá horizontalmente para ver la tabla completa
-                                </p>
                                 <table class="w-full min-w-[560px] text-left">
                                     <thead>
                                         <tr class="border-b text-[10px] font-black uppercase text-slate-400">
-                                            <th class="p-3">Línea</th>
-                                            <th class="p-3">Recorrido Principal</th>
+                                            <th class="p-3">Línea / Recorrido</th>
+                                            <th class="p-3">Paradas Principales</th>
                                             <th class="p-3">Chofer y Móvil</th>
                                             <th class="p-3 text-center">Ocupación</th>
                                             <th class="p-3">Horario</th>
+                                            <th class="p-3 text-right">Arancel</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tablaMicrosBody"></tbody>
                                 </table>
                             </div>
                         </div>
+
+                        <!-- Padrón de Alumnos Inscriptos en Transporte (RF-11) -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                                <h5 class="font-black text-slate-800 text-xs sm:text-sm uppercase tracking-wider">Nómina de Alumnos Adheridos al Servicio de Transporte (RF-11)</h5>
+                                <span id="contadorInscriptosTransporte" class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">—</span>
+                            </div>
+                            <div id="contenedorInscriptosTransporte"></div>
+                        </div>
                     </div>
 
-                    <!-- Subpestaña Comedor -->
+                    <!-- Subpestaña Comedor (RF-12) -->
                     <div id="subservicios-comedor" class="hidden space-y-4">
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                            <div class="flex justify-between items-center mb-4">
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                                 <div>
-                                    <h4 class="font-bold text-slate-800 text-sm">Menú Semanal Nutricional</h4>
-                                    <p class="text-xs text-slate-500">Plan de alimentación balanceada supervisado por nutricionistas del centro.</p>
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">RF-12 • Servicio Nutricional</span>
+                                    <h4 class="font-black text-slate-900 text-sm sm:text-base mt-1">Comedor Escolar e Inscripción de Alumnos al Servicio</h4>
+                                    <p class="text-xs text-slate-500">Gestioná el alta o baja de alumnos al comedor (Menú General, Celíaco Sin TACC o Vegetariano) con impacto directo en el arancel mensual.</p>
                                 </div>
-                                <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-lg">Aptos Celíaco / Vegetariano</span>
+                                <button type="button" onclick="abrirModalInscribirComedor()"
+                                    class="min-h-[44px] px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-sm active:scale-95 shrink-0">
+                                    <i class="fas fa-utensils text-amber-300" aria-hidden="true"></i>
+                                    <span>🍽️ Inscribir / Gestionar Comedor (RF-12)</span>
+                                </button>
                             </div>
                             <div id="gridMenuComedor" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
+                        </div>
+
+                        <!-- Padrón de Alumnos Adheridos al Comedor (RF-12) -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                                <h5 class="font-black text-slate-800 text-xs sm:text-sm uppercase tracking-wider">Padrón de Alumnos Inscriptos al Comedor Escolar (RF-12)</h5>
+                                <span id="contadorInscriptosComedor" class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">—</span>
+                            </div>
+                            <div id="contenedorInscriptosComedor"></div>
                         </div>
                     </div>
 
@@ -1526,18 +1665,95 @@
                     </div>
                 </div>
 
-                <!-- 6. SECCIÓN: DEPORTES E INSTALACIONES -->
+                <!-- 6. SECCIÓN: DEPORTES, GRUPOS E INSCRIPCIONES CON REGLAS DE NEGOCIO (RF-08, RF-09, RF-10 y RF-23) -->
                 <div id="admin-sec-deportes" class="admin-tab-content hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <h3 class="text-base font-black text-slate-800 mb-1">Infraestructura y Complejo Deportivo</h3>
-                        <p class="text-xs text-slate-500 mb-4">Instalaciones propias para la jornada extendida del centro educativo.</p>
-                        <div id="gridInstalaciones" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                    <!-- Encabezado y Acciones de Deportes -->
+                    <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white p-5 sm:p-6 rounded-2xl shadow-sm border border-blue-800 space-y-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <span class="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950">
+                                        RF-08 • RF-09 • RF-10 • RF-23
+                                    </span>
+                                    <span class="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Regla Estricta: Máximo 2 Deportes por Alumno</span>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-black">⚽ Gestión de Deportes, Grupos por Nivel e Inscripción Validada</h3>
+                                <p class="text-xs text-blue-200 mt-1 max-w-2xl leading-relaxed">
+                                    Registrá deportes con su Profesor Responsable (RF-08), configurá grupos por Nivel Educativo y horarios (RF-09), e inscribí alumnos validando tope de 2 deportes, no superposición horaria y no duplicidad (RF-10).
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                <button type="button" onclick="abrirModalGestionDeporte()"
+                                    class="min-h-[44px] px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-1.5 active:scale-95">
+                                    <i class="fas fa-plus-circle text-amber-300" aria-hidden="true"></i>
+                                    <span>+ Registrar Deporte (RF-08)</span>
+                                </button>
+                                <button type="button" onclick="abrirModalGrupoDeportivo()"
+                                    class="min-h-[44px] px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-1.5 active:scale-95 shadow">
+                                    <i class="fas fa-clock text-amber-300" aria-hidden="true"></i>
+                                    <span>⚙️ Configurar Grupo (RF-09)</span>
+                                </button>
+                                <button type="button" onclick="abrirModalInscribirDeporte()"
+                                    class="min-h-[44px] px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-1.5 active:scale-95 shadow-md">
+                                    <i class="fas fa-user-check" aria-hidden="true"></i>
+                                    <span>⚽ Inscribir Alumno a Deporte (RF-10)</span>
+                                </button>
+                                <button type="button" onclick="abrirModalChatbotDeportivo()"
+                                    class="min-h-[44px] px-3.5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-1.5 active:scale-95 shadow">
+                                    <i class="fas fa-robot" aria-hidden="true"></i>
+                                    <span>🤖 Chatbot Recomendador (RF-23)</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <h3 class="text-base font-black text-slate-800 mb-1">Disciplinas Deportivas y Actividades Extracurriculares</h3>
-                        <p class="text-xs text-slate-500 mb-4">Los 8 deportes institucionales ofrecidos para todos los niveles.</p>
+                    <!-- 1. Disciplinas Deportivas y Profesor Responsable (RF-08) -->
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                            <div>
+                                <h4 class="text-sm sm:text-base font-black text-slate-800">1. Disciplinas Deportivas y Profesor Responsable Asignado (RF-08)</h4>
+                                <p class="text-xs text-slate-500">Cada disciplina tiene un docente coordinador responsable, sede asignada y arancel mensual.</p>
+                            </div>
+                            <button type="button" onclick="abrirModalGestionDeporte()" class="self-start sm:self-auto px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold rounded-lg text-xs border border-blue-200 transition">
+                                + Nuevo Deporte
+                            </button>
+                        </div>
                         <div id="gridDeportes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                    </div>
+
+                    <!-- 2. Grupos Deportivos por Nivel Educativo y Horario (RF-09) -->
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                            <div>
+                                <h4 class="text-sm sm:text-base font-black text-slate-800">2. Grupos Deportivos Configurados: Deporte + Nivel + Días y Horarios (RF-09)</h4>
+                                <p class="text-xs text-slate-500">Comisiones diferenciadas para Nivel Inicial, Primario y Secundario con control de cupo y horario.</p>
+                            </div>
+                            <button type="button" onclick="abrirModalGrupoDeportivo()" class="self-start sm:self-auto px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-bold rounded-lg text-xs border border-indigo-200 transition">
+                                + Nuevo Grupo Horario
+                            </button>
+                        </div>
+                        <div id="contenedorGruposDeportivos" class="overflow-x-auto touch-scroll"></div>
+                    </div>
+
+                    <!-- 3. Inscripciones Deportivas de Alumnos (RF-10) -->
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                            <div>
+                                <h4 class="text-sm sm:text-base font-black text-slate-800">3. Padrón de Alumnos Inscriptos en Deportes (RF-10 — Máximo 2 Deportes por Alumno)</h4>
+                                <p class="text-xs text-slate-500">Impacta automáticamente en la cuota del alumno y en el Listado 4 de Tesorería.</p>
+                            </div>
+                            <button type="button" onclick="abrirModalInscribirDeporte()" class="self-start sm:self-auto px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition shadow-sm">
+                                ⚽ Inscribir Alumno
+                            </button>
+                        </div>
+                        <div id="contenedorInscripcionesDeportes" class="overflow-x-auto touch-scroll"></div>
+                    </div>
+
+                    <!-- 4. Infraestructura y Complejo Deportivo -->
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <h4 class="text-sm sm:text-base font-black text-slate-800 mb-1">4. Infraestructura y Complejo Deportivo</h4>
+                        <p class="text-xs text-slate-500 mb-4">Instalaciones propias para la jornada extendida del centro educativo.</p>
+                        <div id="gridInstalaciones" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
                     </div>
                 </div>
 
@@ -1709,6 +1925,36 @@
                         </div>
                     </div>
 
+                    <!-- BANDEJA DE REVISIÓN Y APROBACIÓN DE COMPROBANTES DE TRANSFERENCIA (M-04 / M-05) -->
+                    <div class="bg-white rounded-2xl border-2 border-indigo-200 shadow-sm p-4 sm:p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200">
+                                        Regla Financiera M-04 y M-05
+                                    </span>
+                                    <span id="badgeComprobantesPendientesAdmin" class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                                        2 Pendientes de Revisión
+                                    </span>
+                                </div>
+                                <h4 class="font-black text-slate-900 text-sm sm:text-base">🔎 Bandeja de Comprobantes de Transferencia Pendientes de Aprobación (M-05)</h4>
+                                <p class="text-xs text-slate-600 mt-0.5">
+                                    <strong>Regla de negocio clave:</strong> Las transferencias informadas por los padres quedan en estado <em>Pendiente de Revisión</em> y <strong>la deuda NO disminuye hasta que Administración apruebe la operación</strong>.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                <button type="button" onclick="cambiarAdminTab('reportes')"
+                                    class="min-h-[40px] px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-1.5">
+                                    <i class="fas fa-clipboard-list text-blue-900" aria-hidden="true"></i>
+                                    <span>📊 Ver 9 Reportes Dirección (RF-22)</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="contenedorBandejaComprobantesAdmin" class="space-y-3">
+                            <!-- Renderizado dinámico por renderizarBandejaComprobantesAdmin() -->
+                        </div>
+                    </div>
+
                     <!-- SELECTOR Y PESTAÑAS DE LOS 5 LISTADOS OFICIALES -->
                     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-100 gap-2">
@@ -1755,6 +2001,85 @@
                         <!-- Se renderiza dinámicamente mediante renderizarReporteTesoreria() -->
                     </div>
 
+                </div>
+
+                <!-- 9. SECCIÓN: LOS 9 REPORTES ACADÉMICOS E INSTITUCIONALES DE DIRECCIÓN (RF-22) -->
+                <div id="admin-sec-reportes" class="admin-tab-content hidden space-y-6">
+                    <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl p-5 sm:p-6 shadow-sm border border-blue-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950">
+                                    Requerimiento Funcional RF-22
+                                </span>
+                                <span class="text-[10px] text-blue-200 font-bold uppercase tracking-wider">9 Reportes Oficiales de Dirección</span>
+                            </div>
+                            <h3 class="text-lg sm:text-xl font-black tracking-tight">📊 Centro de Reportes Académicos, Deportivos y Operativos (RF-22)</h3>
+                            <p class="text-xs text-blue-200 mt-1 max-w-2xl leading-relaxed">
+                                Consultá en tiempo real los 9 listados institucionales exigidos por Dirección: alumnos por curso, por materia, docentes por nivel, deportes, recorridos de transporte, ficha integral de alumno y carga horaria docente.
+                            </p>
+                        </div>
+                        <button type="button" onclick="cambiarAdminTab('tesoreria')"
+                            class="self-start lg:self-auto min-h-[44px] px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition flex items-center gap-2 shrink-0 shadow">
+                            <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                            <span>💰 Ver 5 Listados Financieros</span>
+                        </button>
+                    </div>
+
+                    <!-- Selector de los 9 Reportes Institucionales RF-22 -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-100 gap-2">
+                            <div>
+                                <h4 class="font-black text-slate-900 text-xs sm:text-sm uppercase tracking-wider">Seleccioná el Reporte Institucional a Consultar (1 al 9):</h4>
+                            </div>
+                            <span id="labelReporteRF22Activo" class="text-xs font-bold text-blue-900 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 self-start sm:self-auto">
+                                Reporte 1: Alumnos por Curso
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            <button type="button" onclick="cambiarReporteRF22(1)" id="btnRF22_1" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-blue-900 text-white shadow-sm flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-white/20 text-[10px] font-black flex items-center justify-center shrink-0">1</span>
+                                <span class="truncate">Alumnos por Curso</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(2)" id="btnRF22_2" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">2</span>
+                                <span class="truncate">Alumnos por Materia</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(3)" id="btnRF22_3" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">3</span>
+                                <span class="truncate">Docentes por Nivel Educativo</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(4)" id="btnRF22_4" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">4</span>
+                                <span class="truncate">Alumnos por Deporte</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(5)" id="btnRF22_5" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">5</span>
+                                <span class="truncate">Alumnos por Recorrido Transporte</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(6)" id="btnRF22_6" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">6</span>
+                                <span class="truncate">Ficha Integral de un Alumno</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(7)" id="btnRF22_7" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">7</span>
+                                <span class="truncate">Cursos y Horarios de un Docente</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(8)" id="btnRF22_8" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">8</span>
+                                <span class="truncate">Alumnos por Deporte y Nivel</span>
+                            </button>
+                            <button type="button" onclick="cambiarReporteRF22(9)" id="btnRF22_9" class="btn-rf22 min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-2 text-left">
+                                <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-800 text-[10px] font-black flex items-center justify-center shrink-0">9</span>
+                                <span class="truncate">Deporte, Nivel, Horario y Profesor</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor Dinámico del Reporte RF-22 Seleccionado -->
+                    <div id="contenedorReporteDireccionRF22" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6 space-y-4">
+                        <!-- Renderizado dinámico mediante renderizarReporteRF22() -->
+                    </div>
                 </div>
 
             </div>
@@ -2571,6 +2896,575 @@
                     class="min-h-[44px] px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow flex items-center justify-center gap-2">
                     <i class="fas fa-check-double text-amber-300" aria-hidden="true"></i>
                     <span>Confirmar Pago de Cuota</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- NUEVOS MODALES INTERACTIVOS (RF-05 A RF-12, RF-14, RF-17 A RF-23, M-04) -->
+    <!-- ============================================================== -->
+
+    <!-- Botón Flotante Chatbot de Recomendación Deportiva (RF-23) -->
+    <button type="button" id="btnFlotanteChatbotRF23" onclick="abrirModalChatbotDeportivo()"
+        aria-label="Abrir Asistente de Recomendación Deportiva RF-23"
+        class="fixed bottom-4 right-4 z-[150] bg-gradient-to-r from-blue-900 to-indigo-900 hover:from-blue-800 hover:to-indigo-800 text-white px-4 py-3 rounded-full shadow-2xl border-2 border-amber-400 flex items-center gap-2.5 transition transform hover:scale-105 active:scale-95 min-h-[48px]">
+        <span class="w-7 h-7 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+        </span>
+        <span class="text-xs font-black uppercase tracking-wider hidden sm:inline">Chatbot Deportivo (RF-23)</span>
+    </button>
+
+    <!-- 1. Modal RF-08: Registrar / Editar Deporte y Profesor Responsable -->
+    <div id="modalGestionDeporte" role="dialog" aria-modal="true" aria-labelledby="modalGestionDeporteTitle" onclick="if(event.target === this) cerrarModalGestionDeporte()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">RF-08 • Deporte y Profesor</span>
+                    <h3 id="modalGestionDeporteTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">Registrar / Editar Deporte Institucional</h3>
+                </div>
+                <button type="button" onclick="cerrarModalGestionDeporte()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="guardarDeporteRF08(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="depEditId" value="">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="depNombre" class="block font-bold text-slate-700 mb-1 uppercase">Nombre del Deporte *</label>
+                        <input type="text" id="depNombre" required placeholder="Ej: Handball o Natación" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-900 min-h-[42px]">
+                    </div>
+                    <div>
+                        <label for="depProfesor" class="block font-bold text-slate-700 mb-1 uppercase">Profesor Responsable (RF-08) *</label>
+                        <select id="depProfesor" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-900 min-h-[42px]"></select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label for="depSede" class="block font-bold text-slate-700 mb-1 uppercase">Instalación / Sede</label>
+                        <select id="depSede" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Pileta Semi-Olímpica Climatizada">Pileta Climatizada</option>
+                            <option value="Canchas de Césped Sintético">Canchas Sintéticas</option>
+                            <option value="Gimnasio Cubierto Multideporte">Gimnasio Cubierto</option>
+                            <option value="Pista de Atletismo Reglamentaria">Pista de Atletismo</option>
+                            <option value="Salón de Usos Múltiples (SUM)">Salón SUM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="depArancel" class="block font-bold text-slate-700 mb-1 uppercase">Arancel Mensual ($)</label>
+                        <input type="number" id="depArancel" required min="0" value="15000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                    <div>
+                        <label for="depEstado" class="block font-bold text-slate-700 mb-1 uppercase">Estado</label>
+                        <select id="depEstado" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Activo">Activo</option>
+                            <option value="Suspendido">Suspendido</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalGestionDeporte()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white font-black uppercase rounded-xl shadow">Guardar Deporte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Modal RF-09: Configurar Grupo Deportivo (Deporte + Nivel + Horario) -->
+    <div id="modalGrupoDeportivo" role="dialog" aria-modal="true" aria-labelledby="modalGrupoDeportivoTitle" onclick="if(event.target === this) cerrarModalGrupoDeportivo()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 text-indigo-900 border border-indigo-200">RF-09 • Grupos por Nivel y Horario</span>
+                    <h3 id="modalGrupoDeportivoTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">Configurar Grupo Deportivo (RF-09)</h3>
+                </div>
+                <button type="button" onclick="cerrarModalGrupoDeportivo()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="guardarGrupoDeportivoRF09(event)" class="space-y-3.5 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="grpDeporte" class="block font-bold text-slate-700 mb-1 uppercase">Disciplina Deportiva *</label>
+                        <select id="grpDeporte" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]"></select>
+                    </div>
+                    <div>
+                        <label for="grpNivel" class="block font-bold text-slate-700 mb-1 uppercase">Nivel Educativo Exclusivo *</label>
+                        <select id="grpNivel" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Inicial">Inicial</option>
+                            <option value="Primario">Primario</option>
+                            <option value="Secundario" selected>Secundario</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="grpHorario" class="block font-bold text-slate-700 mb-1 uppercase">Días y Franja Horaria *</label>
+                        <select id="grpHorario" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Lun y Mié 16:00 a 17:30 hs">Lun y Mié 16:00 a 17:30 hs (Extracurricular)</option>
+                            <option value="Mar y Jue 16:00 a 17:30 hs">Mar y Jue 16:00 a 17:30 hs (Extracurricular)</option>
+                            <option value="Mié y Vie 17:30 a 19:00 hs">Mié y Vie 17:30 a 19:00 hs (Extracurricular)</option>
+                            <option value="Sáb 10:00 a 12:00 hs">Sáb 10:00 a 12:00 hs (Fin de Semana)</option>
+                            <option value="Lun a Vie 09:00 a 10:30 hs">Lun a Vie 09:00 a 10:30 hs (Superpuesto Cursado)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="grpCupo" class="block font-bold text-slate-700 mb-1 uppercase">Cupo Máximo</label>
+                        <input type="number" id="grpCupo" required min="5" max="60" value="25" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalGrupoDeportivo()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase rounded-xl shadow">Crear Grupo Horario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Modal RF-10: Inscribir Alumno a Deporte con las 3 Reglas de Negocio -->
+    <div id="modalInscribirDeporte" role="dialog" aria-modal="true" aria-labelledby="modalInscribirDeporteTitle" onclick="if(event.target === this) cerrarModalInscribirDeporte()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">RF-10 • Validación de 3 Reglas Estrictas</span>
+                    <h3 id="modalInscribirDeporteTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">⚽ Inscribir Alumno a Actividad Deportiva</h3>
+                </div>
+                <button type="button" onclick="cerrarModalInscribirDeporte()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="confirmarInscripcionDeporteRF10(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label for="insDepAlumno" class="block font-bold text-slate-700 mb-1 uppercase">1. Seleccionar Alumno Matriculado *</label>
+                    <select id="insDepAlumno" required onchange="evaluarPreInscripcionDeporteRF10()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-900 min-h-[44px] font-semibold"></select>
+                </div>
+                <div id="fichaResumenAlumnoDeporteRF10" class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1 text-[11px]">
+                    <!-- Resumen dinámico de nivel, horario de cursada y deportes actuales (X/2) -->
+                </div>
+                <div>
+                    <label for="insDepGrupo" class="block font-bold text-slate-700 mb-1 uppercase">2. Seleccionar Grupo Deportivo (Deporte + Nivel + Horario) *</label>
+                    <select id="insDepGrupo" required onchange="evaluarPreInscripcionDeporteRF10()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-900 min-h-[44px] font-semibold"></select>
+                </div>
+
+                <!-- Semáforo de las 3 Reglas de Negocio RF-10 -->
+                <div id="resultadoValidacionRF10" class="p-3.5 rounded-xl border text-xs space-y-1.5">
+                    <!-- Muestra el estado en vivo de: 1) Tope máx 2 deportes, 2) No conflicto horario, 3) Nivel compatible y sin duplicado -->
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalInscribirDeporte()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" id="btnSubmitInscribirDeporteRF10" class="min-h-[42px] px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase rounded-xl shadow flex items-center gap-1.5">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Confirmar Inscripción</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Modal RF-05 / RF-06 / RF-07: ABM de Profesores -->
+    <div id="modalGestionDocente" role="dialog" aria-modal="true" aria-labelledby="modalGestionDocenteTitle" onclick="if(event.target === this) cerrarModalGestionDocente()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">RF-05 • RF-06 • RF-07</span>
+                    <h3 id="modalGestionDocenteTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">Registrar / Modificar Profesor</h3>
+                </div>
+                <button type="button" onclick="cerrarModalGestionDocente()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="guardarDocenteRF05(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="docEditLegajo" value="">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="docNombre" class="block font-bold text-slate-700 mb-1 uppercase">Nombre y Apellido *</label>
+                        <input type="text" id="docNombre" required placeholder="Ej: Prof. Mariana Gómez" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                    <div>
+                        <label for="docDni" class="block font-bold text-slate-700 mb-1 uppercase">DNI *</label>
+                        <input type="text" id="docDni" required placeholder="Ej: 32.450.110" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="docEspecialidad" class="block font-bold text-slate-700 mb-1 uppercase">Cargo / Especialidad *</label>
+                        <input type="text" id="docEspecialidad" required placeholder="Ej: Profesor de Matemática y Física" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                    <div>
+                        <label for="docNivel" class="block font-bold text-slate-700 mb-1 uppercase">Nivel Educativo Principal *</label>
+                        <select id="docNivel" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Secundario">Secundario</option>
+                            <option value="Primario">Primario</option>
+                            <option value="Inicial">Inicial</option>
+                            <option value="Todos los niveles">Todos los niveles</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label for="docArea" class="block font-bold text-slate-700 mb-1 uppercase">Área Institucional</label>
+                        <select id="docArea" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Ciencias Exactas">Ciencias Exactas</option>
+                            <option value="Idiomas">Idiomas</option>
+                            <option value="Educación Física">Educación Física</option>
+                            <option value="Humanidades">Humanidades</option>
+                            <option value="Tecnología y Ciencias">Tecnología y Ciencias</option>
+                            <option value="Autoridades">Autoridades</option>
+                            <option value="Bienestar">Bienestar</option>
+                            <option value="Salud">Salud</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="docEmail" class="block font-bold text-slate-700 mb-1 uppercase">Correo Institucional *</label>
+                        <input type="email" id="docEmail" required placeholder="docente@educarparatransformar.edu.ar" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                    <div>
+                        <label for="docEstado" class="block font-bold text-slate-700 mb-1 uppercase">Estado (RF-07)</label>
+                        <select id="docEstado" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                            <option value="Activo">Activo</option>
+                            <option value="En Licencia">En Licencia</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalGestionDocente()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white font-black uppercase rounded-xl shadow">Guardar Profesor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. Modal RF-21: Asignar Materia, Curso y Horario a Profesor -->
+    <div id="modalAsignarMateriaProfesor" role="dialog" aria-modal="true" aria-labelledby="modalAsignarMateriaTitle" onclick="if(event.target === this) cerrarModalAsignarMateriaProfesor()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 text-indigo-900 border border-indigo-200">RF-21 • Asignación Académica</span>
+                    <h3 id="modalAsignarMateriaTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">📚 Asignar Materia y Curso a Profesor</h3>
+                </div>
+                <button type="button" onclick="cerrarModalAsignarMateriaProfesor()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="guardarAsignacionMateriaRF21(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label for="asigDocente" class="block font-bold text-slate-700 mb-1 uppercase">1. Profesor Activo *</label>
+                    <select id="asigDocente" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold"></select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="asigCurso" class="block font-bold text-slate-700 mb-1 uppercase">2. Curso y Nivel (RF-17) *</label>
+                        <select id="asigCurso" required onchange="actualizarMateriasPorCursoSelect()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold"></select>
+                    </div>
+                    <div>
+                        <label for="asigMateria" class="block font-bold text-slate-700 mb-1 uppercase">3. Materia del Plan (RF-18) *</label>
+                        <input type="text" id="asigMateria" required placeholder="Ej: Matemática II / Inglés Bilingüe" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                    </div>
+                </div>
+                <div>
+                    <label for="asigHorario" class="block font-bold text-slate-700 mb-1 uppercase">4. Horario de Dictado (RF-19) *</label>
+                    <select id="asigHorario" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                        <option value="Lun y Mié 07:30 a 09:30 hs">Lun y Mié 07:30 a 09:30 hs</option>
+                        <option value="Lun y Mié 09:45 a 11:45 hs">Lun y Mié 09:45 a 11:45 hs</option>
+                        <option value="Mar y Jue 07:30 a 09:30 hs">Mar y Jue 07:30 a 09:30 hs</option>
+                        <option value="Mar y Jue 10:00 a 12:00 hs">Mar y Jue 10:00 a 12:00 hs</option>
+                        <option value="Vie 08:00 a 11:30 hs">Vie 08:00 a 11:30 hs</option>
+                        <option value="Lun y Jue 14:00 a 15:30 hs (Jornada Extendida)">Lun y Jue 14:00 a 15:30 hs (Jornada Extendida)</option>
+                    </select>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalAsignarMateriaProfesor()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase rounded-xl shadow">Confirmar Asignación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. Modal RF-17 / RF-18 / RF-19: Gestión de Cursos por Nivel, Materias y Horarios -->
+    <div id="modalGestionCursosMaterias" role="dialog" aria-modal="true" aria-labelledby="modalGestionCursosTitle" onclick="if(event.target === this) cerrarModalGestionCursosMaterias()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-2xl shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">RF-16 • RF-17 • RF-18 • RF-19</span>
+                    <h3 id="modalGestionCursosTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">📅 Estructura de Niveles, Cursos, Materias y Horarios</h3>
+                    <p class="text-xs text-slate-500">Regla RF-17: Cada curso pertenece exclusivamente a un único Nivel Educativo.</p>
+                </div>
+                <button type="button" onclick="cerrarModalGestionCursosMaterias()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+
+            <form onsubmit="agregarNuevoCursoRF17(event)" class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-xs items-end">
+                <div>
+                    <label for="nuevoCursoNivel" class="block font-bold text-slate-700 mb-1">Nivel Único (RF-17)</label>
+                    <select id="nuevoCursoNivel" class="w-full p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                        <option value="Inicial">Inicial</option>
+                        <option value="Primario">Primario</option>
+                        <option value="Secundario" selected>Secundario</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="nuevoCursoNombre" class="block font-bold text-slate-700 mb-1">Nombre del Curso *</label>
+                    <input type="text" id="nuevoCursoNombre" required placeholder="Ej: 4° Año 'A'" class="w-full p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                </div>
+                <div>
+                    <label for="nuevoCursoHorario" class="block font-bold text-slate-700 mb-1">Horario Cursado (RF-19)</label>
+                    <input type="text" id="nuevoCursoHorario" required value="Lun a Vie 07:30 a 15:30 hs" class="w-full p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                </div>
+                <button type="submit" class="min-h-[38px] px-3 py-2 bg-blue-900 hover:bg-blue-800 text-white font-black uppercase rounded-lg shadow">+ Crear Curso</button>
+            </form>
+
+            <div id="listaCursosMateriasModal" class="space-y-2.5 text-xs">
+                <!-- Renderizado dinámico de cursos, su nivel exclusivo, horario y materias -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Modal RF-11: Inscribir Alumno al Servicio de Transporte (4 Recorridos) -->
+    <div id="modalInscribirTransporte" role="dialog" aria-modal="true" aria-labelledby="modalInscribirTransporteTitle" onclick="if(event.target === this) cerrarModalInscribirTransporte()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">RF-11 • Servicio de Transporte</span>
+                    <h3 id="modalInscribirTransporteTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">🚌 Inscribir Alumno a Recorrido de Transporte</h3>
+                </div>
+                <button type="button" onclick="cerrarModalInscribirTransporte()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="guardarInscripcionTransporteRF11(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label for="transAlumnoSelect" class="block font-bold text-slate-700 mb-1 uppercase">1. Seleccionar Alumno *</label>
+                    <select id="transAlumnoSelect" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold"></select>
+                </div>
+                <div>
+                    <label for="transRecorridoSelect" class="block font-bold text-slate-700 mb-1 uppercase">2. Seleccionar Recorrido Oficial (1 de los 4) *</label>
+                    <select id="transRecorridoSelect" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold">
+                        <option value="Línea 1 - Zona Norte">Línea 1 - Zona Norte (Fontana / Av. Alvear / Av. Sarmiento) — $22.000</option>
+                        <option value="Línea 2 - Zona Sur">Línea 2 - Zona Sur (Barranqueras / Av. Castelli / Hospital) — $22.000</option>
+                        <option value="Línea 3 - Zona Centro">Línea 3 - Zona Centro (Plaza 25 de Mayo / Av. Italia) — $22.000</option>
+                        <option value="Línea 4 - Zona Este / Fontana">Línea 4 - Corredor Ruta 16 / Zona Este — $22.000</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="transParadaInput" class="block font-bold text-slate-700 mb-1 uppercase">3. Parada Designada Puerta a Puerta *</label>
+                    <input type="text" id="transParadaInput" required placeholder="Ej: Av. Sarmiento 850 esq. Laprida" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px]">
+                </div>
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-900">
+                    <i class="fas fa-info-circle mr-1"></i> Al confirmar, el alumno se incorpora automáticamente al <strong>Listado 5 de Tesorería (Pagos por Recorrido de Transporte)</strong> y se actualiza su cuota mensual (+$22.000).
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalInscribirTransporte()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white font-black uppercase rounded-xl shadow">Confirmar Transporte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. Modal RF-12: Inscribir / Gestionar Servicio de Comedor Escolar -->
+    <div id="modalInscribirComedor" role="dialog" aria-modal="true" aria-labelledby="modalInscribirComedorTitle" onclick="if(event.target === this) cerrarModalInscribirComedor()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">RF-12 • Nutrición Escolar</span>
+                    <h3 id="modalInscribirComedorTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">🍽️ Inscripción al Servicio de Comedor</h3>
+                </div>
+                <button type="button" onclick="cerrarModalInscribirComedor()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="guardarInscripcionComedorRF12(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label for="comAlumnoSelect" class="block font-bold text-slate-700 mb-1 uppercase">1. Seleccionar Alumno *</label>
+                    <select id="comAlumnoSelect" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold"></select>
+                </div>
+                <div>
+                    <label for="comMenuSelect" class="block font-bold text-slate-700 mb-1 uppercase">2. Plan Nutricional / Modalidad *</label>
+                    <select id="comMenuSelect" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold">
+                        <option value="Menú General Balanceado">Menú General Balanceado (Lun a Vie) — $28.000/mes</option>
+                        <option value="Menú Apto Celíaco (Sin TACC)">Menú Apto Celíaco (Sin TACC) — $28.000/mes</option>
+                        <option value="Menú 100% Vegetariano">Menú 100% Vegetariano — $28.000/mes</option>
+                        <option value="Menú Hiposódico Pediátrico">Menú Hiposódico Pediátrico — $28.000/mes</option>
+                        <option value="Sin Comedor">Dar de Baja del Servicio de Comedor ($0)</option>
+                    </select>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalInscribirComedor()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase rounded-xl shadow">Guardar Adhesión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 9. Modal M-04: Informar Transferencia y Adjuntar Comprobante (Parcial o Total) -->
+    <div id="modalInformarTransferencia" role="dialog" aria-modal="true" aria-labelledby="modalInformarTransferenciaTitle" onclick="if(event.target === this) cerrarModalInformarTransferencia()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[230] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">Regla M-04 y M-05 • Sujeto a Aprobación</span>
+                    <h3 id="modalInformarTransferenciaTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">📎 Informar Transferencia y Adjuntar Comprobante</h3>
+                </div>
+                <button type="button" onclick="cerrarModalInformarTransferencia()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="enviarComprobanteTransferenciaM04(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label for="transfCuotaSelect" class="block font-bold text-slate-700 mb-1 uppercase">1. Seleccionar Factura / Período a Abonar *</label>
+                    <select id="transfCuotaSelect" required onchange="actualizarMontoSugeridoTransferencia()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none min-h-[42px] font-semibold"></select>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <p class="font-black text-slate-700 uppercase text-[10px] tracking-wider">2. Seleccionar Conceptos Incluidos en la Transferencia:</p>
+                    <label class="flex items-center justify-between gap-2 cursor-pointer">
+                        <span class="flex items-center gap-2"><input type="checkbox" id="chkConceptoEducacion" checked onchange="recalcularCheckboxesTransferencia()" class="rounded text-blue-900"> <span>Arancel Educativo + Idioma</span></span>
+                        <span id="lblMontoEducacionTransf" class="font-mono font-bold text-slate-700">$103.000</span>
+                    </label>
+                    <label class="flex items-center justify-between gap-2 cursor-pointer">
+                        <span class="flex items-center gap-2"><input type="checkbox" id="chkConceptoDeporte" checked onchange="recalcularCheckboxesTransferencia()" class="rounded text-blue-900"> <span>Actividad Deportiva</span></span>
+                        <span id="lblMontoDeporteTransf" class="font-mono font-bold text-slate-700">$15.000</span>
+                    </label>
+                    <label class="flex items-center justify-between gap-2 cursor-pointer">
+                        <span class="flex items-center gap-2"><input type="checkbox" id="chkConceptoServicios" checked onchange="recalcularCheckboxesTransferencia()" class="rounded text-blue-900"> <span>Servicios (Comedor / Transporte)</span></span>
+                        <span id="lblMontoServiciosTransf" class="font-mono font-bold text-slate-700">$50.000</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="transfImporteInput" class="block font-bold text-slate-700 mb-1 uppercase">3. Importe Transferido ($ ARS) *</label>
+                        <input type="number" id="transfImporteInput" required min="1000" step="100" class="w-full p-2.5 bg-white border-2 border-blue-900 rounded-xl outline-none font-mono font-black text-sm text-blue-900 min-h-[42px]">
+                        <p id="transfSaldoMaximoHint" class="text-[10px] text-slate-500 mt-1">Permite pago parcial o total sin superar el saldo.</p>
+                    </div>
+                    <div>
+                        <label for="transfNroOperacion" class="block font-bold text-slate-700 mb-1 uppercase">4. N.º Operación / CBU *</label>
+                        <input type="text" id="transfNroOperacion" required value="TRF-BNA-9948210" placeholder="Ej: TRF-0098412" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono min-h-[42px]">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="transfArchivoNombre" class="block font-bold text-slate-700 mb-1 uppercase">5. Comprobante Adjunto (PDF / JPG / PNG) *</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="transfArchivoNombre" required value="Comprobante_Transferencia_Familia_Acosta.pdf" class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px] min-h-[42px]">
+                        <label class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl cursor-pointer flex items-center gap-1.5 shrink-0">
+                            <i class="fas fa-upload"></i> <span>Subir</span>
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="if(this.files[0]) document.getElementById('transfArchivoNombre').value = this.files[0].name">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-50 border border-amber-300 rounded-xl text-[11px] text-amber-950 flex items-start gap-2">
+                    <i class="fas fa-hourglass-half text-amber-700 mt-0.5 shrink-0"></i>
+                    <p><strong>Regla M-04/M-05:</strong> El comprobante quedará registrado como <strong>«Pendiente de Revisión»</strong>. El saldo adeudado de la cuota recién disminuirá cuando Administración verifique y apruebe el comprobante.</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="cerrarModalInformarTransferencia()" class="min-h-[42px] px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit" class="min-h-[42px] px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black uppercase rounded-xl shadow flex items-center gap-1.5">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Enviar Comprobante a Revisión</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 10. Modal RF-14 y RF-20: Ficha Familiar (Padre/Tutor y Hermanos) e Inscripción a Materias del Cursado -->
+    <div id="modalFichaIntegralAlumno" role="dialog" aria-modal="true" aria-labelledby="modalFichaIntegralTitle" onclick="if(event.target === this) cerrarModalFichaIntegralAlumno()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[220] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-2xl shadow-2xl relative my-auto border border-slate-100 text-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 text-indigo-900 border border-indigo-200">RF-14 • RF-20 • Vínculo Familiar y Cursado</span>
+                    <h3 id="modalFichaIntegralTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">👨‍👩‍👧‍👦 Asociación de Padre/Tutor (RF-14) e Inscripción a Materias (RF-20)</h3>
+                </div>
+                <button type="button" onclick="cerrarModalFichaIntegralAlumno()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label for="fichaIntAlumnoSelect" class="block font-bold text-slate-700 mb-1 uppercase">Seleccionar Alumno del Padrón:</label>
+                    <select id="fichaIntAlumnoSelect" onchange="cargarDatosFichaIntegralAlumno()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-blue-950 min-h-[42px]"></select>
+                </div>
+
+                <!-- Bloque RF-14: Padre/Tutor y Hermanos -->
+                <form onsubmit="guardarTutorAlumnoRF14(event)" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-black text-slate-800 uppercase text-[11px] tracking-wider"><i class="fas fa-user-shield text-indigo-700 mr-1"></i> Datos del Padre / Tutor Responsable (RF-14)</h4>
+                        <span id="badgeHermanosVinculadosRF14" class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-900">—</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div>
+                            <label for="rf14TutorNombre" class="block font-bold text-slate-600 mb-1">Nombre Padre/Tutor *</label>
+                            <input type="text" id="rf14TutorNombre" required class="w-full p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                        </div>
+                        <div>
+                            <label for="rf14TutorDni" class="block font-bold text-slate-600 mb-1">DNI Tutor *</label>
+                            <input type="text" id="rf14TutorDni" required class="w-full p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                        </div>
+                        <div>
+                            <label for="rf14TutorEmail" class="block font-bold text-slate-600 mb-1">Email de Facturación *</label>
+                            <input type="email" id="rf14TutorEmail" required class="w-full p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[11px] uppercase shadow-sm">Actualizar Vínculo Familiar (RF-14)</button>
+                    </div>
+                </form>
+
+                <!-- Bloque RF-20: Inscripción a Materias del Cursado (sin duplicados) -->
+                <div class="p-4 bg-blue-50/50 rounded-2xl border border-blue-200 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <h4 class="font-black text-slate-800 uppercase text-[11px] tracking-wider"><i class="fas fa-book text-blue-800 mr-1"></i> Materias del Cursado Inscriptas (RF-20 — Validación anti-duplicados)</h4>
+                            <p id="rf20CursoNivelInfo" class="text-[11px] text-slate-500">—</p>
+                        </div>
+                    </div>
+                    <div id="rf20ListaMateriasAlumno" class="flex flex-wrap gap-1.5"></div>
+                    <form onsubmit="inscribirMateriaAlumnoRF20(event)" class="flex flex-col sm:flex-row gap-2 pt-2 border-t border-blue-200/60">
+                        <input type="text" id="rf20NuevaMateriaInput" required placeholder="Nombre de materia a inscribir (ej: Robótica Aplicada)" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg min-h-[38px]">
+                        <button type="submit" class="px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-lg text-[11px] uppercase shrink-0">+ Inscribir Materia (RF-20)</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Modal RF-23: Funcionalidad Agregada — Chatbot Inteligente de Recomendación Deportiva -->
+    <div id="modalChatbotDeportivo" role="dialog" aria-modal="true" aria-labelledby="modalChatbotTitle" onclick="if(event.target === this) cerrarModalChatbotDeportivo()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[240] items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl w-full max-w-2xl shadow-2xl relative my-auto border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+            <!-- Cabecera del Chatbot -->
+            <div class="bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-900 text-white p-4 sm:p-5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-xl font-black shadow shrink-0">
+                        <i class="fas fa-robot" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <span class="inline-block text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                            Funcionalidad Agregada • RF-23
+                        </span>
+                        <h3 id="modalChatbotTitle" class="text-sm sm:text-base font-black leading-tight mt-0.5">
+                            Asistente Inteligente de Recomendación Deportiva
+                        </h3>
+                        <p class="text-[11px] text-blue-200">Filtra por Nivel Educativo, Horario de Cursado y Tope Máximo de 2 Deportes (RF-10)</p>
+                    </div>
+                </div>
+                <button type="button" onclick="cerrarModalChatbotDeportivo()" aria-label="Cerrar asistente deportivo" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Selector de Alumno Analizado -->
+            <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <label for="chatbotAlumnoSelect" class="font-black text-slate-700 uppercase text-[10px] tracking-wider shrink-0">
+                    <i class="fas fa-user-graduate text-blue-900 mr-1"></i> Alumno Analizado en Tiempo Real:
+                </label>
+                <select id="chatbotAlumnoSelect" onchange="ejecutarAnalisisChatbotRF23()" class="w-full sm:w-auto flex-1 p-2 bg-white border border-slate-300 rounded-xl font-bold text-blue-950 outline-none focus:border-blue-900 min-h-[38px]"></select>
+            </div>
+
+            <!-- Cuerpo Conversacional y Motor de Reglas -->
+            <div id="chatbotCuerpoConversacion" class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 text-xs bg-slate-50/40">
+                <!-- Se hidrata dinámicamente con el diagnóstico horario, grupos compatibles (con inscripción 1-tap) y grupos descartados con motivo -->
+            </div>
+
+            <!-- Botones de Consulta Rápida -->
+            <div class="p-3.5 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="hacerPreguntaChatbotRF23('compatibles')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold rounded-lg border border-blue-200 transition">
+                        ✅ ¿Qué deportes puedo cursar?
+                    </button>
+                    <button type="button" onclick="hacerPreguntaChatbotRF23('descartados')" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-900 font-bold rounded-lg border border-rose-200 transition">
+                        🚫 ¿Por qué se descartan otros grupos?
+                    </button>
+                    <button type="button" onclick="hacerPreguntaChatbotRF23('reglamento')" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold rounded-lg border border-amber-200 transition">
+                        📏 Ver regla de tope (Máx. 2 deportes)
+                    </button>
+                </div>
+                <button type="button" onclick="cerrarModalChatbotDeportivo()" class="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg">
+                    Cerrar
                 </button>
             </div>
         </div>
