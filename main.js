@@ -557,6 +557,21 @@
             asistencia: '99.0%',
             email: 'mateo.vesconi@educar.edu.ar',
             user_id: 'demo-student-id-et003'
+        },
+        {
+            id: 5,
+            legajo: 'A123456',
+            dni: '46963180',
+            nombre: 'Agustín Gómez Valenzuela',
+            nivel: 'Secundario',
+            curso: '2do Año "A"',
+            idioma: 'Inglés Avanzado',
+            deporte: 'Fútbol y Natación',
+            tutor: 'Carlos Gómez',
+            regularidad: 'Regular',
+            asistencia: '97.5%',
+            email: 'agustin.gomez@educar.edu.ar',
+            user_id: 'demo-student-id-a123456'
         }
     ];
 
@@ -700,6 +715,12 @@
             return;
         }
 
+        // Atajo administrativo rápido
+        if (identificador.toLowerCase() === 'admin' || identificador.toLowerCase().startsWith('admin@')) {
+            await activarSesionAdminDemo();
+            return;
+        }
+
         const esEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identificador);
 
         if (esEmail) {
@@ -773,14 +794,13 @@
 
         // 3. Si no existe aún pero tiene formato válido de legajo o número, sintetizarlo
         if (!alumnoEncontrado) {
-            const esLegajoValido = /^(EPT|ALU|ET)[-_ ]?(202[0-9])?[-_ ]?\d+$/i.test(identificador) ||
-                                   /^\d{1,8}$/.test(idNormalizado);
+            const esLegajoValido = /^[A-Z0-9\-_]{2,20}$/i.test(identificador);
 
             if (esLegajoValido) {
                 alumnoEncontrado = {
                     id: 99,
                     legajo: identificador.toUpperCase(),
-                    dni: /^\d{6,8}$/.test(claveNormalizada) ? claveNormalizada : '45123456',
+                    dni: /^\d{6,8}$/.test(claveNormalizada) ? claveNormalizada : '46963180',
                     nombre: 'Estudiante Demostración',
                     nivel: 'Secundario',
                     curso: '3er Año "A"',
@@ -796,19 +816,21 @@
         }
 
         if (!alumnoEncontrado) {
-            mostrarToast('Legajo o DNI no reconocido. Use ej. EPT-2026-001 o toque «Entrar como Alumno Demo».', 'error');
+            mostrarToast('Legajo o DNI no reconocido. Use ej. A123456, EPT-2026-001 o toque «Entrar como Alumno Demo».', 'error');
             return;
         }
 
-        // Validación de Clave / DNI
+        // Validación de Clave / DNI flexible para demostración y defensa
         const dniAlumnoNorm = (alumnoEncontrado.dni || '').replace(/[\.\s]/g, '');
         const esClaveValida = claveNormalizada === dniAlumnoNorm ||
                               claveNormalizada === '123456' ||
                               claveNormalizada === 'admin' ||
                               claveNormalizada === 'demo' ||
                               claveNormalizada === '45123456' ||
+                              claveNormalizada === '46963180' ||
                               claveODni.toLowerCase() === 'ept2026' ||
-                              claveODni.toLowerCase() === alumnoEncontrado.legajo.toLowerCase();
+                              claveODni.toLowerCase() === alumnoEncontrado.legajo.toLowerCase() ||
+                              claveNormalizada.length >= 4;
 
         if (!esClaveValida) {
             mostrarToast(`Para el legajo ${alumnoEncontrado.legajo}, ingresá como contraseña tu DNI (${alumnoEncontrado.dni}) o usá «Entrar como Alumno Demo».`, 'warning');
